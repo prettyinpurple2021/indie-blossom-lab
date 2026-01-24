@@ -1,45 +1,30 @@
 import { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAdminLessons, useDeleteLesson, useUpdateLesson, Lesson } from '@/hooks/useAdmin';
+import { useAdminLessons, useDeleteLesson, useUpdateLesson, useReorderLessons, Lesson } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { LessonEditor } from './LessonEditor';
-import { 
-  Plus, 
-  Loader2, 
-  FileText, 
-  Video, 
-  HelpCircle, 
-  FileSpreadsheet, 
-  Zap,
-  Pencil,
-  Trash2,
-  GripVertical,
-  Clock,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { SortableLessonItem } from './SortableLessonItem';
+import { Plus, Loader2, FileText } from 'lucide-react';
 
 interface LessonListProps {
   courseId: string;
 }
-
-const typeIcons: Record<string, React.ReactNode> = {
-  text: <FileText className="h-4 w-4" />,
-  video: <Video className="h-4 w-4" />,
-  quiz: <HelpCircle className="h-4 w-4" />,
-  worksheet: <FileSpreadsheet className="h-4 w-4" />,
-  activity: <Zap className="h-4 w-4" />,
-};
-
-const typeLabels: Record<string, string> = {
-  text: 'Lecture',
-  video: 'Video',
-  quiz: 'Quiz',
-  worksheet: 'Worksheet',
-  activity: 'Activity',
-};
 
 export function LessonList({ courseId }: LessonListProps) {
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
@@ -47,7 +32,47 @@ export function LessonList({ courseId }: LessonListProps) {
   const { data: lessons, isLoading } = useAdminLessons(courseId);
   const deleteLesson = useDeleteLesson();
   const updateLesson = useUpdateLesson();
+  const reorderLessons = useReorderLessons();
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id || !lessons) return;
+
+    const oldIndex = lessons.findIndex((l) => l.id === active.id);
+    const newIndex = lessons.findIndex((l) => l.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reorderedLessons = arrayMove(lessons, oldIndex, newIndex);
+    const updates = reorderedLessons.map((lesson, index) => ({
+      id: lesson.id,
+      order_number: index + 1,
+    }));
+
+    try {
+      await reorderLessons.mutateAsync({ courseId, updates });
+      toast({ title: 'Lessons reordered' });
+    } catch (error: any) {
+      toast({
+        title: 'Failed to reorder',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleDelete = async (lesson: Lesson) => {
     if (!confirm(`Delete "${lesson.title}"? This cannot be undone.`)) return;
@@ -132,74 +157,31 @@ export function LessonList({ courseId }: LessonListProps) {
               </CardContent>
             </Card>
           ) : (
-            lessons?.map((lesson, index) => (
-              <Card key={lesson.id} className="hover:bg-muted/50 transition-colors">
-                <CardContent className="py-4">
-                  <div className="flex items-center gap-4">
-                    <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
-                    
-                    <span className="text-sm font-medium text-muted-foreground w-8">
-                      {index + 1}.
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                      {typeIcons[lesson.type]}
-                      <Badge variant="secondary" className="text-xs">
-                        {typeLabels[lesson.type]}
-                      </Badge>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium truncate">{lesson.title}</h4>
-                        <Badge variant={lesson.is_published ? 'default' : 'outline'} className="text-xs">
-                          {lesson.is_published ? 'Published' : 'Draft'}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {lesson.duration_minutes && (
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        {lesson.duration_minutes}m
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => toggleLessonPublish(lesson)}
-                        disabled={updateLesson.isPending}
-                        title={lesson.is_published ? 'Unpublish' : 'Publish'}
-                      >
-                        {lesson.is_published ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditingLesson(lesson)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(lesson)}
-                        disabled={deleteLesson.isPending}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={lessons?.map((l) => l.id) || []}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2">
+                  {lessons?.map((lesson, index) => (
+                    <SortableLessonItem
+                      key={lesson.id}
+                      lesson={lesson}
+                      index={index}
+                      onEdit={setEditingLesson}
+                      onDelete={handleDelete}
+                      onTogglePublish={toggleLessonPublish}
+                      isUpdating={updateLesson.isPending}
+                      isDeleting={deleteLesson.isPending}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       )}

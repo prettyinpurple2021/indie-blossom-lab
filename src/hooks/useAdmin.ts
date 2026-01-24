@@ -285,6 +285,36 @@ export function useDeleteLesson() {
   });
 }
 
+// Reorder lessons
+export function useReorderLessons() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      courseId,
+      updates,
+    }: {
+      courseId: string;
+      updates: { id: string; order_number: number }[];
+    }) => {
+      // Update each lesson's order_number
+      const promises = updates.map(({ id, order_number }) =>
+        supabase
+          .from('lessons')
+          .update({ order_number })
+          .eq('id', id)
+      );
+
+      const results = await Promise.all(promises);
+      const error = results.find((r) => r.error)?.error;
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-lessons', variables.courseId] });
+    },
+  });
+}
+
 // Update course
 export function useUpdateCourse() {
   const queryClient = useQueryClient();

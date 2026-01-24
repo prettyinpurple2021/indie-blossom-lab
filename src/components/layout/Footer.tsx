@@ -1,90 +1,122 @@
 import { Link } from 'react-router-dom';
-import { Separator } from '@/components/ui/separator';
+import { Zap, Twitter, Github, Youtube } from 'lucide-react';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="border-t border-border/40 bg-muted/30">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="relative border-t border-primary/20 bg-background/50 backdrop-blur-xl">
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-transparent pointer-events-none" />
+      
+      <div className="container relative py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                S
+          <div className="md:col-span-1">
+            <Link to="/" className="flex items-center gap-3 group mb-4">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_20px_hsl(270_80%_50%/0.4)] group-hover:shadow-[0_0_30px_hsl(270_80%_50%/0.6)] transition-all">
+                <Zap className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg">
-                SoloSuccess
-                <span className="text-primary"> Academy</span>
+              <span className="font-display font-bold text-lg tracking-wider">
+                <span className="text-gradient">SOLO</span>SUCCESS
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Empowering solo founders with AI-powered learning to build successful businesses. 
-              From mindset to pitch, we've got you covered.
+            <p className="text-sm text-muted-foreground font-mono leading-relaxed">
+              AI-powered learning platform for solo founders building the future.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Platform */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <h3 className="font-display font-semibold mb-4 text-sm tracking-wider text-primary">PLATFORM</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/courses" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  All Courses
+                <Link to="/courses" className="text-muted-foreground hover:text-primary transition-colors font-mono">
+                  Courses
                 </Link>
               </li>
               <li>
-                <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors font-mono">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors font-mono">
                   Sign In
-                </Link>
-              </li>
-              <li>
-                <Link to="/auth?mode=signup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Get Started
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
+            <h3 className="font-display font-semibold mb-4 text-sm tracking-wider text-secondary">RESOURCES</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Help Center
+                <a href="#" className="text-muted-foreground hover:text-secondary transition-colors font-mono">
+                  Documentation
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact Us
+                <a href="#" className="text-muted-foreground hover:text-secondary transition-colors font-mono">
+                  Community
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-secondary transition-colors font-mono">
+                  Support
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="font-display font-semibold mb-4 text-sm tracking-wider text-accent">LEGAL</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-accent transition-colors font-mono">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-accent transition-colors font-mono">
                   Terms of Service
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-accent transition-colors font-mono">
+                  Refund Policy
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <Separator className="my-8" />
-
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {currentYear} SoloSuccess Academy. All rights reserved.
+        {/* Bottom section */}
+        <div className="mt-12 pt-8 border-t border-primary/20 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground font-mono">
+            &copy; {new Date().getFullYear()} SoloSuccess Academy. All rights reserved.
           </p>
+          
+          {/* Social links */}
           <div className="flex items-center gap-4">
-            <span className="text-xs text-muted-foreground">
-              Built for solo founders, by solo founders ✨
-            </span>
+            <a 
+              href="#" 
+              className="h-10 w-10 rounded-lg bg-muted/50 border border-primary/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:shadow-[0_0_15px_hsl(270_80%_60%/0.3)] transition-all"
+            >
+              <Twitter className="h-4 w-4" />
+            </a>
+            <a 
+              href="#" 
+              className="h-10 w-10 rounded-lg bg-muted/50 border border-primary/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:shadow-[0_0_15px_hsl(270_80%_60%/0.3)] transition-all"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <a 
+              href="#" 
+              className="h-10 w-10 rounded-lg bg-muted/50 border border-primary/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:shadow-[0_0_15px_hsl(270_80%_60%/0.3)] transition-all"
+            >
+              <Youtube className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </div>

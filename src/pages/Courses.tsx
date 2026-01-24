@@ -8,7 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { useCourses } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
 import { phaseMetadata, formatPrice, getPhaseClasses, type CoursePhase } from '@/lib/courseData';
-import { ArrowRight, BookOpen, CheckCircle2, Lock, ShoppingCart } from 'lucide-react';
+import { ArrowRight, BookOpen, CheckCircle2, Lock, ShoppingCart, Terminal, Zap } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -83,28 +83,35 @@ export default function Courses() {
   }, {} as Record<CoursePhase, typeof courses>);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cyber-bg cyber-grid">
       <Header />
       
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-12 relative z-10">
         <div className="container">
           {/* Page Header */}
-          <div className="max-w-3xl mb-12">
-            <h1 className="text-4xl font-display font-bold mb-4">
-              Course Catalog
+          <div className="max-w-4xl mb-16">
+            <div className="flex items-center gap-3 mb-4">
+              <Terminal className="h-6 w-6 text-primary" />
+              <Badge variant="outline" className="font-mono border-primary/30 bg-primary/10">
+                &gt; COURSE_CATALOG
+              </Badge>
+            </div>
+            <h1 className="text-5xl font-display font-bold mb-6">
+              <span className="text-foreground">COURSE</span>{' '}
+              <span className="text-gradient">CATALOG</span>
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground font-mono">
               10 comprehensive courses designed to take you from solo founder to successful entrepreneur. 
               Complete all courses to build your professional portfolio and pitch.
             </p>
           </div>
 
           {isLoading ? (
-            <div className="flex justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <div className="flex justify-center py-16">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-[0_0_30px_hsl(270_80%_60%/0.5)]" />
             </div>
           ) : (
-            <div className="space-y-16">
+            <div className="space-y-20">
               {(['initialization', 'orchestration', 'launch'] as CoursePhase[]).map((phase) => {
                 const meta = phaseMetadata[phase];
                 const phaseCourses = coursesByPhase?.[phase] || [];
@@ -112,12 +119,12 @@ export default function Courses() {
                 return (
                   <section key={phase}>
                     {/* Phase Header */}
-                    <div className="flex items-center gap-4 mb-8">
-                      <div className={`px-4 py-2 rounded-lg ${getPhaseClasses(phase)} border`}>
+                    <div className="flex flex-wrap items-center gap-4 mb-10">
+                      <div className={`px-5 py-3 rounded-lg ${getPhaseClasses(phase)} border font-display text-lg shadow-[0_0_20px_currentColor/0.2]`}>
                         <span className="text-2xl mr-2">{meta.icon}</span>
-                        <span className="font-semibold">{meta.label}</span>
+                        <span className="font-bold tracking-wide">{meta.label}</span>
                       </div>
-                      <span className="text-muted-foreground">{meta.description}</span>
+                      <span className="text-muted-foreground font-mono">{meta.description}</span>
                     </div>
 
                     {/* Course Grid */}
@@ -132,24 +139,24 @@ export default function Courses() {
                         return (
                           <Card 
                             key={course.id} 
-                            className="group relative flex flex-col border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+                            className="group relative flex flex-col glass-card glass-card-hover"
                           >
                             {/* Purchase Status Badge */}
-                            <div className="absolute top-4 right-4">
+                            <div className="absolute top-4 right-4 z-10">
                               {isPurchased ? (
-                                <Badge className="bg-success/10 text-success border-success/30">
+                                <Badge className="bg-success/20 text-success border-success/30 shadow-[0_0_15px_hsl(142_80%_50%/0.3)]">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
                                   Owned
                                 </Badge>
                               ) : (
-                                <Badge variant="outline">
+                                <Badge variant="outline" className="font-display font-bold border-primary/30 bg-primary/10">
                                   {formatPrice(course.price_cents)}
                                 </Badge>
                               )}
                             </div>
 
                             <CardHeader className="flex-1">
-                              <Badge variant="outline" className="w-fit text-xs mb-2">
+                              <Badge variant="outline" className="w-fit text-xs mb-3 font-mono border-primary/30">
                                 Course {course.order_number}
                               </Badge>
                               <CardTitle className="text-xl group-hover:text-primary transition-colors">
@@ -163,10 +170,10 @@ export default function Courses() {
                             <CardContent className="pt-0">
                               {/* Progress bar for purchased courses */}
                               {isPurchased && progress && progress.total > 0 && (
-                                <div className="mb-4">
+                                <div className="mb-5">
                                   <div className="flex items-center justify-between text-sm mb-2">
-                                    <span className="text-muted-foreground">Progress</span>
-                                    <span className="font-medium">{progressPercent}%</span>
+                                    <span className="text-muted-foreground font-mono">Progress</span>
+                                    <span className="font-display font-medium text-primary">{progressPercent}%</span>
                                   </div>
                                   <Progress value={progressPercent} className="h-2" />
                                 </div>
@@ -174,18 +181,18 @@ export default function Courses() {
 
                               {/* Project info */}
                               {course.project_title && (
-                                <div className="mb-4 p-3 rounded-lg bg-muted/50 border border-border/50">
-                                  <div className="text-xs text-muted-foreground mb-1">Course Project</div>
-                                  <div className="text-sm font-medium">{course.project_title}</div>
+                                <div className="mb-5 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                                  <div className="text-xs text-muted-foreground font-mono mb-1">Course Project</div>
+                                  <div className="text-sm font-display font-medium">{course.project_title}</div>
                                 </div>
                               )}
 
                               {/* Action Button */}
                               {isAuthenticated ? (
                                 isPurchased ? (
-                                  <Button className="w-full" asChild>
+                                  <Button className="w-full" variant="neon" asChild>
                                     <Link to={`/courses/${course.id}`}>
-                                      <BookOpen className="mr-2 h-4 w-4" />
+                                      <Zap className="mr-2 h-4 w-4" />
                                       Continue Learning
                                     </Link>
                                   </Button>

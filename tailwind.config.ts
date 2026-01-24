@@ -90,7 +90,7 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
+        display: ["Orbitron", "Space Grotesk", "Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "Fira Code", "monospace"],
       },
       keyframes: {
@@ -126,6 +126,14 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        "glow-pulse": {
+          "0%, 100%": { 
+            boxShadow: "0 0 20px hsl(270 80% 60% / 0.3), 0 0 40px hsl(270 80% 60% / 0.1)" 
+          },
+          "50%": { 
+            boxShadow: "0 0 30px hsl(270 80% 60% / 0.5), 0 0 60px hsl(270 80% 60% / 0.2)" 
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -136,10 +144,12 @@ export default {
         "slide-out-right": "slide-out-right 0.3s ease-out",
         pulse: "pulse 2s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)",
+        "cyber-gradient": "radial-gradient(ellipse at 50% 0%, hsl(270 60% 15% / 0.5) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, hsl(185 60% 10% / 0.4) 0%, transparent 50%)",
       },
     },
   },

@@ -228,9 +228,35 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid hsl(270 50% 50% / 0.2);
+    border-radius: 0.75rem;
     box-shadow: 
       0 4px 30px hsl(270 50% 20% / 0.1),
       inset 0 1px 0 hsl(270 50% 80% / 0.05);
+    /* Entrance animation */
+    animation: glass-card-enter 0.5s ease-out both;
+  }
+
+  /* Staggered entrance delays for multiple cards */
+  .glass-card:nth-child(1) { animation-delay: 0ms; }
+  .glass-card:nth-child(2) { animation-delay: 50ms; }
+  .glass-card:nth-child(3) { animation-delay: 100ms; }
+  .glass-card:nth-child(4) { animation-delay: 150ms; }
+  .glass-card:nth-child(5) { animation-delay: 200ms; }
+  .glass-card:nth-child(6) { animation-delay: 250ms; }
+  .glass-card:nth-child(7) { animation-delay: 300ms; }
+  .glass-card:nth-child(8) { animation-delay: 350ms; }
+  .glass-card:nth-child(9) { animation-delay: 400ms; }
+  .glass-card:nth-child(10) { animation-delay: 450ms; }
+
+  @keyframes glass-card-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   .glass-card-hover {
@@ -245,6 +271,11 @@
       0 0 60px hsl(270 80% 60% / 0.1),
       inset 0 1px 0 hsl(270 50% 80% / 0.1);
     transform: translateY(-2px);
+  }
+
+  /* Utility to disable entrance animation when not needed */
+  .glass-card-static {
+    animation: none;
   }
 
   /* ====== NEON TEXT EFFECTS ====== */

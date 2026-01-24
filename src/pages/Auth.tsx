@@ -78,23 +78,24 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cyber-bg">
       <Header />
       
-      <main className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-          </div>
+      <main className="flex-1 flex items-center justify-center py-12 px-4 relative">
+        {/* Cyber grid overlay */}
+        <div className="cyber-grid" />
+        
+        <div className="w-full max-w-md relative z-10">
+          {/* Animated glow orbs */}
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-medium mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
               <Sparkles className="h-4 w-4" />
               Join 10,000+ Solo Founders
             </div>
-            <h1 className="text-3xl font-display font-bold mb-2">
+            <h1 className="text-3xl font-display font-bold mb-2 neon-text">
               Start Your Journey
             </h1>
             <p className="text-muted-foreground">
@@ -102,12 +103,22 @@ export default function Auth() {
             </p>
           </div>
 
-          <Card className="border-border/50 shadow-xl">
+          <Card className="glass-card border-primary/30 shadow-[0_0_40px_hsl(var(--primary)/0.2)]">
             <Tabs defaultValue={defaultTab} className="w-full">
               <CardHeader className="pb-4">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 bg-black/60 border border-primary/20 p-1">
+                  <TabsTrigger 
+                    value="signin" 
+                    className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(var(--primary)/0.4)] transition-all duration-300"
+                  >
+                    Sign In
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="signup"
+                    className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(var(--primary)/0.4)] transition-all duration-300"
+                  >
+                    Sign Up
+                  </TabsTrigger>
                 </TabsList>
               </CardHeader>
 
@@ -115,7 +126,7 @@ export default function Auth() {
                 <TabsContent value="signin" className="mt-0">
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email">Email</Label>
+                      <Label htmlFor="signin-email" className="text-foreground/80 font-medium">Email</Label>
                       <Input
                         id="signin-email"
                         type="email"
@@ -124,10 +135,11 @@ export default function Auth() {
                         onChange={(e) => setSignInEmail(e.target.value)}
                         required
                         disabled={isLoading}
+                        className="neon-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signin-password">Password</Label>
+                      <Label htmlFor="signin-password" className="text-foreground/80 font-medium">Password</Label>
                       <div className="relative">
                         <Input
                           id="signin-password"
@@ -137,23 +149,24 @@ export default function Auth() {
                           onChange={(e) => setSignInPassword(e.target.value)}
                           required
                           disabled={isLoading}
+                          className="neon-input pr-10"
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-muted-foreground hover:text-primary transition-colors"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            <EyeOff className="h-4 w-4" />
                           ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
+                            <Eye className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
                     </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" variant="neon" className="w-full" disabled={isLoading}>
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -169,7 +182,7 @@ export default function Auth() {
                 <TabsContent value="signup" className="mt-0">
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-name">Display Name</Label>
+                      <Label htmlFor="signup-name" className="text-foreground/80 font-medium">Display Name</Label>
                       <Input
                         id="signup-name"
                         type="text"
@@ -177,10 +190,11 @@ export default function Auth() {
                         value={signUpName}
                         onChange={(e) => setSignUpName(e.target.value)}
                         disabled={isLoading}
+                        className="neon-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
+                      <Label htmlFor="signup-email" className="text-foreground/80 font-medium">Email</Label>
                       <Input
                         id="signup-email"
                         type="email"
@@ -189,10 +203,11 @@ export default function Auth() {
                         onChange={(e) => setSignUpEmail(e.target.value)}
                         required
                         disabled={isLoading}
+                        className="neon-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
+                      <Label htmlFor="signup-password" className="text-foreground/80 font-medium">Password</Label>
                       <div className="relative">
                         <Input
                           id="signup-password"
@@ -203,18 +218,19 @@ export default function Auth() {
                           required
                           minLength={6}
                           disabled={isLoading}
+                          className="neon-input pr-10"
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-muted-foreground hover:text-primary transition-colors"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            <EyeOff className="h-4 w-4" />
                           ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
+                            <Eye className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
@@ -222,7 +238,7 @@ export default function Auth() {
                         Must be at least 6 characters
                       </p>
                     </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" variant="neon" className="w-full" disabled={isLoading}>
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />

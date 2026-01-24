@@ -80,8 +80,8 @@ export default function Profile() {
         <div className="cyber-grid" />
         
         {/* Animated glow orbs */}
-        <div className="absolute top-20 left-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full blur-3xl animate-orb-glow-primary" />
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1.5s' }} />
         
         <div className="container max-w-4xl relative z-10">
           <h1 className="text-3xl font-display font-bold mb-8 neon-text">Your Profile</h1>

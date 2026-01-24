@@ -138,8 +138,8 @@ export default function CourseDetail() {
         {/* Hero Section */}
         <section className="relative py-12 border-b border-primary/20">
           {/* Animated glow orbs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-orb-glow-primary" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1.5s' }} />
           
           <div className="container relative z-10">
             <Button variant="ghost" asChild className="mb-6 hover:bg-primary/10 hover:text-primary transition-all">

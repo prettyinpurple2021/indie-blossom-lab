@@ -513,6 +513,78 @@
     }
   }
 
+  /* Glowing orb animation for background effects */
+  .animate-orb-glow {
+    animation: orb-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes orb-glow {
+    0%, 100% { 
+      opacity: 0.6;
+      transform: scale(1);
+      filter: blur(48px);
+    }
+    50% { 
+      opacity: 1;
+      transform: scale(1.1);
+      filter: blur(64px);
+    }
+  }
+
+  /* Orb glow with color shift for primary */
+  .animate-orb-glow-primary {
+    animation: orb-glow-primary 5s ease-in-out infinite;
+  }
+
+  @keyframes orb-glow-primary {
+    0%, 100% { 
+      opacity: 0.5;
+      transform: scale(1);
+      background: hsl(270 100% 70% / 0.15);
+    }
+    50% { 
+      opacity: 0.9;
+      transform: scale(1.15);
+      background: hsl(270 100% 70% / 0.25);
+    }
+  }
+
+  /* Orb glow for secondary */
+  .animate-orb-glow-secondary {
+    animation: orb-glow-secondary 6s ease-in-out infinite;
+  }
+
+  @keyframes orb-glow-secondary {
+    0%, 100% { 
+      opacity: 0.5;
+      transform: scale(1);
+      background: hsl(185 100% 55% / 0.12);
+    }
+    50% { 
+      opacity: 0.85;
+      transform: scale(1.12);
+      background: hsl(185 100% 55% / 0.22);
+    }
+  }
+
+  /* Orb glow for accent */
+  .animate-orb-glow-accent {
+    animation: orb-glow-accent 5.5s ease-in-out infinite;
+  }
+
+  @keyframes orb-glow-accent {
+    0%, 100% { 
+      opacity: 0.5;
+      transform: scale(1);
+      background: hsl(320 100% 65% / 0.12);
+    }
+    50% { 
+      opacity: 0.85;
+      transform: scale(1.1);
+      background: hsl(320 100% 65% / 0.22);
+    }
+  }
+
   /* Flicker effect for extra cyberpunk feel */
   .animate-flicker {
     animation: flicker 4s infinite;

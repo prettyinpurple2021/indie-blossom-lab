@@ -26,7 +26,7 @@ export default function CourseProject() {
         <div className="cyber-grid absolute inset-0" />
         <Header />
         <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-orb-glow-primary" />
           <div className="glass-card p-8 text-center border-secondary/30 relative z-10">
             <div className="h-16 w-16 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]">
               <Lock className="h-8 w-8 text-secondary" />
@@ -50,7 +50,7 @@ export default function CourseProject() {
         <div className="cyber-grid absolute inset-0" />
         <Header />
         <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-orb-glow-primary" />
           <div className="glass-card p-8 relative z-10">
             <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary)))' }} />
             <p className="text-muted-foreground mt-4">Loading project...</p>
@@ -68,7 +68,7 @@ export default function CourseProject() {
         <div className="cyber-grid absolute inset-0" />
         <Header />
         <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl animate-orb-glow-secondary" />
           <div className="glass-card p-8 text-center border-warning/30 relative z-10">
             <div className="h-16 w-16 rounded-full bg-warning/20 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_hsl(var(--warning)/0.3)]">
               <Lock className="h-8 w-8 text-warning" />
@@ -92,7 +92,7 @@ export default function CourseProject() {
         <div className="cyber-grid absolute inset-0" />
         <Header />
         <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-destructive/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 left-1/3 w-64 h-64 rounded-full blur-3xl animate-orb-glow-accent" />
           <div className="glass-card p-8 text-center border-destructive/30 relative z-10">
             <h1 className="text-2xl font-bold mb-4 text-destructive">Course Not Found</h1>
             <Button asChild variant="neon">
@@ -112,7 +112,7 @@ export default function CourseProject() {
         <div className="cyber-grid absolute inset-0" />
         <Header />
         <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-muted/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/3 right-1/4 w-64 h-64 rounded-full blur-3xl animate-orb-glow-primary" />
           <div className="glass-card p-8 text-center relative z-10">
             <h1 className="text-2xl font-bold mb-2 neon-text">No Project Available</h1>
             <p className="text-muted-foreground mb-6">This course doesn't have a project assignment yet.</p>
@@ -133,8 +133,8 @@ export default function CourseProject() {
       
       <main className="flex-1 py-8 relative">
         {/* Animated glow orbs */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full blur-3xl animate-orb-glow-primary" />
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1s' }} />
         
         <div className="container max-w-4xl relative z-10">
           {/* Back navigation */}

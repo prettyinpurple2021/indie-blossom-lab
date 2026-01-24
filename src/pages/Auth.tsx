@@ -87,8 +87,8 @@ export default function Auth() {
         
         <div className="w-full max-w-md relative z-10">
           {/* Animated glow orbs */}
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full blur-3xl animate-orb-glow-primary" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1s' }} />
 
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-medium mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.3)]">

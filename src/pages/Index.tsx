@@ -90,9 +90,9 @@ export default function Index() {
         <section className="relative overflow-hidden py-24 md:py-36">
           {/* Animated background effects */}
           <div className="absolute inset-0 -z-10">
-            <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px] animate-pulse" />
-            <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-[200px] animate-pulse" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] animate-orb-glow-primary" />
+            <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full blur-[150px] animate-orb-glow-secondary" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[200px] animate-orb-glow-accent" style={{ animationDelay: '2s' }} />
           </div>
 
           <div className="container relative">

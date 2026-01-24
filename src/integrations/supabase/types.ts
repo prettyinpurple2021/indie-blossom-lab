@@ -283,6 +283,7 @@ export type Database = {
           created_at: string
           duration_minutes: number | null
           id: string
+          is_published: boolean
           order_number: number
           quiz_data: Json | null
           title: string
@@ -298,6 +299,7 @@ export type Database = {
           created_at?: string
           duration_minutes?: number | null
           id?: string
+          is_published?: boolean
           order_number: number
           quiz_data?: Json | null
           title: string
@@ -313,6 +315,7 @@ export type Database = {
           created_at?: string
           duration_minutes?: number | null
           id?: string
+          is_published?: boolean
           order_number?: number
           quiz_data?: Json | null
           title?: string

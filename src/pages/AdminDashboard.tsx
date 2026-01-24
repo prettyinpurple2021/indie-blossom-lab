@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LessonList } from '@/components/admin/LessonList';
+import { CourseEditor } from '@/components/admin/CourseEditor';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin, useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
@@ -17,8 +18,8 @@ import {
   Eye, 
   EyeOff,
   Users,
-  TrendingUp,
-  DollarSign
+  DollarSign,
+  Plus
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -28,6 +29,7 @@ export default function AdminDashboard() {
   const updateCourse = useUpdateCourse();
   const { toast } = useToast();
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [isCreatingCourse, setIsCreatingCourse] = useState(false);
 
   const isLoading = authLoading || adminLoading;
 
@@ -148,60 +150,88 @@ export default function AdminDashboard() {
             </TabsList>
 
             <TabsContent value="courses" className="space-y-4">
+              {/* Create Course Button / Form */}
+              {!isCreatingCourse ? (
+                <div className="flex justify-end">
+                  <Button onClick={() => setIsCreatingCourse(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Course
+                  </Button>
+                </div>
+              ) : (
+                <CourseEditor onClose={() => setIsCreatingCourse(false)} />
+              )}
+
               {coursesLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {courses?.map((course) => (
-                    <Card key={course.id} className="hover:bg-muted/50 transition-colors">
-                      <CardContent className="py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold truncate">{course.title}</h3>
-                              <Badge variant={course.is_published ? 'default' : 'secondary'}>
-                                {course.is_published ? 'Published' : 'Draft'}
-                              </Badge>
-                              <Badge variant="outline">{course.phase}</Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground truncate">
-                              {course.description}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => togglePublish(course.id, course.is_published)}
-                              disabled={updateCourse.isPending}
-                            >
-                              {course.is_published ? (
-                                <>
-                                  <EyeOff className="mr-2 h-4 w-4" />
-                                  Unpublish
-                                </>
-                              ) : (
-                                <>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  Publish
-                                </>
-                              )}
-                            </Button>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              onClick={() => setSelectedCourseId(course.id)}
-                            >
-                              Manage Lessons
-                            </Button>
-                          </div>
-                        </div>
+                  {courses?.length === 0 ? (
+                    <Card>
+                      <CardContent className="py-12 text-center">
+                        <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h4 className="text-lg font-medium mb-2">No courses yet</h4>
+                        <p className="text-muted-foreground mb-4">
+                          Create your first course to get started.
+                        </p>
+                        <Button onClick={() => setIsCreatingCourse(true)}>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create First Course
+                        </Button>
                       </CardContent>
                     </Card>
-                  ))}
+                  ) : (
+                    courses?.map((course) => (
+                      <Card key={course.id} className="hover:bg-muted/50 transition-colors">
+                        <CardContent className="py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-semibold truncate">{course.title}</h3>
+                                <Badge variant={course.is_published ? 'default' : 'secondary'}>
+                                  {course.is_published ? 'Published' : 'Draft'}
+                                </Badge>
+                                <Badge variant="outline">{course.phase}</Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground truncate">
+                                {course.description}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => togglePublish(course.id, course.is_published)}
+                                disabled={updateCourse.isPending}
+                              >
+                                {course.is_published ? (
+                                  <>
+                                    <EyeOff className="mr-2 h-4 w-4" />
+                                    Unpublish
+                                  </>
+                                ) : (
+                                  <>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Publish
+                                  </>
+                                )}
+                              </Button>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => setSelectedCourseId(course.id)}
+                              >
+                                Manage Lessons
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
                 </div>
               )}
             </TabsContent>

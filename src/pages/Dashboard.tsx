@@ -19,7 +19,9 @@ import {
   Target,
   Clock,
   Sparkles,
-  Play
+  Play,
+  Zap,
+  Terminal
 } from 'lucide-react';
 
 function DashboardContent() {
@@ -101,74 +103,81 @@ function DashboardContent() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cyber-bg cyber-grid">
       <Header />
       
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-12 relative z-10">
         <div className="container">
           {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-display font-bold mb-2">
-              Welcome back, {profile?.display_name || 'Founder'}! 👋
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-2">
+              <Terminal className="h-6 w-6 text-primary" />
+              <Badge variant="outline" className="font-mono border-primary/30 bg-primary/10">
+                &gt; COMMAND_CENTER
+              </Badge>
+            </div>
+            <h1 className="text-4xl font-display font-bold mb-3">
+              <span className="text-foreground">WELCOME BACK,</span>{' '}
+              <span className="text-gradient">{profile?.display_name?.toUpperCase() || 'FOUNDER'}</span>
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground font-mono">
               Track your progress and continue your journey to success.
             </p>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card className="border-border/50">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+            <Card className="glass-card glass-card-hover group">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <BookOpen className="h-6 w-6 text-primary" />
+                  <div className="h-14 w-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:shadow-[0_0_20px_hsl(270_80%_60%/0.4)] transition-all">
+                    <BookOpen className="h-7 w-7 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Courses Owned</p>
-                    <p className="text-2xl font-bold">{purchasedCount}/{totalCourses}</p>
+                    <p className="text-sm text-muted-foreground font-mono">Courses Owned</p>
+                    <p className="text-3xl font-display font-bold text-gradient">{purchasedCount}/{totalCourses}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/50">
+            <Card className="glass-card glass-card-hover group">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center">
-                    <CheckCircle2 className="h-6 w-6 text-success" />
+                  <div className="h-14 w-14 rounded-xl bg-success/10 border border-success/30 flex items-center justify-center group-hover:shadow-[0_0_20px_hsl(142_80%_50%/0.4)] transition-all">
+                    <CheckCircle2 className="h-7 w-7 text-success" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Lessons Complete</p>
-                    <p className="text-2xl font-bold">{completedLessons}</p>
+                    <p className="text-sm text-muted-foreground font-mono">Lessons Complete</p>
+                    <p className="text-3xl font-display font-bold text-success">{completedLessons}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/50">
+            <Card className="glass-card glass-card-hover group">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                    <Target className="h-6 w-6 text-secondary" />
+                  <div className="h-14 w-14 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center group-hover:shadow-[0_0_20px_hsl(185_80%_50%/0.4)] transition-all">
+                    <Target className="h-7 w-7 text-secondary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Overall Progress</p>
-                    <p className="text-2xl font-bold">{overallProgress}%</p>
+                    <p className="text-sm text-muted-foreground font-mono">Overall Progress</p>
+                    <p className="text-3xl font-display font-bold text-secondary">{overallProgress}%</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/50">
+            <Card className="glass-card glass-card-hover group">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <Trophy className="h-6 w-6 text-accent" />
+                  <div className="h-14 w-14 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center group-hover:shadow-[0_0_20px_hsl(320_80%_60%/0.4)] transition-all">
+                    <Trophy className="h-7 w-7 text-accent" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Achievements</p>
-                    <p className="text-2xl font-bold">{completedLessons > 0 ? 1 : 0}</p>
+                    <p className="text-sm text-muted-foreground font-mono">Achievements</p>
+                    <p className="text-3xl font-display font-bold text-accent">{completedLessons > 0 ? 1 : 0}</p>
                   </div>
                 </div>
               </CardContent>
@@ -180,22 +189,23 @@ function DashboardContent() {
             <div className="lg:col-span-2 space-y-8">
               {/* Continue Learning */}
               {continueCourse && (
-                <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-                  <CardHeader>
+                <Card className="glass-card border-primary/30 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent" />
+                  <CardHeader className="relative">
                     <div className="flex items-center gap-2 text-primary mb-2">
-                      <Play className="h-4 w-4" />
-                      <span className="text-sm font-medium">Continue Learning</span>
+                      <Play className="h-5 w-5" />
+                      <span className="text-sm font-display font-medium tracking-wide">CONTINUE LEARNING</span>
                     </div>
-                    <CardTitle>{(continueCourse.courses as any)?.title}</CardTitle>
+                    <CardTitle className="text-2xl">{(continueCourse.courses as any)?.title}</CardTitle>
                     <CardDescription>
                       {(continueCourse.courses as any)?.description}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="mb-4">
-                      <div className="flex justify-between text-sm mb-2">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">
+                  <CardContent className="relative">
+                    <div className="mb-6">
+                      <div className="flex justify-between text-sm mb-3">
+                        <span className="text-muted-foreground font-mono">Progress</span>
+                        <span className="font-display font-medium text-primary">
                           {courseProgressMap.get(continueCourse.course_id)?.completed || 0}/
                           {courseProgressMap.get(continueCourse.course_id)?.total || 0} lessons
                         </span>
@@ -205,11 +215,12 @@ function DashboardContent() {
                           ((courseProgressMap.get(continueCourse.course_id)?.completed || 0) / 
                           (courseProgressMap.get(continueCourse.course_id)?.total || 1)) * 100
                         } 
-                        className="h-2" 
+                        className="h-3" 
                       />
                     </div>
-                    <Button asChild>
+                    <Button variant="neon" asChild>
                       <Link to={`/courses/${continueCourse.course_id}`}>
+                        <Zap className="mr-2 h-4 w-4" />
                         Continue Course
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
@@ -220,7 +231,9 @@ function DashboardContent() {
 
               {/* Purchased Courses */}
               <div>
-                <h2 className="text-xl font-semibold mb-4">My Courses</h2>
+                <h2 className="text-2xl font-display font-semibold mb-6 flex items-center gap-3">
+                  <span className="text-gradient">MY COURSES</span>
+                </h2>
                 {purchases && purchases.length > 0 ? (
                   <div className="grid gap-4">
                     {purchases.map((purchase) => {
@@ -231,24 +244,24 @@ function DashboardContent() {
                         : 0;
 
                       return (
-                        <Card key={purchase.id} className="border-border/50">
-                          <CardContent className="p-4">
+                        <Card key={purchase.id} className="glass-card glass-card-hover">
+                          <CardContent className="p-5">
                             <div className="flex items-center gap-4">
-                              <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${getPhaseClasses(course?.phase)}`}>
-                                <span className="text-lg font-bold">{course?.order_number}</span>
+                              <div className={`h-14 w-14 rounded-lg flex items-center justify-center font-display font-bold text-lg ${getPhaseClasses(course?.phase)} shadow-[0_0_15px_currentColor/0.3]`}>
+                                {course?.order_number}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="font-medium truncate">{course?.title}</h3>
-                                <div className="flex items-center gap-4 mt-1">
+                                <h3 className="font-display font-medium truncate text-lg">{course?.title}</h3>
+                                <div className="flex items-center gap-4 mt-2">
                                   <Progress value={progressPercent} className="flex-1 h-2" />
-                                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                                  <span className="text-sm font-mono text-primary whitespace-nowrap">
                                     {progressPercent}%
                                   </span>
                                 </div>
                               </div>
-                              <Button variant="ghost" size="sm" asChild>
+                              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10">
                                 <Link to={`/courses/${purchase.course_id}`}>
-                                  <ArrowRight className="h-4 w-4" />
+                                  <ArrowRight className="h-5 w-5" />
                                 </Link>
                               </Button>
                             </div>
@@ -258,14 +271,14 @@ function DashboardContent() {
                     })}
                   </div>
                 ) : (
-                  <Card className="border-dashed">
-                    <CardContent className="py-12 text-center">
-                      <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                      <h3 className="font-medium mb-2">No courses yet</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
+                  <Card className="glass-card border-dashed border-primary/30">
+                    <CardContent className="py-16 text-center">
+                      <BookOpen className="h-14 w-14 mx-auto mb-4 text-muted-foreground/50" />
+                      <h3 className="font-display font-medium text-xl mb-2">No courses yet</h3>
+                      <p className="text-muted-foreground mb-6 font-mono text-sm">
                         Start your journey by purchasing your first course.
                       </p>
-                      <Button asChild>
+                      <Button variant="neon" asChild>
                         <Link to="/courses">Browse Courses</Link>
                       </Button>
                     </CardContent>
@@ -277,14 +290,14 @@ function DashboardContent() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Course Roadmap */}
-              <Card className="border-border/50">
+              <Card className="glass-card">
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="text-lg flex items-center gap-2 font-display">
                     <Sparkles className="h-5 w-5 text-primary" />
-                    Your Roadmap
+                    <span className="text-gradient">YOUR ROADMAP</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-2">
                   {courses?.slice(0, 10).map((course) => {
                     const isPurchased = purchasedCourseIds.has(course.id);
                     const progress = courseProgressMap.get(course.id);
@@ -294,19 +307,19 @@ function DashboardContent() {
                       <Link 
                         key={course.id}
                         to={`/courses/${course.id}`}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/10 transition-all group border border-transparent hover:border-primary/30"
                       >
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-medium
+                        <div className={`h-9 w-9 rounded-full flex items-center justify-center text-xs font-display font-bold transition-all
                           ${isComplete 
-                            ? 'bg-success text-success-foreground' 
+                            ? 'bg-success text-success-foreground shadow-[0_0_15px_hsl(142_80%_50%/0.5)]' 
                             : isPurchased 
-                              ? 'bg-primary/20 text-primary' 
+                              ? 'bg-primary/20 text-primary border border-primary/30' 
                               : 'bg-muted text-muted-foreground'
                           }`}
                         >
                           {isComplete ? <CheckCircle2 className="h-4 w-4" /> : course.order_number}
                         </div>
-                        <span className={`text-sm truncate ${!isPurchased && 'text-muted-foreground'}`}>
+                        <span className={`text-sm truncate font-mono ${!isPurchased && 'text-muted-foreground'} group-hover:text-primary transition-colors`}>
                           {course.title}
                         </span>
                       </Link>
@@ -316,9 +329,9 @@ function DashboardContent() {
               </Card>
 
               {/* Quick Actions */}
-              <Card className="border-border/50">
+              <Card className="glass-card">
                 <CardHeader>
-                  <CardTitle className="text-lg">Quick Actions</CardTitle>
+                  <CardTitle className="text-lg font-display">QUICK ACTIONS</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Button variant="outline" className="w-full justify-start" asChild>

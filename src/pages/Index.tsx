@@ -17,7 +17,9 @@ import {
   Star,
   Users,
   Trophy,
-  Play
+  Play,
+  Terminal,
+  Cpu
 } from 'lucide-react';
 
 export default function Index() {
@@ -36,21 +38,25 @@ export default function Index() {
       icon: Brain,
       title: 'AI-Powered Learning',
       description: 'Get personalized feedback and guidance from our AI tutor on every lesson.',
+      glow: 'group-hover:shadow-[0_0_30px_hsl(270_80%_60%/0.3)]',
     },
     {
       icon: Target,
       title: 'Project-Based',
       description: 'Complete real projects that become your professional portfolio.',
+      glow: 'group-hover:shadow-[0_0_30px_hsl(185_80%_50%/0.3)]',
     },
     {
       icon: Zap,
       title: 'Self-Paced',
       description: 'Learn at your own speed with lifetime access to all course materials.',
+      glow: 'group-hover:shadow-[0_0_30px_hsl(320_80%_60%/0.3)]',
     },
     {
       icon: Users,
       title: 'Community',
       description: 'Connect with fellow solo founders in course discussion boards.',
+      glow: 'group-hover:shadow-[0_0_30px_hsl(270_80%_60%/0.3)]',
     },
   ];
 
@@ -76,47 +82,50 @@ export default function Index() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cyber-bg cyber-grid">
       <Header />
       
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20 md:py-32">
-          {/* Background effects */}
+        <section className="relative overflow-hidden py-24 md:py-36">
+          {/* Animated background effects */}
           <div className="absolute inset-0 -z-10">
-            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[100px]" />
-            <div className="absolute inset-0 grid-pattern opacity-30" />
+            <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px] animate-pulse" />
+            <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-[200px] animate-pulse" style={{ animationDelay: '2s' }} />
           </div>
 
           <div className="container relative">
-            <div className="max-w-4xl mx-auto text-center">
+            <div className="max-w-5xl mx-auto text-center">
+              {/* Terminal-style badge */}
               <Badge 
                 variant="outline" 
-                className="mb-6 px-4 py-2 text-sm font-medium border-primary/30 bg-primary/5"
+                className="mb-8 px-4 py-2 text-sm font-mono border-primary/40 bg-primary/10 shadow-[0_0_20px_hsl(270_80%_50%/0.3)] animate-pulse-glow"
               >
-                <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                AI-Powered Learning for Solo Founders
+                <Terminal className="mr-2 h-4 w-4 text-primary" />
+                <span className="text-primary">&gt;</span> AI-Powered Learning for Solo Founders
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6">
-                Build Your Dream Business
-                <span className="block text-gradient mt-2">One Course at a Time</span>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight mb-8 leading-tight">
+                <span className="text-foreground">BUILD YOUR</span>
+                <br />
+                <span className="text-gradient animate-flicker">DREAM BUSINESS</span>
               </h1>
 
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
                 10 comprehensive courses designed for solo founders. From mindset to market to money—
                 graduate with a professional portfolio and investor-ready pitch.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" asChild className="text-lg px-8 neon-border">
+                <Button size="lg" variant="neon" asChild className="text-lg px-10 h-14">
                   <Link to="/auth?mode=signup">
-                    Start Learning Free
+                    <Cpu className="mr-2 h-5 w-5" />
+                    Initialize Journey
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="text-lg px-8">
+                <Button size="lg" variant="outline" asChild className="text-lg px-10 h-14">
                   <Link to="/courses">
                     <Play className="mr-2 h-5 w-5" />
                     View Courses
@@ -124,22 +133,22 @@ export default function Index() {
                 </Button>
               </div>
 
-              {/* Social proof */}
-              <div className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-border/50">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">10,000+</div>
-                  <div className="text-sm text-muted-foreground">Students</div>
+              {/* Social proof with neon styling */}
+              <div className="flex items-center justify-center gap-12 mt-16 pt-10 border-t border-primary/20">
+                <div className="text-center group">
+                  <div className="text-3xl font-display font-bold text-foreground group-hover:text-primary transition-colors">10,000+</div>
+                  <div className="text-sm text-muted-foreground font-mono">Students</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">10</div>
-                  <div className="text-sm text-muted-foreground">Courses</div>
+                <div className="text-center group">
+                  <div className="text-3xl font-display font-bold text-foreground group-hover:text-secondary transition-colors">10</div>
+                  <div className="text-sm text-muted-foreground font-mono">Courses</div>
                 </div>
-                <div className="text-center">
+                <div className="text-center group">
                   <div className="flex items-center justify-center gap-1">
-                    <span className="text-2xl font-bold text-foreground">4.9</span>
-                    <Star className="h-5 w-5 fill-warning text-warning" />
+                    <span className="text-3xl font-display font-bold text-foreground group-hover:text-accent transition-colors">4.9</span>
+                    <Star className="h-6 w-6 fill-warning text-warning" />
                   </div>
-                  <div className="text-sm text-muted-foreground">Rating</div>
+                  <div className="text-sm text-muted-foreground font-mono">Rating</div>
                 </div>
               </div>
             </div>
@@ -147,13 +156,17 @@ export default function Index() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-muted/30">
-          <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                Why Solo Founders Choose Us
+        <section className="py-24 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+          
+          <div className="container relative">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+                <span className="text-gradient-pink">WHY SOLO FOUNDERS</span>
+                <br />
+                <span className="text-foreground">CHOOSE US</span>
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                 Everything you need to go from idea to successful business, 
                 with AI assistance every step of the way.
               </p>
@@ -161,15 +174,18 @@ export default function Index() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((feature) => (
-                <Card key={feature.title} className="border-border/50 bg-card/50 backdrop-blur">
+                <Card 
+                  key={feature.title} 
+                  className={`group glass-card glass-card-hover cursor-default ${feature.glow}`}
+                >
                   <CardHeader>
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-primary" />
+                    <div className="h-14 w-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 group-hover:shadow-[0_0_20px_hsl(270_80%_60%/0.4)] transition-all duration-300">
+                      <feature.icon className="h-7 w-7 text-primary" />
                     </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    <p className="text-muted-foreground">{feature.description}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -178,13 +194,15 @@ export default function Index() {
         </section>
 
         {/* Course Journey Section */}
-        <section className="py-20">
+        <section className="py-24">
           <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                Your Journey to Success
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+                <span className="text-foreground">YOUR PATH TO</span>
+                <br />
+                <span className="text-gradient">SUCCESS</span>
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                 Three phases, ten courses, one transformation. Each course builds on the last, 
                 culminating in your professional portfolio and pitch.
               </p>
@@ -192,40 +210,40 @@ export default function Index() {
 
             {isLoading ? (
               <div className="flex justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-[0_0_20px_hsl(270_80%_60%/0.5)]" />
               </div>
             ) : (
-              <div className="space-y-12">
+              <div className="space-y-16">
                 {(['initialization', 'orchestration', 'launch'] as CoursePhase[]).map((phase) => {
                   const meta = phaseMetadata[phase];
                   const phaseCourses = coursesByPhase?.[phase] || [];
 
                   return (
-                    <div key={phase} className="space-y-6">
+                    <div key={phase} className="space-y-8">
                       <div className="flex items-center gap-4">
-                        <Badge className={meta.colorClass}>
-                          <span className="mr-1">{meta.icon}</span>
+                        <Badge className={`${meta.colorClass} px-4 py-2 text-sm font-display`}>
+                          <span className="mr-2 text-lg">{meta.icon}</span>
                           {meta.label}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">{meta.description}</span>
+                        <span className="text-muted-foreground font-mono">{meta.description}</span>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {phaseCourses.map((course) => (
                           <Card 
                             key={course.id} 
-                            className="group border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+                            className="group glass-card glass-card-hover"
                           >
                             <CardHeader>
                               <div className="flex items-start justify-between">
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs font-mono border-primary/30">
                                   Course {course.order_number}
                                 </Badge>
-                                <span className="font-bold text-primary">
+                                <span className="font-display font-bold text-primary">
                                   {formatPrice(course.price_cents)}
                                 </span>
                               </div>
-                              <CardTitle className="text-lg mt-2 group-hover:text-primary transition-colors">
+                              <CardTitle className="text-xl mt-3 group-hover:text-primary transition-colors">
                                 {course.title}
                               </CardTitle>
                               <CardDescription className="line-clamp-2">
@@ -233,7 +251,7 @@ export default function Index() {
                               </CardDescription>
                             </CardHeader>
                             <CardContent>
-                              <Button variant="ghost" className="w-full group-hover:bg-primary/10" asChild>
+                              <Button variant="ghost" className="w-full group-hover:bg-primary/10 group-hover:text-primary" asChild>
                                 <Link to={`/courses/${course.id}`}>
                                   View Course
                                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -252,36 +270,38 @@ export default function Index() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-20 bg-muted/30">
-          <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                Success Stories
+        <section className="py-24 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/5 to-transparent" />
+          
+          <div className="container relative">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+                <span className="text-gradient-cyan">SUCCESS STORIES</span>
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                 Join thousands of solo founders who've transformed their businesses.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((testimonial) => (
-                <Card key={testimonial.name} className="border-border/50">
+                <Card key={testimonial.name} className="glass-card glass-card-hover">
                   <CardContent className="pt-6">
                     <div className="flex items-center gap-1 mb-4">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="h-4 w-4 fill-warning text-warning" />
                       ))}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-6">
+                    <p className="text-muted-foreground mb-6 italic">
                       "{testimonial.content}"
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                      <div className="h-12 w-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-sm font-display font-bold text-primary shadow-[0_0_15px_hsl(270_80%_60%/0.3)]">
                         {testimonial.avatar}
                       </div>
                       <div>
-                        <div className="font-medium text-sm">{testimonial.name}</div>
-                        <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                        <div className="font-display font-medium">{testimonial.name}</div>
+                        <div className="text-xs text-muted-foreground font-mono">{testimonial.role}</div>
                       </div>
                     </div>
                   </CardContent>
@@ -292,41 +312,48 @@ export default function Index() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20">
+        <section className="py-24">
           <div className="container">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/5 overflow-hidden">
-              <CardContent className="p-12 text-center relative">
-                <div className="absolute inset-0 grid-pattern opacity-20" />
-                <div className="relative">
-                  <Trophy className="h-16 w-16 mx-auto mb-6 text-primary" />
-                  <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                    Ready to Transform Your Business?
-                  </h2>
-                  <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-                    Start your journey today. Complete all 10 courses and graduate with a 
-                    professional portfolio and investor-ready pitch.
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Button size="lg" asChild className="text-lg px-8">
-                      <Link to="/auth?mode=signup">
-                        Get Started Now
-                        <Rocket className="ml-2 h-5 w-5" />
-                      </Link>
-                    </Button>
+            <Card className="glass-card border-primary/30 overflow-hidden relative">
+              {/* Animated background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
+              <div className="absolute inset-0 grid-pattern opacity-30" />
+              
+              <CardContent className="p-16 text-center relative">
+                <div className="h-20 w-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_40px_hsl(270_80%_50%/0.5)] animate-glow">
+                  <Trophy className="h-10 w-10 text-primary-foreground" />
+                </div>
+                
+                <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+                  <span className="text-foreground">READY TO</span>
+                  <br />
+                  <span className="text-gradient">TRANSFORM?</span>
+                </h2>
+                
+                <p className="text-muted-foreground max-w-xl mx-auto mb-10 text-lg">
+                  Start your journey today. Complete all 10 courses and graduate with a 
+                  professional portfolio and investor-ready pitch.
+                </p>
+                
+                <Button size="lg" variant="neon" asChild className="text-lg px-12 h-14">
+                  <Link to="/auth?mode=signup">
+                    <Rocket className="mr-2 h-5 w-5" />
+                    Launch Your Journey
+                  </Link>
+                </Button>
+                
+                <div className="flex flex-wrap items-center justify-center gap-8 mt-12 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                    <span className="font-mono">Lifetime access</span>
                   </div>
-                  <div className="flex items-center justify-center gap-6 mt-8 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      Lifetime access
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      AI-powered feedback
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      Certificate on completion
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                    <span className="font-mono">AI-powered feedback</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                    <span className="font-mono">Certificate on completion</span>
                   </div>
                 </div>
               </CardContent>

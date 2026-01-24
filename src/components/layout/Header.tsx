@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield } from 'lucide-react';
+import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield, Zap } from 'lucide-react';
 
 export function Header() {
   const { user, profile, isAuthenticated, signOut } = useAuth();
@@ -35,32 +35,32 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full header-glass">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg overflow-hidden">
-            <span className="relative z-10">S</span>
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary via-accent to-secondary text-primary-foreground font-bold text-lg overflow-hidden shadow-[0_0_20px_hsl(270_80%_50%/0.5)] group-hover:shadow-[0_0_30px_hsl(270_80%_50%/0.7)] transition-all duration-300">
+            <Zap className="h-5 w-5 relative z-10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary opacity-100 group-hover:animate-pulse" />
           </div>
-          <span className="font-display font-bold text-xl hidden sm:block">
-            SoloSuccess
-            <span className="text-primary"> Academy</span>
+          <span className="font-display font-bold text-xl tracking-wider hidden sm:block">
+            <span className="text-gradient">SOLO</span>
+            <span className="text-foreground">SUCCESS</span>
           </span>
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
           <Link 
             to="/courses" 
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-all duration-300 hover:drop-shadow-[0_0_8px_hsl(270_80%_60%/0.5)]"
           >
             Courses
           </Link>
           {isAuthenticated && (
             <Link 
               to="/dashboard" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-all duration-300 hover:drop-shadow-[0_0_8px_hsl(270_80%_60%/0.5)]"
             >
               Dashboard
             </Link>
@@ -68,7 +68,7 @@ export function Header() {
           {isAdmin && (
             <Link 
               to="/admin" 
-              className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              className="text-sm font-medium text-primary neon-text transition-all duration-300"
             >
               Admin
             </Link>
@@ -81,22 +81,22 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <Avatar className="h-10 w-10 border-2 border-primary/20">
+                  <Avatar className="h-10 w-10 border-2 border-primary/40 shadow-[0_0_15px_hsl(270_80%_50%/0.3)]">
                     <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.display_name || 'User'} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
+                    <AvatarFallback className="bg-primary/20 text-primary font-display">
                       {getInitials(profile?.display_name, user?.email)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuContent className="w-56 glass-card border-primary/20" align="end" forceMount>
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{profile?.display_name || 'User'}</p>
+                    <p className="font-medium font-display">{profile?.display_name || 'User'}</p>
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="cursor-pointer">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
@@ -123,7 +123,7 @@ export function Header() {
                 </DropdownMenuItem>
                 {isAdmin && (
                   <>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="bg-primary/20" />
                     <DropdownMenuItem asChild>
                       <Link to="/admin" className="cursor-pointer text-primary">
                         <Shield className="mr-2 h-4 w-4" />
@@ -132,7 +132,7 @@ export function Header() {
                     </DropdownMenuItem>
                   </>
                 )}
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
@@ -140,11 +140,11 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>
                 <Link to="/auth">Sign In</Link>
               </Button>
-              <Button asChild className="neon-border">
+              <Button variant="neon" asChild>
                 <Link to="/auth?mode=signup">Get Started</Link>
               </Button>
             </div>

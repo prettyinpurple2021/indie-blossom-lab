@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 
 export type LessonType = 'text' | 'video' | 'quiz' | 'assignment' | 'worksheet' | 'activity';
+export type CoursePhase = 'initialization' | 'orchestration' | 'launch';
 
 export interface Lesson {
   id: string;
@@ -16,6 +17,7 @@ export interface Lesson {
   quiz_data: QuizData | null;
   worksheet_data: WorksheetData | null;
   activity_data: ActivityData | null;
+  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -90,6 +92,50 @@ export function useAdminCourses() {
   });
 }
 
+// Create a new course
+export function useCreateCourse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (course: {
+      title: string;
+      description?: string | null;
+      phase: CoursePhase;
+      price_cents?: number;
+    }) => {
+      // Get the next order number
+      const { data: existing } = await supabase
+        .from('courses')
+        .select('order_number')
+        .eq('phase', course.phase)
+        .order('order_number', { ascending: false })
+        .limit(1);
+
+      const nextOrder = (existing?.[0]?.order_number || 0) + 1;
+
+      const { data, error } = await supabase
+        .from('courses')
+        .insert([{
+          title: course.title,
+          description: course.description || null,
+          phase: course.phase,
+          price_cents: course.price_cents || 4900,
+          order_number: nextOrder,
+          is_published: false,
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-courses'] });
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    },
+  });
+}
+
 // Helper to transform DB lesson to our Lesson type
 function transformLesson(dbLesson: any): Lesson {
   return {
@@ -98,6 +144,7 @@ function transformLesson(dbLesson: any): Lesson {
     quiz_data: dbLesson.quiz_data as QuizData | null,
     worksheet_data: dbLesson.worksheet_data as WorksheetData | null,
     activity_data: dbLesson.activity_data as ActivityData | null,
+    is_published: dbLesson.is_published ?? false,
   };
 }
 
@@ -137,6 +184,7 @@ export function useCreateLesson() {
       quiz_data?: QuizData | null;
       worksheet_data?: WorksheetData | null;
       activity_data?: ActivityData | null;
+      is_published?: boolean;
     }) => {
       const insertData: any = {
         course_id: lesson.course_id,
@@ -149,6 +197,7 @@ export function useCreateLesson() {
         quiz_data: lesson.quiz_data,
         worksheet_data: lesson.worksheet_data,
         activity_data: lesson.activity_data,
+        is_published: lesson.is_published ?? false,
       };
 
       const { data, error } = await supabase
@@ -187,6 +236,7 @@ export function useUpdateLesson() {
         quiz_data?: QuizData | null;
         worksheet_data?: WorksheetData | null;
         activity_data?: ActivityData | null;
+        is_published?: boolean;
       };
     }) => {
       const dbUpdates: Record<string, any> = {};
@@ -198,6 +248,7 @@ export function useUpdateLesson() {
       if (updates.quiz_data !== undefined) dbUpdates.quiz_data = updates.quiz_data;
       if (updates.worksheet_data !== undefined) dbUpdates.worksheet_data = updates.worksheet_data;
       if (updates.activity_data !== undefined) dbUpdates.activity_data = updates.activity_data;
+      if (updates.is_published !== undefined) dbUpdates.is_published = updates.is_published;
 
       const { data, error } = await supabase
         .from('lessons')

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useAdminLessons, useDeleteLesson, Lesson } from '@/hooks/useAdmin';
+import { useAdminLessons, useDeleteLesson, useUpdateLesson, Lesson } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { LessonEditor } from './LessonEditor';
 import { 
@@ -16,7 +16,9 @@ import {
   Pencil,
   Trash2,
   GripVertical,
-  Clock
+  Clock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 interface LessonListProps {
@@ -44,6 +46,7 @@ export function LessonList({ courseId }: LessonListProps) {
   const [isCreating, setIsCreating] = useState(false);
   const { data: lessons, isLoading } = useAdminLessons(courseId);
   const deleteLesson = useDeleteLesson();
+  const updateLesson = useUpdateLesson();
   const { toast } = useToast();
 
   const handleDelete = async (lesson: Lesson) => {
@@ -55,6 +58,23 @@ export function LessonList({ courseId }: LessonListProps) {
     } catch (error: any) {
       toast({
         title: 'Failed to delete',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const toggleLessonPublish = async (lesson: Lesson) => {
+    try {
+      await updateLesson.mutateAsync({
+        lessonId: lesson.id,
+        courseId,
+        updates: { is_published: !lesson.is_published },
+      });
+      toast({ title: lesson.is_published ? 'Lesson unpublished' : 'Lesson published!' });
+    } catch (error: any) {
+      toast({
+        title: 'Failed to update',
         description: error.message,
         variant: 'destructive',
       });
@@ -130,7 +150,12 @@ export function LessonList({ courseId }: LessonListProps) {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium truncate">{lesson.title}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium truncate">{lesson.title}</h4>
+                        <Badge variant={lesson.is_published ? 'default' : 'outline'} className="text-xs">
+                          {lesson.is_published ? 'Published' : 'Draft'}
+                        </Badge>
+                      </div>
                     </div>
 
                     {lesson.duration_minutes && (
@@ -141,6 +166,19 @@ export function LessonList({ courseId }: LessonListProps) {
                     )}
 
                     <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleLessonPublish(lesson)}
+                        disabled={updateLesson.isPending}
+                        title={lesson.is_published ? 'Unpublish' : 'Publish'}
+                      >
+                        {lesson.is_published ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

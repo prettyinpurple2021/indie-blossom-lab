@@ -12,6 +12,7 @@ import { VideoUpload } from './VideoUpload';
 import { QuizEditor } from './QuizEditor';
 import { WorksheetEditor } from './WorksheetEditor';
 import { ActivityEditor } from './ActivityEditor';
+import { AIGenerateButton } from './AIGenerateButton';
 import { Loader2, Save, X } from 'lucide-react';
 
 interface LessonEditorProps {
@@ -138,7 +139,20 @@ export function LessonEditor({ courseId, lesson, nextOrderNumber, onClose }: Les
           <TabsContent value="content" className="space-y-4 mt-4">
             {(type === 'text' || type === 'video') && (
               <div className="space-y-2">
-                <Label htmlFor="content">Lesson Content (Markdown supported)</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content">Lesson Content (Markdown supported)</Label>
+                  <AIGenerateButton
+                    type="lesson_content"
+                    context={{ lessonTitle: title, topic: title }}
+                    onGenerated={(content) => {
+                      if (typeof content === 'string') {
+                        setContent(content);
+                      }
+                    }}
+                    buttonText="Generate Content"
+                    buttonSize="sm"
+                  />
+                </div>
                 <Textarea
                   id="content"
                   value={content}

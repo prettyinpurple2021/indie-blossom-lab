@@ -1,0 +1,306 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+interface GenerateRequest {
+  type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam";
+  context: {
+    courseTitle?: string;
+    courseDescription?: string;
+    lessonTitle?: string;
+    lessonType?: string;
+    topic?: string;
+    difficulty?: "beginner" | "intermediate" | "advanced";
+    questionCount?: number;
+  };
+}
+
+const systemPrompts: Record<string, string> = {
+  course_outline: `You are an expert curriculum designer for SoloSuccess Academy, an online learning platform for solo founders and small business owners. 
+Generate a comprehensive course outline with:
+- A compelling course title
+- A detailed course description (2-3 paragraphs)
+- A discussion question for the community
+- A project title and description for the capstone project
+- 6-10 lesson ideas with titles and brief descriptions
+
+Format your response as JSON:
+{
+  "title": "Course Title",
+  "description": "Course description...",
+  "discussion_question": "Question for discussion...",
+  "project_title": "Capstone Project Title",
+  "project_description": "Project description...",
+  "lessons": [
+    { "title": "Lesson Title", "type": "text|video|quiz|worksheet|activity", "description": "Brief description" }
+  ]
+}`,
+
+  lesson_content: `You are an expert educational content writer for SoloSuccess Academy. 
+Generate engaging, actionable lesson content for solo founders and small business owners.
+Use clear language, practical examples, and include:
+- An engaging introduction
+- 3-5 main sections with headers
+- Practical tips and action items
+- A summary or key takeaways
+
+Format with markdown: use **bold** for emphasis, bullet points for lists, and clear section headers.
+Keep the content between 800-1500 words.`,
+
+  quiz: `You are an expert assessment designer for SoloSuccess Academy.
+Create quiz questions that test understanding and application of concepts.
+Generate questions in JSON format:
+{
+  "questions": [
+    {
+      "question": "Question text",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctIndex": 0,
+      "explanation": "Brief explanation of why this is correct"
+    }
+  ]
+}
+Include a mix of difficulty levels and ensure questions are practical and relevant to entrepreneurs.`,
+
+  worksheet: `You are an expert instructional designer for SoloSuccess Academy.
+Create a practical worksheet with exercises that help learners apply concepts.
+Generate in JSON format:
+{
+  "title": "Worksheet Title",
+  "instructions": "Overall instructions for the worksheet",
+  "sections": [
+    {
+      "title": "Section Title",
+      "description": "Section description",
+      "exercises": [
+        {
+          "type": "text|checklist|rating|reflection",
+          "prompt": "Exercise prompt or question",
+          "hints": "Optional hints or examples"
+        }
+      ]
+    }
+  ]
+}`,
+
+  activity: `You are an expert activity designer for SoloSuccess Academy.
+Create an interactive activity that engages learners through hands-on practice.
+Generate in JSON format:
+{
+  "title": "Activity Title",
+  "description": "Brief description of the activity",
+  "objectives": ["Learning objective 1", "Learning objective 2"],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Step Title",
+      "instructions": "Detailed instructions",
+      "duration": "Estimated time (e.g., '10 minutes')",
+      "deliverable": "What the learner should produce or accomplish"
+    }
+  ],
+  "reflection": "Reflection question for after completing the activity"
+}`,
+
+  exam: `You are an expert assessment designer for SoloSuccess Academy.
+Create a comprehensive final exam that covers all major concepts from a course.
+Generate 15-20 questions in JSON format:
+{
+  "title": "Final Exam: [Course Title]",
+  "instructions": "Exam instructions...",
+  "passingScore": 70,
+  "questions": [
+    {
+      "question": "Question text",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctIndex": 0,
+      "explanation": "Explanation of the correct answer",
+      "points": 5
+    }
+  ]
+}
+Include questions of varying difficulty and cover the breadth of the course material.`
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Verify user is admin
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+
+    // Check if user is admin
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .single();
+
+    if (!roleData) {
+      return new Response(
+        JSON.stringify({ error: "Admin access required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { type, context }: GenerateRequest = await req.json();
+
+    if (!type || !systemPrompts[type]) {
+      return new Response(
+        JSON.stringify({ error: "Invalid content type" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Build user prompt based on context
+    let userPrompt = "";
+    switch (type) {
+      case "course_outline":
+        userPrompt = `Create a course outline about: ${context.topic || "building a successful solo business"}
+Target audience: Solo founders and small business owners
+Difficulty level: ${context.difficulty || "intermediate"}`;
+        break;
+
+      case "lesson_content":
+        userPrompt = `Create lesson content for:
+Course: ${context.courseTitle || "Solo Business Mastery"}
+Lesson Title: ${context.lessonTitle || context.topic || "Getting Started"}
+Difficulty: ${context.difficulty || "intermediate"}
+${context.topic ? `Topic focus: ${context.topic}` : ""}`;
+        break;
+
+      case "quiz":
+        userPrompt = `Create ${context.questionCount || 5} quiz questions about:
+Topic: ${context.topic || context.lessonTitle || "business fundamentals"}
+Course context: ${context.courseTitle || "Solo Business"}
+Difficulty: ${context.difficulty || "intermediate"}`;
+        break;
+
+      case "worksheet":
+        userPrompt = `Create a practical worksheet for:
+Topic: ${context.topic || context.lessonTitle || "strategic planning"}
+Course: ${context.courseTitle || "Solo Business Mastery"}
+Focus on actionable exercises that entrepreneurs can apply immediately.`;
+        break;
+
+      case "activity":
+        userPrompt = `Create an interactive activity for:
+Topic: ${context.topic || context.lessonTitle || "business strategy"}
+Course: ${context.courseTitle || "Solo Business Mastery"}
+Make it hands-on and practical for solo entrepreneurs.`;
+        break;
+
+      case "exam":
+        userPrompt = `Create a comprehensive final exam for:
+Course: ${context.courseTitle || "Solo Business Mastery"}
+Course Description: ${context.courseDescription || "A course for solo entrepreneurs"}
+Include ${context.questionCount || 15} questions covering all major topics.`;
+        break;
+    }
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompts[type] },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 4000,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI usage limit reached. Please check your Lovable AI credits." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      throw new Error("Failed to generate content");
+    }
+
+    const aiResponse = await response.json();
+    const generatedContent = aiResponse.choices?.[0]?.message?.content;
+
+    if (!generatedContent) {
+      throw new Error("No content generated");
+    }
+
+    // Try to parse JSON from the response for structured content types
+    let parsedContent = generatedContent;
+    if (["course_outline", "quiz", "worksheet", "activity", "exam"].includes(type)) {
+      try {
+        // Extract JSON from markdown code blocks if present
+        const jsonMatch = generatedContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+        const jsonString = jsonMatch ? jsonMatch[1] : generatedContent;
+        parsedContent = JSON.parse(jsonString.trim());
+      } catch {
+        // If parsing fails, return raw content
+        console.log("Could not parse JSON, returning raw content");
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ content: parsedContent, raw: generatedContent }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (error) {
+    console.error("Content generation error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(
+      JSON.stringify({ error: message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

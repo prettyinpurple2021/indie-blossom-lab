@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import DOMPurify from 'dompurify';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Calendar, CheckCircle2 } from 'lucide-react';
 import { type CourseProject } from '@/hooks/useProjects';
@@ -6,6 +6,25 @@ import { type CourseProject } from '@/hooks/useProjects';
 interface ProjectFeedbackProps {
   project: CourseProject;
 }
+
+// Sanitize and format feedback content to prevent XSS attacks
+const formatFeedback = (content: string): string => {
+  const formatted = content
+    .replace(/## (.*)/g, '<h3 class="text-lg font-semibold mt-6 mb-3 text-foreground">$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^- (.*)/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/^• (.*)/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/\n\n/g, '</p><p class="mb-4">')
+    .replace(/\n/g, '<br/>')
+    .replace(/^/, '<p class="mb-4">')
+    .replace(/$/, '</p>');
+  
+  return DOMPurify.sanitize(formatted, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h3', 'li', 'ul', 'ol'],
+    ALLOWED_ATTR: ['class']
+  });
+};
 
 export function ProjectFeedback({ project }: ProjectFeedbackProps) {
   if (!project.ai_feedback) {
@@ -20,20 +39,6 @@ export function ProjectFeedback({ project }: ProjectFeedbackProps) {
       hour: 'numeric',
       minute: '2-digit',
     });
-  };
-
-  // Parse markdown-like content for display
-  const formatFeedback = (content: string) => {
-    return content
-      .replace(/## (.*)/g, '<h3 class="text-lg font-semibold mt-6 mb-3 text-foreground">$1</h3>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/^- (.*)/gm, '<li class="ml-4 list-disc">$1</li>')
-      .replace(/^• (.*)/gm, '<li class="ml-4 list-disc">$1</li>')
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/\n/g, '<br/>')
-      .replace(/^/, '<p class="mb-4">')
-      .replace(/$/, '</p>');
   };
 
   return (

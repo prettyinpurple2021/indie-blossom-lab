@@ -26,14 +26,40 @@ serve(async (req) => {
     const body = await req.text();
     const signature = req.headers.get("stripe-signature");
 
-    // For now, we'll process without webhook signature verification
-    // In production, you'd want to verify the signature
-    const event = JSON.parse(body);
+    if (!signature) {
+      console.error("No Stripe signature found");
+      return new Response(
+        JSON.stringify({ error: "No signature provided" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    console.log("Webhook event received:", event.type);
+    // CRITICAL: Verify webhook signature to prevent forged requests
+    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    if (!webhookSecret) {
+      console.error("STRIPE_WEBHOOK_SECRET not configured");
+      return new Response(
+        JSON.stringify({ error: "Webhook not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      console.error("Webhook signature verification failed:", errorMessage);
+      return new Response(
+        JSON.stringify({ error: "Invalid signature" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Verified webhook event:", event.type);
 
     if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+      const session = event.data.object as Stripe.Checkout.Session;
       
       const userId = session.metadata?.userId;
       const courseId = session.metadata?.courseId;
@@ -49,7 +75,7 @@ serve(async (req) => {
             user_id: userId,
             course_id: courseId,
             stripe_checkout_session_id: session.id,
-            stripe_payment_intent_id: session.payment_intent,
+            stripe_payment_intent_id: session.payment_intent as string,
             amount_cents: amountTotal,
           });
 

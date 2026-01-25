@@ -10,6 +10,7 @@ import { LessonList } from '@/components/admin/LessonList';
 import { CourseEditor } from '@/components/admin/CourseEditor';
 import { TextbookEditor } from '@/components/admin/TextbookEditor';
 import { SeedCurriculumButton } from '@/components/admin/SeedCurriculumButton';
+import { QuickGenerateDialog } from '@/components/admin/QuickGenerateDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin, useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
@@ -276,6 +277,11 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-2 shrink-0">
+                              <QuickGenerateDialog
+                                courseId={course.id}
+                                courseTitle={course.title}
+                                courseDescription={course.description}
+                              />
                               <Button
                                 variant="outline"
                                 size="sm"

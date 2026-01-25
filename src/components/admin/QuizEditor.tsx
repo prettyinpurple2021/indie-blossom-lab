@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { QuizData, QuizQuestion } from '@/hooks/useAdmin';
+import { AIGenerateButton } from './AIGenerateButton';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 interface QuizEditorProps {
@@ -50,6 +51,22 @@ export function QuizEditor({ data, onChange }: QuizEditorProps) {
     onChange({ questions: updated, passingScore });
   };
 
+  const handleAIGenerated = (content: any) => {
+    if (content?.questions && Array.isArray(content.questions)) {
+      const mappedQuestions: QuizQuestion[] = content.questions.map((q: any, index: number) => ({
+        id: crypto.randomUUID(),
+        question: q.question || '',
+        options: q.options || ['', '', '', ''],
+        correctAnswer: q.correctIndex ?? 0,
+        explanation: q.explanation || '',
+      }));
+      onChange({
+        questions: [...questions, ...mappedQuestions],
+        passingScore,
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -60,6 +77,13 @@ export function QuizEditor({ data, onChange }: QuizEditorProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <AIGenerateButton
+            type="quiz"
+            context={{ questionCount: 5 }}
+            onGenerated={handleAIGenerated}
+            buttonText="Generate Questions"
+            buttonSize="sm"
+          />
           <Label htmlFor="passing-score" className="text-sm">Passing Score:</Label>
           <Input
             id="passing-score"

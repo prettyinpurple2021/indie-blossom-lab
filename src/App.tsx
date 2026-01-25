@@ -16,6 +16,7 @@ import DiscussionDetail from "./pages/DiscussionDetail";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
+import ContentGenerator from "./pages/ContentGenerator";
 import Textbook from "./pages/Textbook";
 import NotFound from "./pages/NotFound";
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/content-generator" element={<ContentGenerator />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:courseId" element={<CourseDetail />} />
             <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonViewer />} />

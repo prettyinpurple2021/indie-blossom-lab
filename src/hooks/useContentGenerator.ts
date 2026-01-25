@@ -1,0 +1,124 @@
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+export type ContentType = 'course_outline' | 'lesson_content' | 'quiz' | 'worksheet' | 'activity' | 'exam';
+
+export interface GenerateContext {
+  courseTitle?: string;
+  courseDescription?: string;
+  lessonTitle?: string;
+  lessonType?: string;
+  topic?: string;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  questionCount?: number;
+}
+
+export interface GeneratedCourseOutline {
+  title: string;
+  description: string;
+  discussion_question: string;
+  project_title: string;
+  project_description: string;
+  lessons: Array<{
+    title: string;
+    type: string;
+    description: string;
+  }>;
+}
+
+export interface GeneratedQuiz {
+  questions: Array<{
+    question: string;
+    options: string[];
+    correctIndex: number;
+    explanation: string;
+  }>;
+}
+
+export interface GeneratedWorksheet {
+  title: string;
+  instructions: string;
+  sections: Array<{
+    title: string;
+    description: string;
+    exercises: Array<{
+      type: string;
+      prompt: string;
+      hints?: string;
+    }>;
+  }>;
+}
+
+export interface GeneratedActivity {
+  title: string;
+  description: string;
+  objectives: string[];
+  steps: Array<{
+    stepNumber: number;
+    title: string;
+    instructions: string;
+    duration: string;
+    deliverable: string;
+  }>;
+  reflection: string;
+}
+
+export function useContentGenerator() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const generateContent = async <T = string>(
+    type: ContentType,
+    context: GenerateContext
+  ): Promise<T | null> => {
+    setIsGenerating(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { type, context },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to generate content');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        title: 'Content generated!',
+        description: 'AI has created your content. Review and edit as needed.',
+      });
+
+      return data.content as T;
+    } catch (error: any) {
+      console.error('Content generation error:', error);
+      
+      let errorMessage = 'Failed to generate content';
+      if (error.message?.includes('Rate limit')) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+      } else if (error.message?.includes('Admin access')) {
+        errorMessage = 'Admin access required to generate content.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      toast({
+        title: 'Generation failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+
+      return null;
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return {
+    generateContent,
+    isGenerating,
+  };
+}

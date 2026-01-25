@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +21,8 @@ import {
   Users,
   DollarSign,
   Plus,
-  BookText
+  BookText,
+  Sparkles
 } from 'lucide-react';
 import { NeonSpinner, InlineSpinner } from '@/components/ui/neon-spinner';
 
@@ -181,6 +182,31 @@ export default function AdminDashboard() {
             </TabsList>
 
             <TabsContent value="courses" className="space-y-4">
+              {/* AI Content Generator Link */}
+              <Card className="border-2 border-dashed border-primary/40 bg-primary/5 hover:border-primary/60 transition-all">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/20">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">AI Content Generator</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Generate courses, lessons, quizzes, and more with AI
+                        </p>
+                      </div>
+                    </div>
+                    <Button asChild variant="neon">
+                      <Link to="/admin/content-generator">
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Open Generator
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Seed Curriculum Button */}
               <SeedCurriculumButton />
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -29,11 +29,47 @@ import {
   Copy,
   Check,
   ArrowLeft,
+  Edit,
 } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
 import { useContentGenerator, GenerateContext, ContentType } from '@/hooks/useContentGenerator';
 import { useToast } from '@/hooks/use-toast';
+
+const buildDefaultPrompt = (
+  contentType: ContentType,
+  topic: string,
+  courseTitle: string,
+  courseDescription: string,
+  lessonTitle: string,
+  difficulty: string,
+  questionCount: number
+): string => {
+  const base = `Topic: ${topic || '[Enter topic]'}\nDifficulty: ${difficulty}`;
+  
+  switch (contentType) {
+    case 'course_outline':
+      return `Create a comprehensive course outline for solo entrepreneurs.\n${base}\n\nInclude:\n- Engaging course title and description\n- 6-8 lessons with varied types (text, video, quiz, activity)\n- A discussion question for community engagement\n- A final project with clear deliverables`;
+    
+    case 'lesson_content':
+      return `Create detailed lesson content.\n${base}${courseTitle ? `\nCourse: ${courseTitle}` : ''}${lessonTitle ? `\nLesson: ${lessonTitle}` : ''}\n\nMake it practical and actionable for solo founders.`;
+    
+    case 'quiz':
+      return `Create a quiz with ${questionCount} multiple-choice questions.\n${base}${courseTitle ? `\nCourse: ${courseTitle}` : ''}${lessonTitle ? `\nLesson: ${lessonTitle}` : ''}\n\nInclude explanations for each correct answer.`;
+    
+    case 'worksheet':
+      return `Create a practical worksheet with exercises.\n${base}${courseTitle ? `\nCourse: ${courseTitle}` : ''}${lessonTitle ? `\nLesson: ${lessonTitle}` : ''}\n\nInclude fill-in sections, reflection prompts, and action items.`;
+    
+    case 'activity':
+      return `Create a hands-on activity with clear steps.\n${base}${courseTitle ? `\nCourse: ${courseTitle}` : ''}${lessonTitle ? `\nLesson: ${lessonTitle}` : ''}\n\nInclude objectives, step-by-step instructions, and deliverables.`;
+    
+    case 'exam':
+      return `Create a comprehensive final exam with ${questionCount} questions.\n${base}${courseDescription ? `\nCourse Description: ${courseDescription}` : ''}\n\nCover all major course topics with varied question difficulty.`;
+    
+    default:
+      return base;
+  }
+};
 
 export default function ContentGenerator() {
   const navigate = useNavigate();
@@ -51,6 +87,20 @@ export default function ContentGenerator() {
   const [questionCount, setQuestionCount] = useState(5);
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState('');
+  const [showPromptEditor, setShowPromptEditor] = useState(false);
+
+  // Update prompt when inputs change
+  useEffect(() => {
+    if (!showPromptEditor) {
+      setCustomPrompt(buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount));
+    }
+  }, [activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount, showPromptEditor]);
+
+  const handleShowPromptEditor = () => {
+    setCustomPrompt(buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount));
+    setShowPromptEditor(true);
+  };
 
   if (adminLoading) {
     return (
@@ -99,7 +149,7 @@ export default function ContentGenerator() {
       questionCount: activeTab === 'quiz' || activeTab === 'exam' ? questionCount : undefined,
     };
 
-    const content = await generateContent(activeTab, context);
+    const content = await generateContent(activeTab, context, customPrompt);
     if (content) {
       setGeneratedContent(content);
     }
@@ -332,6 +382,36 @@ export default function ContentGenerator() {
                         value={questionCount}
                         onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
                       />
+                    </div>
+                  )}
+                </div>
+
+                {/* Editable Prompt Section */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>AI Prompt</Label>
+                    {!showPromptEditor && (
+                      <Button variant="ghost" size="sm" onClick={handleShowPromptEditor}>
+                        <Edit className="mr-2 h-3 w-3" />
+                        Edit Prompt
+                      </Button>
+                    )}
+                  </div>
+                  {showPromptEditor ? (
+                    <Textarea
+                      value={customPrompt}
+                      onChange={(e) => setCustomPrompt(e.target.value)}
+                      className="min-h-[150px] font-mono text-sm"
+                      placeholder="Enter your custom prompt..."
+                    />
+                  ) : (
+                    <div className="p-3 rounded-lg border border-border/50 bg-muted/30">
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-4">
+                        {buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount)}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Click "Edit Prompt" to customize the AI instructions
+                      </p>
                     </div>
                   )}
                 </div>

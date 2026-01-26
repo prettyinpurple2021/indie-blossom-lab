@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +33,7 @@ import { useIsAdmin } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
 import { useContentGenerator, GenerateContext, ContentType } from '@/hooks/useContentGenerator';
 import { useToast } from '@/hooks/use-toast';
+import { NeonSpinner } from '@/components/ui/neon-spinner';
 
 const buildDefaultPrompt = (
   contentType: ContentType,
@@ -104,37 +103,26 @@ export default function ContentGenerator() {
 
   if (adminLoading) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Checking access...</p>
-          </div>
-        </main>
-        <Footer />
+      <div className="flex-1 flex items-center justify-center py-12">
+        <NeonSpinner size="lg" />
       </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <Card className="max-w-md">
-            <CardHeader>
-              <CardTitle>Access Denied</CardTitle>
-              <CardDescription>
-                This page is only accessible to administrators.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => navigate('/')}>Return Home</Button>
-            </CardContent>
-          </Card>
-        </main>
-        <Footer />
+      <div className="flex-1 flex items-center justify-center py-12">
+        <Card className="max-w-md glass-card">
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
+            <CardDescription>
+              This page is only accessible to administrators.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="neon" onClick={() => navigate('/')}>Return Home</Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -258,199 +246,198 @@ export default function ContentGenerator() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col cyber-bg">
-      <Header />
-      
-      <main className="flex-1 container py-8">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/admin')}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Admin Dashboard
-          </Button>
-          
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-primary/20 border border-primary/30">
-              <Sparkles className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold neon-text">AI Content Generator</h1>
-              <p className="text-muted-foreground">Generate courses, lessons, quizzes, and more with AI</p>
-            </div>
+    <div className="p-6 md:p-8 lg:p-12">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/admin')}
+          className="mb-4 hover:bg-primary/10 hover:text-primary"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Admin Dashboard
+        </Button>
+        
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-primary/20 border border-primary/30">
+            <Sparkles className="h-8 w-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold neon-text">AI Content Generator</h1>
+            <p className="text-muted-foreground">Generate courses, lessons, quizzes, and more with AI</p>
           </div>
         </div>
+      </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Panel - Input */}
-          <Card className="glass-card border-primary/20">
-            <CardHeader>
-              <CardTitle>Generate Content</CardTitle>
-              <CardDescription>Choose content type and provide context</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ContentType)}>
-                <TabsList className="grid grid-cols-3 gap-1 h-auto">
-                  {contentTypes.slice(0, 3).map((ct) => (
-                    <TabsTrigger key={ct.value} value={ct.value} className="flex flex-col gap-1 p-2 h-auto">
-                      <ct.icon className="h-4 w-4" />
-                      <span className="text-xs">{ct.label}</span>
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                <TabsList className="grid grid-cols-3 gap-1 h-auto mt-1">
-                  {contentTypes.slice(3).map((ct) => (
-                    <TabsTrigger key={ct.value} value={ct.value} className="flex flex-col gap-1 p-2 h-auto">
-                      <ct.icon className="h-4 w-4" />
-                      <span className="text-xs">{ct.label}</span>
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left Panel - Input */}
+        <Card className="glass-card border-primary/20">
+          <CardHeader>
+            <CardTitle>Generate Content</CardTitle>
+            <CardDescription>Choose content type and provide context</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ContentType)}>
+              <TabsList className="grid grid-cols-3 gap-1 h-auto">
+                {contentTypes.slice(0, 3).map((ct) => (
+                  <TabsTrigger key={ct.value} value={ct.value} className="flex flex-col gap-1 p-2 h-auto">
+                    <ct.icon className="h-4 w-4" />
+                    <span className="text-xs">{ct.label}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <TabsList className="grid grid-cols-3 gap-1 h-auto mt-1">
+                {contentTypes.slice(3).map((ct) => (
+                  <TabsTrigger key={ct.value} value={ct.value} className="flex flex-col gap-1 p-2 h-auto">
+                    <ct.icon className="h-4 w-4" />
+                    <span className="text-xs">{ct.label}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
 
-              <div className="space-y-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="topic">Topic / Subject</Label>
+                <Input
+                  id="topic"
+                  placeholder="e.g., Building a personal brand as a solo founder"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+
+              {(activeTab === 'lesson_content' || activeTab === 'quiz' || activeTab === 'worksheet' || activeTab === 'activity') && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseTitle">Course Title (optional)</Label>
+                    <Input
+                      id="courseTitle"
+                      placeholder="e.g., Solo Founder Essentials"
+                      value={courseTitle}
+                      onChange={(e) => setCourseTitle(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lessonTitle">Lesson Title (optional)</Label>
+                    <Input
+                      id="lessonTitle"
+                      placeholder="e.g., Finding Your Niche"
+                      value={lessonTitle}
+                      onChange={(e) => setLessonTitle(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'exam' && (
                 <div className="space-y-2">
-                  <Label htmlFor="topic">Topic / Subject</Label>
-                  <Input
-                    id="topic"
-                    placeholder="e.g., Building a personal brand as a solo founder"
-                    value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
+                  <Label htmlFor="courseDesc">Course Description</Label>
+                  <Textarea
+                    id="courseDesc"
+                    placeholder="Describe the course content for comprehensive exam coverage..."
+                    value={courseDescription}
+                    onChange={(e) => setCourseDescription(e.target.value)}
+                    rows={3}
                   />
                 </div>
+              )}
 
-                {(activeTab === 'lesson_content' || activeTab === 'quiz' || activeTab === 'worksheet' || activeTab === 'activity') && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Difficulty</Label>
+                  <Select value={difficulty} onValueChange={(v: any) => setDifficulty(v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {(activeTab === 'quiz' || activeTab === 'exam') && (
+                  <div className="space-y-2">
+                    <Label>Questions</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={30}
+                      value={questionCount}
+                      onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Editable Prompt Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>AI Prompt</Label>
+                  {!showPromptEditor && (
+                    <Button variant="ghost" size="sm" onClick={handleShowPromptEditor}>
+                      <Edit className="mr-2 h-3 w-3" />
+                      Edit Prompt
+                    </Button>
+                  )}
+                </div>
+                {showPromptEditor ? (
+                  <Textarea
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    className="min-h-[150px] font-mono text-sm"
+                    placeholder="Enter your custom prompt..."
+                  />
+                ) : (
+                  <div className="p-3 rounded-lg border border-border/50 bg-muted/30">
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-4">
+                      {buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Click "Edit Prompt" to customize the AI instructions
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                onClick={handleGenerate}
+                disabled={isGenerating || !topic.trim()}
+                className="w-full"
+                size="lg"
+                variant="neon"
+              >
+                {isGenerating ? (
                   <>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseTitle">Course Title (optional)</Label>
-                      <Input
-                        id="courseTitle"
-                        placeholder="e.g., Solo Founder Essentials"
-                        value={courseTitle}
-                        onChange={(e) => setCourseTitle(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lessonTitle">Lesson Title (optional)</Label>
-                      <Input
-                        id="lessonTitle"
-                        placeholder="e.g., Finding Your Niche"
-                        value={lessonTitle}
-                        onChange={(e) => setLessonTitle(e.target.value)}
-                      />
-                    </div>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate Content
                   </>
                 )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-                {activeTab === 'exam' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="courseDesc">Course Description</Label>
-                    <Textarea
-                      id="courseDesc"
-                      placeholder="Describe the course content for comprehensive exam coverage..."
-                      value={courseDescription}
-                      onChange={(e) => setCourseDescription(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Difficulty</Label>
-                    <Select value={difficulty} onValueChange={(v: any) => setDifficulty(v)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {(activeTab === 'quiz' || activeTab === 'exam') && (
-                    <div className="space-y-2">
-                      <Label>Questions</Label>
-                      <Input
-                        type="number"
-                        min={1}
-                        max={30}
-                        value={questionCount}
-                        onChange={(e) => setQuestionCount(parseInt(e.target.value) || 5)}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Editable Prompt Section */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>AI Prompt</Label>
-                    {!showPromptEditor && (
-                      <Button variant="ghost" size="sm" onClick={handleShowPromptEditor}>
-                        <Edit className="mr-2 h-3 w-3" />
-                        Edit Prompt
-                      </Button>
-                    )}
-                  </div>
-                  {showPromptEditor ? (
-                    <Textarea
-                      value={customPrompt}
-                      onChange={(e) => setCustomPrompt(e.target.value)}
-                      className="min-h-[150px] font-mono text-sm"
-                      placeholder="Enter your custom prompt..."
-                    />
-                  ) : (
-                    <div className="p-3 rounded-lg border border-border/50 bg-muted/30">
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-4">
-                        {buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount)}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Click "Edit Prompt" to customize the AI instructions
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !topic.trim()}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Generate {contentTypes.find(c => c.value === activeTab)?.label}
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Right Panel - Output */}
-          <Card className="glass-card border-primary/20">
-            <CardHeader className="flex flex-row items-center justify-between">
+        {/* Right Panel - Output */}
+        <Card className="glass-card border-secondary/20">
+          <CardHeader>
+            <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Generated Content</CardTitle>
-                <CardDescription>Review and copy your AI-generated content</CardDescription>
+                <CardDescription>Review and copy your generated content</CardDescription>
               </div>
               {generatedContent && (
                 <Button variant="outline" size="sm" onClick={handleCopy}>
                   {copied ? (
                     <>
                       <Check className="mr-2 h-4 w-4" />
-                      Copied
+                      Copied!
                     </>
                   ) : (
                     <>
@@ -460,25 +447,23 @@ export default function ContentGenerator() {
                   )}
                 </Button>
               )}
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[500px]">
-                {generatedContent ? (
-                  renderGeneratedContent()
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                    <Sparkles className="h-12 w-12 mb-4 opacity-30" />
-                    <p>Generated content will appear here</p>
-                    <p className="text-sm">Enter a topic and click Generate</p>
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-
-      <Footer />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[500px]">
+              {generatedContent ? (
+                renderGeneratedContent()
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground py-12">
+                  <Sparkles className="h-12 w-12 mb-4 opacity-50" />
+                  <p>Your generated content will appear here</p>
+                  <p className="text-sm">Fill in the form and click Generate</p>
+                </div>
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

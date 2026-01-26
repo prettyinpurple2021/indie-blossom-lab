@@ -23,7 +23,7 @@ import { NeonSpinner } from '@/components/ui/neon-spinner';
 export default function LessonViewer() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showAITutor, setShowAITutor] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,28 +74,10 @@ export default function LessonViewer() {
     }
   };
 
-  // Redirect to auth if not authenticated
-  if (!isAuthenticated && !isLoading) {
-    return (
-      <div className="min-h-screen cyber-bg flex items-center justify-center">
-        <div className="glass-card p-8 text-center max-w-md mx-4">
-          <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(168,85,247,0.4)]">
-            <Lock className="h-8 w-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-display font-bold mb-2 neon-text">Sign In Required</h1>
-          <p className="text-muted-foreground mb-6">Please sign in to access this lesson.</p>
-          <Button asChild variant="neon">
-            <Link to="/auth">Sign In</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen cyber-bg flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-12">
         <NeonSpinner size="xl" />
       </div>
     );
@@ -104,7 +86,7 @@ export default function LessonViewer() {
   // Check purchase status
   if (!hasPurchased) {
     return (
-      <div className="min-h-screen cyber-bg flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-12">
         <div className="glass-card p-8 text-center max-w-md mx-4">
           <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(168,85,247,0.4)]">
             <Lock className="h-8 w-8 text-primary" />
@@ -122,7 +104,7 @@ export default function LessonViewer() {
   // Lesson not found
   if (!currentLesson) {
     return (
-      <div className="min-h-screen cyber-bg flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-12">
         <div className="glass-card p-8 text-center max-w-md mx-4">
           <h1 className="text-2xl font-display font-bold mb-2 neon-text">Lesson Not Found</h1>
           <p className="text-muted-foreground mb-6">This lesson doesn't exist.</p>
@@ -135,7 +117,7 @@ export default function LessonViewer() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col cyber-bg">
+    <div className="flex flex-col h-full">
       {/* Top Navigation Bar */}
       <header className="h-14 border-b border-primary/20 bg-black/60 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-40 shadow-[0_4px_20px_rgba(168,85,247,0.15)]">
         {/* Mobile Sidebar Toggle */}
@@ -182,10 +164,10 @@ export default function LessonViewer() {
         </Button>
       </header>
 
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-80 flex-shrink-0">
-          <div className="sticky top-14 h-[calc(100vh-3.5rem)] bg-black/40 backdrop-blur-xl border-r border-primary/20">
+          <div className="h-full bg-black/40 backdrop-blur-xl border-r border-primary/20 overflow-auto">
             <LessonSidebar
               lessons={lessons || []}
               currentLessonId={lessonId || ''}

@@ -26,12 +26,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
 import { ProgressRing } from '@/components/ui/progress-ring';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
+import { GradeEditor } from '@/components/admin/GradeEditor';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin, useAdminCourses } from '@/hooks/useAdmin';
-import { useGradebook, StudentProgress, CourseProgress } from '@/hooks/useGradebook';
+import { useGradebook, StudentProgress, CourseProgress, QuizScore } from '@/hooks/useGradebook';
 import { 
   GraduationCap, 
   Search, 
@@ -40,7 +47,8 @@ import {
   BookOpen,
   FileCheck,
   ChevronRight,
-  X
+  Edit2,
+  MessageSquare
 } from 'lucide-react';
 
 export default function Gradebook() {
@@ -52,6 +60,14 @@ export default function Gradebook() {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseFilter, setCourseFilter] = useState<string>('all');
   const [selectedStudent, setSelectedStudent] = useState<StudentProgress | null>(null);
+  const [editingGrade, setEditingGrade] = useState<{
+    progressId: string;
+    studentName: string;
+    lessonTitle: string;
+    currentScore: number | null;
+    currentOverride: number | null;
+    currentNotes: string | null;
+  } | null>(null);
 
   const isLoading = authLoading || adminLoading;
 
@@ -84,6 +100,17 @@ export default function Gradebook() {
     ? Math.round(students.filter(s => s.quizCount > 0).reduce((acc, s) => acc + s.totalQuizScore, 0) / 
         (students.filter(s => s.quizCount > 0).length || 1))
     : 0;
+
+  const handleEditGrade = (quiz: QuizScore, studentName: string) => {
+    setEditingGrade({
+      progressId: quiz.progressId,
+      studentName,
+      lessonTitle: quiz.lessonTitle,
+      currentScore: quiz.score,
+      currentOverride: quiz.adminOverrideScore,
+      currentNotes: quiz.adminNotes,
+    });
+  };
 
   const getProjectStatusBadge = (status: string | null) => {
     switch (status) {
@@ -389,19 +416,44 @@ export default function Gradebook() {
                           <p className="text-sm text-muted-foreground mb-1">Quiz Scores</p>
                           {course.quizScores.length > 0 ? (
                             <div className="flex flex-wrap gap-1">
-                              {course.quizScores.map((quiz, idx) => (
-                                <Badge 
-                                  key={idx}
-                                  className={`text-xs ${
-                                    quiz.score >= 80 ? 'bg-success/20 text-success border-success/30' :
-                                    quiz.score >= 60 ? 'bg-warning/20 text-warning border-warning/30' :
-                                    'bg-destructive/20 text-destructive border-destructive/30'
-                                  }`}
-                                  title={quiz.lessonTitle}
-                                >
-                                  {quiz.score}%
-                                </Badge>
-                              ))}
+                              <TooltipProvider>
+                                {course.quizScores.map((quiz, idx) => (
+                                  <Tooltip key={idx}>
+                                    <TooltipTrigger asChild>
+                                      <button
+                                        onClick={() => handleEditGrade(quiz, selectedStudent.displayName)}
+                                        className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border cursor-pointer hover:opacity-80 transition-opacity ${
+                                          quiz.effectiveScore >= 80 ? 'bg-success/20 text-success border-success/30' :
+                                          quiz.effectiveScore >= 60 ? 'bg-warning/20 text-warning border-warning/30' :
+                                          'bg-destructive/20 text-destructive border-destructive/30'
+                                        }`}
+                                      >
+                                        {quiz.adminOverrideScore !== null && (
+                                          <Edit2 className="h-3 w-3" />
+                                        )}
+                                        {quiz.effectiveScore}%
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="bg-background border-primary/30">
+                                      <div className="text-sm">
+                                        <p className="font-medium">{quiz.lessonTitle}</p>
+                                        {quiz.adminOverrideScore !== null && (
+                                          <p className="text-muted-foreground">
+                                            Original: {quiz.score}% → Override: {quiz.adminOverrideScore}%
+                                          </p>
+                                        )}
+                                        {quiz.adminNotes && (
+                                          <p className="text-muted-foreground flex items-center gap-1 mt-1">
+                                            <MessageSquare className="h-3 w-3" />
+                                            {quiz.adminNotes}
+                                          </p>
+                                        )}
+                                        <p className="text-primary mt-1">Click to edit</p>
+                                      </div>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ))}
+                              </TooltipProvider>
                             </div>
                           ) : (
                             <span className="text-sm text-muted-foreground">No quizzes taken</span>
@@ -416,6 +468,20 @@ export default function Gradebook() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Grade Editor Dialog */}
+      {editingGrade && (
+        <GradeEditor
+          open={!!editingGrade}
+          onOpenChange={(open) => !open && setEditingGrade(null)}
+          progressId={editingGrade.progressId}
+          studentName={editingGrade.studentName}
+          lessonTitle={editingGrade.lessonTitle}
+          currentScore={editingGrade.currentScore}
+          currentOverride={editingGrade.currentOverride}
+          currentNotes={editingGrade.currentNotes}
+        />
+      )}
     </div>
   );
 }

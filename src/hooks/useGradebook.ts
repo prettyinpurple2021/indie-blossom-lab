@@ -1,6 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+export interface QuizScore {
+  progressId: string;
+  lessonId: string;
+  lessonTitle: string;
+  score: number;
+  adminOverrideScore: number | null;
+  adminNotes: string | null;
+  effectiveScore: number; // The score to display (override if exists, otherwise original)
+}
+
 export interface StudentProgress {
   userId: string;
   displayName: string;
@@ -18,7 +28,7 @@ export interface CourseProgress {
   lessonsCompleted: number;
   totalLessons: number;
   progressPercent: number;
-  quizScores: { lessonId: string; lessonTitle: string; score: number }[];
+  quizScores: QuizScore[];
   projectStatus: 'draft' | 'submitted' | 'reviewed' | null;
   projectSubmittedAt: string | null;
 }
@@ -62,10 +72,10 @@ export function useGradebook() {
 
       if (lessonsError) throw lessonsError;
 
-      // Fetch all user progress
+      // Fetch all user progress (including admin override fields)
       const { data: progressData, error: progressError } = await supabase
         .from('user_progress')
-        .select('user_id, lesson_id, completed, quiz_score')
+        .select('id, user_id, lesson_id, completed, quiz_score, admin_override_score, admin_notes')
         .in('user_id', userIds);
 
       if (progressError) throw progressError;
@@ -92,18 +102,24 @@ export function useGradebook() {
             courseLessons.some(l => l.id === p.lesson_id) && p.completed
           );
           
-          // Get quiz scores for this course
-          const quizScores = userProgress
+          // Get quiz scores for this course (including admin overrides)
+          const quizScores: QuizScore[] = userProgress
             .filter(p => {
               const lesson = courseLessons.find(l => l.id === p.lesson_id);
-              return lesson?.type === 'quiz' && p.quiz_score !== null;
+              return lesson?.type === 'quiz' && (p.quiz_score !== null || p.admin_override_score !== null);
             })
             .map(p => {
               const lesson = courseLessons.find(l => l.id === p.lesson_id);
+              const originalScore = p.quiz_score ?? 0;
+              const overrideScore = p.admin_override_score;
               return {
+                progressId: p.id,
                 lessonId: p.lesson_id,
                 lessonTitle: lesson?.title || 'Unknown',
-                score: p.quiz_score!,
+                score: originalScore,
+                adminOverrideScore: overrideScore,
+                adminNotes: p.admin_notes,
+                effectiveScore: overrideScore ?? originalScore,
               };
             });
 
@@ -128,7 +144,7 @@ export function useGradebook() {
         const totalCompleted = courseProgressList.reduce((acc, c) => acc + c.lessonsCompleted, 0);
         const allQuizScores = courseProgressList.flatMap(c => c.quizScores);
         const avgQuizScore = allQuizScores.length > 0 
-          ? Math.round(allQuizScores.reduce((acc, q) => acc + q.score, 0) / allQuizScores.length) 
+          ? Math.round(allQuizScores.reduce((acc, q) => acc + q.effectiveScore, 0) / allQuizScores.length) 
           : 0;
 
         return {

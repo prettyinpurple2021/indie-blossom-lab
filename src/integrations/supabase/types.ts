@@ -579,9 +579,13 @@ export type Database = {
       }
       user_progress: {
         Row: {
+          admin_notes: string | null
+          admin_override_score: number | null
           completed: boolean
           completed_at: string | null
           created_at: string
+          graded_at: string | null
+          graded_by: string | null
           id: string
           lesson_id: string
           notes: string | null
@@ -590,9 +594,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          admin_notes?: string | null
+          admin_override_score?: number | null
           completed?: boolean
           completed_at?: string | null
           created_at?: string
+          graded_at?: string | null
+          graded_by?: string | null
           id?: string
           lesson_id: string
           notes?: string | null
@@ -601,9 +609,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          admin_notes?: string | null
+          admin_override_score?: number | null
           completed?: boolean
           completed_at?: string | null
           created_at?: string
+          graded_at?: string | null
+          graded_by?: string | null
           id?: string
           lesson_id?: string
           notes?: string | null

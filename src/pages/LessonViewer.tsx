@@ -5,13 +5,16 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useCourse, useCourseLessons, useHasPurchasedCourse } from '@/hooks/useCourses';
 import { useCourseProgress, useMarkLessonComplete } from '@/hooks/useProgress';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { LessonContent } from '@/components/lesson/LessonContent';
 import { LessonSidebar } from '@/components/lesson/LessonSidebar';
 import { AITutorChat } from '@/components/lesson/AITutorChat';
 import { CourseBreadcrumb } from '@/components/navigation/CourseBreadcrumb';
+import { CertificateModal } from '@/components/certificates/CertificateModal';
 import { fireCourseCompletionConfetti } from '@/hooks/useConfetti';
 import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useCourseCertificate, useGenerateCertificate } from '@/hooks/useCertificates';
 import { 
   ArrowLeft,
   ArrowRight, 
@@ -26,15 +29,23 @@ export default function LessonViewer() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: profile } = useProfile(user?.id);
   const { toast } = useToast();
   const { awardXP, checkAndAwardBadges } = useGamification();
   const [showAITutor, setShowAITutor] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [generatedCertificate, setGeneratedCertificate] = useState<{
+    verificationCode: string;
+    issuedAt: string;
+  } | null>(null);
 
   const { data: course, isLoading: courseLoading } = useCourse(courseId);
   const { data: lessons, isLoading: lessonsLoading } = useCourseLessons(courseId);
   const { data: hasPurchased, isLoading: purchaseLoading } = useHasPurchasedCourse(user?.id, courseId);
   const { data: progressData, isLoading: progressLoading } = useCourseProgress(user?.id, courseId);
+  const { data: existingCertificate } = useCourseCertificate(user?.id, courseId);
+  const generateCertificate = useGenerateCertificate();
   const markComplete = useMarkLessonComplete();
 
   const isLoading = courseLoading || lessonsLoading || purchaseLoading || progressLoading;
@@ -72,9 +83,31 @@ export default function LessonViewer() {
         setTimeout(() => checkAndAwardBadges(), 1000);
       }
 
-      // Fire confetti if completing the entire course
+      // Fire confetti and generate certificate if completing the entire course
       if (willCompleteCourse) {
         fireCourseCompletionConfetti();
+        
+        // Generate certificate if one doesn't exist
+        if (!existingCertificate && course) {
+          try {
+            const studentName = profile?.display_name || user.email?.split('@')[0] || 'Student';
+            const cert = await generateCertificate.mutateAsync({
+              userId: user.id,
+              courseId: course.id,
+              studentName,
+              courseTitle: course.title,
+            });
+            
+            setGeneratedCertificate({
+              verificationCode: cert.verification_code,
+              issuedAt: cert.issued_at,
+            });
+            setShowCertificateModal(true);
+          } catch (certError) {
+            console.error('Failed to generate certificate:', certError);
+          }
+        }
+        
         toast({
           title: '🎉 Course Completed!',
           description: `Congratulations! You've finished all lessons in ${course?.title}!`,
@@ -260,6 +293,19 @@ export default function LessonViewer() {
         isOpen={showAITutor}
         onClose={() => setShowAITutor(false)}
       />
+
+      {/* Certificate Modal */}
+      {generatedCertificate && course && (
+        <CertificateModal
+          isOpen={showCertificateModal}
+          onClose={() => setShowCertificateModal(false)}
+          studentName={profile?.display_name || user?.email?.split('@')[0] || 'Student'}
+          courseTitle={course.title}
+          courseOrderNumber={course.order_number}
+          verificationCode={generatedCertificate.verificationCode}
+          issuedAt={generatedCertificate.issuedAt}
+        />
+      )}
     </div>
   );
 }

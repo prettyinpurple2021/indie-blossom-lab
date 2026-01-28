@@ -27,13 +27,15 @@ import {
   Zap,
   ChevronLeft,
   ChevronRight,
-  GraduationCap
+  GraduationCap,
+  Award
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'My Courses', url: '/courses', icon: BookOpen },
+  { title: 'Certificates', url: '/certificates', icon: Award },
   { title: 'Profile', url: '/profile', icon: User },
   { title: 'Settings', url: '/settings', icon: Settings },
 ];

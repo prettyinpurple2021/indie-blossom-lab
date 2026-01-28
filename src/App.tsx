@@ -28,6 +28,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ContentGenerator from "./pages/ContentGenerator";
 import Gradebook from "./pages/Gradebook";
 import Textbook from "./pages/Textbook";
+import Certificates from "./pages/Certificates";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -48,13 +50,16 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Public Routes - Marketing/Landing Pages */}
+            {/* Public Routes - Marketing/Landing Pages */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
               </Route>
+
+              {/* Public Certificate Verification */}
+              <Route path="/verify/:verificationCode" element={<VerifyCertificate />} />
 
               {/* Protected App Routes - Require Authentication */}
               <Route element={<AppLayout />}>
@@ -71,6 +76,7 @@ const App = () => (
                 <Route path="/courses/:courseId/discussions" element={<CourseDiscussions />} />
                 <Route path="/courses/:courseId/discussions/:discussionId" element={<DiscussionDetail />} />
                 <Route path="/courses/:courseId/textbook" element={<Textbook />} />
+                <Route path="/certificates" element={<Certificates />} />
               </Route>
 
               {/* Catch-all */}

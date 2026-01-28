@@ -10,12 +10,16 @@ import { Footer } from '@/components/layout/Footer';
 import { useCourse, useCourseLessons, useHasPurchasedCourse } from '@/hooks/useCourses';
 import { useCourseProgress } from '@/hooks/useProgress';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
+import { useCourseCertificate } from '@/hooks/useCertificates';
+import { downloadCertificate } from '@/lib/certificateGenerator';
 import { phaseMetadata, formatPrice, getPhaseClasses, type CoursePhase } from '@/lib/courseData';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   ArrowLeft, 
   ArrowRight,
+  Award,
   BookOpen, 
   BookText,
   CheckCircle2, 
@@ -36,6 +40,7 @@ export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const { data: profile } = useProfile(user?.id);
   const { toast } = useToast();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
@@ -43,6 +48,7 @@ export default function CourseDetail() {
   const { data: lessons, isLoading: lessonsLoading } = useCourseLessons(courseId);
   const { data: hasPurchased } = useHasPurchasedCourse(user?.id, courseId);
   const { data: progressData } = useCourseProgress(user?.id, courseId);
+  const { data: certificate } = useCourseCertificate(user?.id, courseId);
 
   const isLoading = courseLoading || lessonsLoading;
 
@@ -122,11 +128,27 @@ export default function CourseDetail() {
   const progressPercent = progressData?.lessonCount 
     ? Math.round((progressData.completedCount / progressData.lessonCount) * 100)
     : 0;
+  const isCourseComplete = progressPercent === 100;
 
   // Find completed lessons
   const completedLessonIds = new Set(
     progressData?.progress?.filter(p => p.completed).map(p => p.lesson_id) || []
   );
+
+  const handleDownloadCertificate = () => {
+    if (!certificate || !course) return;
+    downloadCertificate({
+      studentName: certificate.student_name,
+      courseTitle: certificate.course_title,
+      courseOrderNumber: course.order_number,
+      verificationCode: certificate.verification_code,
+      issuedAt: certificate.issued_at,
+    });
+    toast({
+      title: 'Certificate Downloaded',
+      description: 'Your certificate PDF has been saved.',
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col cyber-bg">
@@ -348,6 +370,34 @@ export default function CourseDetail() {
 
               {/* Sidebar */}
               <div className="space-y-6">
+                {/* Certificate Card (if course is complete) */}
+                {certificate && isCourseComplete && (
+                  <Card className="glass-card border-accent/30 hover:border-accent/50 hover:shadow-[0_0_25px_hsl(var(--accent)/0.2)] transition-all duration-300 overflow-hidden">
+                    <div className="bg-gradient-to-r from-accent/20 to-primary/20 p-4 border-b border-accent/20">
+                      <div className="flex items-center gap-2 text-accent">
+                        <Award className="h-5 w-5 drop-shadow-[0_0_8px_hsl(var(--accent))]" />
+                        <span className="font-display font-semibold">Course Complete!</span>
+                      </div>
+                    </div>
+                    <CardContent className="pt-4">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Congratulations! You've earned your certificate for this course.
+                      </p>
+                      <Button 
+                        variant="neon" 
+                        className="w-full gap-2"
+                        onClick={handleDownloadCertificate}
+                      >
+                        <Download className="h-4 w-4" />
+                        Download Certificate
+                      </Button>
+                      <p className="text-xs text-center text-muted-foreground mt-2">
+                        Code: <span className="font-mono text-primary">{certificate.verification_code}</span>
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Textbook Card */}
                 <Card className="glass-card border-amber-500/30 hover:border-amber-500/50 hover:shadow-[0_0_25px_rgba(245,158,11,0.2)] transition-all duration-300">
                   <CardHeader>

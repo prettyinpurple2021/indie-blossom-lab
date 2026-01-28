@@ -8,12 +8,14 @@ import { ProgressRing } from '@/components/ui/progress-ring';
 import { XPDisplay } from '@/components/gamification/XPDisplay';
 import { StreakCard } from '@/components/gamification/StreakCard';
 import { BadgesDisplay } from '@/components/gamification/BadgesDisplay';
+import { CertificateCard } from '@/components/certificates/CertificateCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile, useUserAchievements } from '@/hooks/useProfile';
 import { useOverallProgress } from '@/hooks/useProgress';
 import { useCourses } from '@/hooks/useCourses';
+import { useUserCertificates } from '@/hooks/useCertificates';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
-import { TrendingUp, BookOpen } from 'lucide-react';
+import { TrendingUp, BookOpen, Award, ArrowRight } from 'lucide-react';
 
 export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
@@ -21,6 +23,7 @@ export default function Profile() {
   const { data: achievements, isLoading: achievementsLoading } = useUserAchievements(user?.id);
   const { data: overallProgress, isLoading: progressLoading } = useOverallProgress(user?.id);
   const { data: allCourses } = useCourses();
+  const { data: certificates } = useUserCertificates(user?.id);
 
   const isLoading = authLoading || profileLoading;
 
@@ -50,6 +53,11 @@ export default function Profile() {
   const getCourseTitle = (courseId: string) => {
     return allCourses?.find(c => c.id === courseId)?.title || 'Course';
   };
+
+  // Map course IDs to order numbers for certificates
+  const courseOrderMap = new Map(
+    allCourses?.map(c => [c.id, c.order_number]) || []
+  );
 
   return (
     <div className="py-8">
@@ -134,6 +142,40 @@ export default function Profile() {
                       </p>
                     </div>
                   </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Certificates Section */}
+        {certificates && certificates.length > 0 && (
+          <Card className="mt-8 glass-card border-accent/30 hover:border-accent/50 hover:shadow-[0_0_30px_hsl(var(--accent)/0.15)] transition-all duration-300">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 font-display">
+                    <Award className="h-5 w-5 text-accent drop-shadow-[0_0_8px_hsl(var(--accent)/0.5)]" />
+                    Your Certificates
+                  </CardTitle>
+                  <CardDescription>Certificates earned from completing courses</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" asChild className="border-accent/30 hover:bg-accent/10">
+                  <Link to="/certificates">
+                    View All
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {certificates.slice(0, 3).map((certificate) => (
+                  <CertificateCard 
+                    key={certificate.id} 
+                    certificate={certificate}
+                    courseOrderNumber={courseOrderMap.get(certificate.course_id) || 1}
+                  />
                 ))}
               </div>
             </CardContent>

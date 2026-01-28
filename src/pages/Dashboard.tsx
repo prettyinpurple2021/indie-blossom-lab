@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useCourses } from '@/hooks/useCourses';
+import { useCertificateCount } from '@/hooks/useCertificates';
 import { phaseMetadata, formatPrice, getPhaseClasses, type CoursePhase } from '@/lib/courseData';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,6 +25,7 @@ import {
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const { data: courses } = useCourses();
+  const { data: certificateCount } = useCertificateCount(user?.id);
 
   // Fetch user purchases
   const { data: purchases } = useQuery({
@@ -171,11 +173,12 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground font-mono">Certificates</p>
-                  <p className="text-3xl font-display font-bold text-accent">0</p>
+                  <p className="text-3xl font-display font-bold text-accent">{certificateCount || 0}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+          <Link to="/certificates" className="hidden" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

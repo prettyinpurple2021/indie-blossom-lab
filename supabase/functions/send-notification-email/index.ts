@@ -213,6 +213,31 @@ serve(async (req: Request): Promise<Response> => {
       `;
     }
 
+    // Create in-app notification
+    const notificationTitle = type === "grade_review" 
+      ? `Your ${data.lessonTitle} has been graded`
+      : "Time to get back on track!";
+    
+    const notificationMessage = type === "grade_review"
+      ? `You scored ${data.score}% on ${data.lessonTitle} in ${data.courseTitle}${data.adminNotes ? `. Feedback: ${data.adminNotes}` : ''}`
+      : `You haven't been active for ${data.daysInactive} days. You have ${data.incompleteCount} lessons waiting in ${data.courseTitle}.`;
+
+    const notificationLink = type === "grade_review" ? "/dashboard" : "/courses";
+
+    const { error: notificationError } = await supabase
+      .from("notifications")
+      .insert({
+        user_id: userId,
+        type: type,
+        title: notificationTitle,
+        message: notificationMessage,
+        link: notificationLink,
+      });
+
+    if (notificationError) {
+      console.error("Failed to create in-app notification:", notificationError);
+    }
+
     await sendEmail({
       to: userData.user.email,
       subject,
@@ -222,7 +247,7 @@ serve(async (req: Request): Promise<Response> => {
     console.log(`Notification email sent to ${userData.user.email} for type: ${type}`);
 
     return new Response(
-      JSON.stringify({ success: true, message: "Email sent successfully" }),
+      JSON.stringify({ success: true, message: "Email and notification sent successfully" }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {

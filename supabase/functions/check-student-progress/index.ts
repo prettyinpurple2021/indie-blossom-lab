@@ -199,6 +199,21 @@ serve(async (req: Request): Promise<Response> => {
           </html>
         `;
 
+        // Create in-app notification
+        const { error: notificationError } = await supabase
+          .from("notifications")
+          .insert({
+            user_id: userId,
+            type: "progress_reminder",
+            title: "Time to get back on track!",
+            message: `You haven't been active for ${daysInactive} days. You have ${totalIncomplete} lesson${totalIncomplete !== 1 ? 's' : ''} waiting in ${primaryCourseTitle}.`,
+            link: "/courses",
+          });
+
+        if (notificationError) {
+          console.error("Failed to create in-app notification:", notificationError);
+        }
+
         await sendEmail(userData.user.email, subject, html);
         notificationsSent.push(userData.user.email);
         console.log(`Progress reminder sent to ${userData.user.email}`);

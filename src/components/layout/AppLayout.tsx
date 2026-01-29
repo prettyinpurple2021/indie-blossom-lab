@@ -36,11 +36,7 @@ export function AppLayout() {
         <div className="flex-1 flex flex-col relative">
           {/* Top bar with mobile menu trigger */}
           <header className="sticky top-0 z-40 h-14 border-b border-primary/20 bg-background/80 backdrop-blur-xl flex items-center px-4 md:hidden">
-            <SidebarTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SidebarTrigger>
+            <SidebarTrigger />
           </header>
           
           <main className="flex-1 relative z-10">

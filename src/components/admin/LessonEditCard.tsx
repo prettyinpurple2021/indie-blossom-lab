@@ -30,6 +30,7 @@ import {
   GripVertical,
   Sparkles,
   Loader2,
+  Mic,
 } from 'lucide-react';
 
 export interface LessonData {
@@ -55,6 +56,7 @@ interface LessonEditCardProps {
   onDelete: (index: number) => void;
   onRegenerate?: (index: number) => Promise<void>;
   onGenerateVideo?: (index: number, topic: string) => void;
+  onGenerateVoice?: (index: number, content: string, title: string) => void;
   isRegenerating?: boolean;
 }
 
@@ -83,6 +85,7 @@ export function LessonEditCard({
   onDelete,
   onRegenerate,
   onGenerateVideo,
+  onGenerateVoice,
   isRegenerating = false,
 }: LessonEditCardProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -123,6 +126,21 @@ export function LessonEditCard({
               </Badge>
               <span className="text-sm font-medium truncate">{lesson.title}</span>
             </div>
+            {onGenerateVoice && lesson.content && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-accent hover:text-accent hover:bg-accent/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onGenerateVoice(index, lesson.content || '', lesson.title);
+                }}
+                disabled={isRegenerating}
+                title="Generate voice narration"
+              >
+                <Mic className="h-4 w-4" />
+              </Button>
+            )}
             {onGenerateVideo && (
               <Button
                 variant="ghost"

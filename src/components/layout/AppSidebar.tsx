@@ -28,13 +28,15 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
-  Award
+  Award,
+  Trophy
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'My Courses', url: '/courses', icon: BookOpen },
+  { title: 'Leaderboard', url: '/leaderboard', icon: Trophy },
   { title: 'Certificates', url: '/certificates', icon: Award },
   { title: 'Profile', url: '/profile', icon: User },
   { title: 'Settings', url: '/settings', icon: Settings },

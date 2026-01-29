@@ -30,6 +30,7 @@ import Gradebook from "./pages/Gradebook";
 import Textbook from "./pages/Textbook";
 import Certificates from "./pages/Certificates";
 import VerifyCertificate from "./pages/VerifyCertificate";
+import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -77,6 +78,7 @@ const App = () => (
                 <Route path="/courses/:courseId/discussions/:discussionId" element={<DiscussionDetail />} />
                 <Route path="/courses/:courseId/textbook" element={<Textbook />} />
                 <Route path="/certificates" element={<Certificates />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
               </Route>
 
               {/* Catch-all */}

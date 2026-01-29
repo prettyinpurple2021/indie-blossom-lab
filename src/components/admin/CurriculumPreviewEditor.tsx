@@ -24,10 +24,12 @@ import {
   Loader2,
   Image,
   Video,
+  Mic,
 } from 'lucide-react';
 import { LessonEditCard, LessonData } from './LessonEditCard';
 import { ImageGenerateDialog } from './ImageGenerateDialog';
 import { VideoGenerateDialog } from './VideoGenerateDialog';
+import { VoiceGenerateDialog } from './VoiceGenerateDialog';
 import type { GeneratedBulkCurriculum } from '@/hooks/useContentGenerator';
 import { useContentGenerator } from '@/hooks/useContentGenerator';
 import { useToast } from '@/hooks/use-toast';
@@ -46,6 +48,8 @@ export function CurriculumPreviewEditor({ curriculum, onUpdate, documentContent 
   const [regeneratingQuestionIndex, setRegeneratingQuestionIndex] = useState<number | null>(null);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [videoDialogContext, setVideoDialogContext] = useState<{ topic: string; type: 'lesson_explainer' | 'concept_animation' | 'intro_video' } | null>(null);
+  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
+  const [voiceDialogContext, setVoiceDialogContext] = useState<{ content: string; title: string } | null>(null);
   
   const { generateContent, isGenerating } = useContentGenerator();
   const { toast } = useToast();
@@ -384,6 +388,10 @@ export function CurriculumPreviewEditor({ curriculum, onUpdate, documentContent 
                     setVideoDialogContext({ topic, type: 'lesson_explainer' });
                     setVideoDialogOpen(true);
                   }}
+                  onGenerateVoice={(_, content, title) => {
+                    setVoiceDialogContext({ content, title });
+                    setVoiceDialogOpen(true);
+                  }}
                   isRegenerating={regeneratingLessonIndex === index}
                 />
               ))}
@@ -670,6 +678,20 @@ export function CurriculumPreviewEditor({ curriculum, onUpdate, documentContent 
             description: 'Your AI video has been created. You can use it in your lesson materials.',
           });
           setVideoDialogOpen(false);
+        }}
+      />
+
+      <VoiceGenerateDialog
+        open={voiceDialogOpen}
+        onOpenChange={setVoiceDialogOpen}
+        lessonTitle={voiceDialogContext?.title}
+        lessonContent={voiceDialogContext?.content}
+        onAudioGenerated={(url) => {
+          toast({
+            title: 'Voice narration generated!',
+            description: 'Your audio narration has been created.',
+          });
+          setVoiceDialogOpen(false);
         }}
       />
     </div>

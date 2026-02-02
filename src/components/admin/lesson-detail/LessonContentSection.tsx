@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2, FileText, Video, Mic, Edit } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Video, Mic } from 'lucide-react';
 import { useContentGenerator } from '@/hooks/useContentGenerator';
 import { SmartPromptDialog } from './SmartPromptDialog';
+import { GenerationPreview } from './GenerationPreview';
 import { VoiceGenerateDialog } from '@/components/admin/VoiceGenerateDialog';
 import { VideoGenerateDialog } from '@/components/admin/VideoGenerateDialog';
 
@@ -33,6 +34,7 @@ export function LessonContentSection({
   const [showPromptDialog, setShowPromptDialog] = useState(false);
   const [showVoiceDialog, setShowVoiceDialog] = useState(false);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [previewContent, setPreviewContent] = useState<string | null>(null);
 
   const handleGenerate = async (customPrompt: string) => {
     const result = await generateContent('lesson_content', {
@@ -42,13 +44,40 @@ export function LessonContentSection({
     }, customPrompt);
     
     if (result && typeof result === 'string') {
-      onContentChange(result);
+      setPreviewContent(result);
     }
     setShowPromptDialog(false);
   };
 
+  const handleApplyPreview = () => {
+    if (previewContent) {
+      onContentChange(previewContent);
+      setPreviewContent(null);
+    }
+  };
+
+  const handleDiscardPreview = () => {
+    setPreviewContent(null);
+  };
+
+  const handleRegenerate = () => {
+    setPreviewContent(null);
+    setShowPromptDialog(true);
+  };
+
   return (
     <>
+      {/* Generation Preview */}
+      {previewContent && (
+        <GenerationPreview
+          type="content"
+          generatedContent={previewContent}
+          onApply={handleApplyPreview}
+          onDiscard={handleDiscardPreview}
+          onRegenerate={handleRegenerate}
+        />
+      )}
+
       <Card className="glass-card border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -134,6 +163,7 @@ export function LessonContentSection({
         defaultPrompt={smartPrompt}
         onGenerate={handleGenerate}
         isGenerating={isGenerating}
+        contentType="content"
       />
 
       {showVoiceDialog && (

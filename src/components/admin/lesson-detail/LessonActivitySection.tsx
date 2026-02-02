@@ -9,6 +9,7 @@ import { Sparkles, Loader2, Zap, Plus, Trash2, GripVertical } from 'lucide-react
 import { ActivityData } from '@/hooks/useAdmin';
 import { useContentGenerator, GeneratedActivity } from '@/hooks/useContentGenerator';
 import { SmartPromptDialog } from './SmartPromptDialog';
+import { GenerationPreview } from './GenerationPreview';
 
 interface LessonActivitySectionProps {
   lessonTitle: string;
@@ -27,6 +28,7 @@ export function LessonActivitySection({
 }: LessonActivitySectionProps) {
   const { generateContent, isGenerating } = useContentGenerator();
   const [showPromptDialog, setShowPromptDialog] = useState(false);
+  const [previewContent, setPreviewContent] = useState<GeneratedActivity | null>(null);
 
   const instructions = activityData?.instructions || '';
   const activityType = activityData?.type || 'exercise';
@@ -40,19 +42,35 @@ export function LessonActivitySection({
     }, customPrompt);
     
     if (result) {
-      const convertedSteps = result.steps?.map((step) => ({
+      setPreviewContent(result);
+    }
+    setShowPromptDialog(false);
+  };
+
+  const handleApplyPreview = () => {
+    if (previewContent) {
+      const convertedSteps = previewContent.steps?.map((step) => ({
         id: crypto.randomUUID(),
         title: step.title || '',
         description: step.instructions || '',
       })) || [];
       
       onActivityDataChange({
-        instructions: result.description || '',
+        instructions: previewContent.description || '',
         type: activityType,
         steps: convertedSteps,
       });
+      setPreviewContent(null);
     }
-    setShowPromptDialog(false);
+  };
+
+  const handleDiscardPreview = () => {
+    setPreviewContent(null);
+  };
+
+  const handleRegenerate = () => {
+    setPreviewContent(null);
+    setShowPromptDialog(true);
   };
 
   const addStep = () => {
@@ -84,6 +102,17 @@ export function LessonActivitySection({
 
   return (
     <>
+      {/* Generation Preview */}
+      {previewContent && (
+        <GenerationPreview
+          type="activity"
+          generatedContent={previewContent}
+          onApply={handleApplyPreview}
+          onDiscard={handleDiscardPreview}
+          onRegenerate={handleRegenerate}
+        />
+      )}
+
       <Card className="glass-card border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -223,6 +252,7 @@ export function LessonActivitySection({
         defaultPrompt={smartPrompt}
         onGenerate={handleGenerate}
         isGenerating={isGenerating}
+        contentType="activity"
       />
     </>
   );

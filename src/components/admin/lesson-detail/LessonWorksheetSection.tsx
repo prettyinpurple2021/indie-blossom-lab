@@ -8,6 +8,7 @@ import { Sparkles, Loader2, ClipboardList, Plus, Trash2, GripVertical } from 'lu
 import { WorksheetData } from '@/hooks/useAdmin';
 import { useContentGenerator, GeneratedWorksheet } from '@/hooks/useContentGenerator';
 import { SmartPromptDialog } from './SmartPromptDialog';
+import { GenerationPreview } from './GenerationPreview';
 
 interface LessonWorksheetSectionProps {
   lessonTitle: string;
@@ -26,6 +27,7 @@ export function LessonWorksheetSection({
 }: LessonWorksheetSectionProps) {
   const { generateContent, isGenerating } = useContentGenerator();
   const [showPromptDialog, setShowPromptDialog] = useState(false);
+  const [previewContent, setPreviewContent] = useState<GeneratedWorksheet | null>(null);
 
   const instructions = worksheetData?.instructions || '';
   const sections = worksheetData?.sections || [];
@@ -38,18 +40,34 @@ export function LessonWorksheetSection({
     }, customPrompt);
     
     if (result) {
-      const convertedSections = result.sections?.map((section) => ({
+      setPreviewContent(result);
+    }
+    setShowPromptDialog(false);
+  };
+
+  const handleApplyPreview = () => {
+    if (previewContent) {
+      const convertedSections = previewContent.sections?.map((section) => ({
         id: crypto.randomUUID(),
         title: section.title || '',
         prompts: section.exercises?.map((ex) => ex.prompt) || [''],
       })) || [];
       
       onWorksheetDataChange({
-        instructions: result.instructions || '',
+        instructions: previewContent.instructions || '',
         sections: convertedSections,
       });
+      setPreviewContent(null);
     }
-    setShowPromptDialog(false);
+  };
+
+  const handleDiscardPreview = () => {
+    setPreviewContent(null);
+  };
+
+  const handleRegenerate = () => {
+    setPreviewContent(null);
+    setShowPromptDialog(true);
   };
 
   const addSection = () => {
@@ -97,6 +115,17 @@ export function LessonWorksheetSection({
 
   return (
     <>
+      {/* Generation Preview */}
+      {previewContent && (
+        <GenerationPreview
+          type="worksheet"
+          generatedContent={previewContent}
+          onApply={handleApplyPreview}
+          onDiscard={handleDiscardPreview}
+          onRegenerate={handleRegenerate}
+        />
+      )}
+
       <Card className="glass-card border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -234,6 +263,7 @@ export function LessonWorksheetSection({
         defaultPrompt={smartPrompt}
         onGenerate={handleGenerate}
         isGenerating={isGenerating}
+        contentType="worksheet"
       />
     </>
   );

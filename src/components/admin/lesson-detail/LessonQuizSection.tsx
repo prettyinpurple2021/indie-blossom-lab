@@ -9,6 +9,7 @@ import { Sparkles, Loader2, HelpCircle, Plus, Trash2, GripVertical } from 'lucid
 import { QuizData, QuizQuestion } from '@/hooks/useAdmin';
 import { useContentGenerator } from '@/hooks/useContentGenerator';
 import { SmartPromptDialog } from './SmartPromptDialog';
+import { GenerationPreview } from './GenerationPreview';
 
 interface LessonQuizSectionProps {
   lessonTitle: string;
@@ -27,6 +28,7 @@ export function LessonQuizSection({
 }: LessonQuizSectionProps) {
   const { generateContent, isGenerating } = useContentGenerator();
   const [showPromptDialog, setShowPromptDialog] = useState(false);
+  const [previewContent, setPreviewContent] = useState<{ questions: Array<{ question: string; options: string[]; correctIndex: number; explanation?: string }> } | null>(null);
 
   const questions = quizData?.questions || [];
   const passingScore = quizData?.passingScore || 70;
@@ -40,7 +42,14 @@ export function LessonQuizSection({
     }, customPrompt);
     
     if (result && 'questions' in result && Array.isArray(result.questions)) {
-      const mappedQuestions: QuizQuestion[] = result.questions.map((q) => ({
+      setPreviewContent(result);
+    }
+    setShowPromptDialog(false);
+  };
+
+  const handleApplyPreview = () => {
+    if (previewContent?.questions) {
+      const mappedQuestions: QuizQuestion[] = previewContent.questions.map((q) => ({
         id: crypto.randomUUID(),
         question: q.question || '',
         options: q.options || ['', '', '', ''],
@@ -51,8 +60,17 @@ export function LessonQuizSection({
         questions: [...questions, ...mappedQuestions],
         passingScore,
       });
+      setPreviewContent(null);
     }
-    setShowPromptDialog(false);
+  };
+
+  const handleDiscardPreview = () => {
+    setPreviewContent(null);
+  };
+
+  const handleRegenerate = () => {
+    setPreviewContent(null);
+    setShowPromptDialog(true);
   };
 
   const addQuestion = () => {
@@ -90,6 +108,17 @@ export function LessonQuizSection({
 
   return (
     <>
+      {/* Generation Preview */}
+      {previewContent && (
+        <GenerationPreview
+          type="quiz"
+          generatedContent={previewContent}
+          onApply={handleApplyPreview}
+          onDiscard={handleDiscardPreview}
+          onRegenerate={handleRegenerate}
+        />
+      )}
+
       <Card className="glass-card border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -239,6 +268,7 @@ export function LessonQuizSection({
         defaultPrompt={smartPrompt}
         onGenerate={handleGenerate}
         isGenerating={isGenerating}
+        contentType="quiz"
       />
     </>
   );

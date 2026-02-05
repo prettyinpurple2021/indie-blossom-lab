@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.generate-voice]
 verify_jwt = false
+
+[functions.get-leaderboard]
+verify_jwt = false

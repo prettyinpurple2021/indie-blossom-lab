@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -22,16 +22,15 @@ serve(async (req) => {
       });
     }
 
-    // Verify the user is authenticated
-    const supabaseUser = createClient(
+    // Verify the user is authenticated using getUser
+    const supabaseAuth = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -51,7 +50,6 @@ serve(async (req) => {
     let entries: any[] = [];
 
     if (type === "xp") {
-      // Get top XP users - only expose safe data
       const { data: gamData, error: gamError } = await supabase
         .from("user_gamification")
         .select("user_id, total_xp")
@@ -67,13 +65,11 @@ serve(async (req) => {
 
       const userIds = gamData.map((g) => g.user_id);
 
-      // Get public profile info only
       const { data: profiles } = await supabase
         .from("profiles")
         .select("id, display_name, avatar_url")
         .in("id", userIds);
 
-      // Get badge counts
       const { data: badges } = await supabase
         .from("user_badges")
         .select("user_id")
@@ -98,7 +94,6 @@ serve(async (req) => {
         };
       });
     } else if (type === "badges") {
-      // Get top badge collectors
       const { data: badgeData } = await supabase
         .from("user_badges")
         .select("user_id");
@@ -109,13 +104,11 @@ serve(async (req) => {
         });
       }
 
-      // Count badges per user
       const badgeCountMap: Record<string, number> = {};
       badgeData.forEach((b) => {
         badgeCountMap[b.user_id] = (badgeCountMap[b.user_id] || 0) + 1;
       });
 
-      // Sort and limit
       const sortedUsers = Object.entries(badgeCountMap)
         .sort(([, a], [, b]) => b - a)
         .slice(0, limit);
@@ -148,9 +141,6 @@ serve(async (req) => {
         };
       });
     }
-
-    // Note: Streak leaderboard is intentionally removed as it exposes activity patterns
-    // XP and badge counts are sufficient for gamification without privacy concerns
 
     return new Response(JSON.stringify(entries), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

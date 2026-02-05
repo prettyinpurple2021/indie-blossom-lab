@@ -918,6 +918,16 @@ export type Database = {
       }
     }
     Views: {
+      leaderboard_view: {
+        Row: {
+          avatar_url: string | null
+          display_name: string | null
+          rank: number | null
+          total_xp: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null

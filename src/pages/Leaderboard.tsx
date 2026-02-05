@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useXPLeaderboard, useStreakLeaderboard, useBadgeLeaderboard } from '@/hooks/useLeaderboard';
+import { useXPLeaderboard, useBadgeLeaderboard } from '@/hooks/useLeaderboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, Zap, Flame, Award, Crown, Medal } from 'lucide-react';
+import { Trophy, Zap, Award, Crown, Medal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const getRankIcon = (rank: number) => {
@@ -43,8 +43,6 @@ interface LeaderboardEntry {
   displayName: string;
   avatarUrl: string | null;
   totalXp: number;
-  currentStreak: number;
-  longestStreak: number;
   badgeCount: number;
   level: number;
 }
@@ -157,7 +155,6 @@ export default function Leaderboard() {
   const { user } = useAuth();
 
   const { data: xpLeaderboard, isLoading: xpLoading } = useXPLeaderboard(20);
-  const { data: streakLeaderboard, isLoading: streakLoading } = useStreakLeaderboard(20);
   const { data: badgeLeaderboard, isLoading: badgeLoading } = useBadgeLeaderboard(20);
 
   return (
@@ -183,16 +180,11 @@ export default function Leaderboard() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="xp" className="flex items-center gap-2">
                 <Zap className="h-4 w-4" />
                 <span className="hidden sm:inline">XP Leaders</span>
                 <span className="sm:hidden">XP</span>
-              </TabsTrigger>
-              <TabsTrigger value="streak" className="flex items-center gap-2">
-                <Flame className="h-4 w-4" />
-                <span className="hidden sm:inline">Top Streaks</span>
-                <span className="sm:hidden">Streaks</span>
               </TabsTrigger>
               <TabsTrigger value="badges" className="flex items-center gap-2">
                 <Award className="h-4 w-4" />
@@ -217,27 +209,6 @@ export default function Leaderboard() {
                     primaryStat={entry.totalXp.toLocaleString()}
                     primaryLabel="Total XP"
                     primaryIcon={Zap}
-                  />
-                ))
-              )}
-            </TabsContent>
-
-            {/* Streak Tab */}
-            <TabsContent value="streak" className="space-y-3">
-              {streakLoading ? (
-                <LeaderboardSkeleton />
-              ) : !streakLeaderboard || streakLeaderboard.length === 0 ? (
-                <EmptyLeaderboard message="No streak champions yet" />
-              ) : (
-                streakLeaderboard.map((entry, index) => (
-                  <LeaderboardRow
-                    key={entry.userId}
-                    entry={entry}
-                    rank={index + 1}
-                    isCurrentUser={entry.userId === user?.id}
-                    primaryStat={`${entry.longestStreak} days`}
-                    primaryLabel="Best Streak"
-                    primaryIcon={Flame}
                   />
                 ))
               )}

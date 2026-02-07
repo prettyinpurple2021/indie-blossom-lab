@@ -200,7 +200,9 @@ npm run build        # Create production build in dist/
 npm run preview      # Preview production build
 
 # Linting
-npm run lint         # Run TypeScript type checking
+npm run lint         # Run ESLint
+npm run lint:fix     # Run ESLint and auto-fix issues
+npm run type-check   # Run TypeScript type checking
 ```
 
 ## 🌐 Deployment Options

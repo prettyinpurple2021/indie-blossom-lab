@@ -114,7 +114,7 @@ npm run dev
 bun run dev
 ```
 
-The app will be available at `http://localhost:8080`
+The app will be available at `http://localhost:3000`
 
 ## 📁 Project Structure
 
@@ -193,17 +193,14 @@ Key color tokens:
 
 ```bash
 # Development
-npm run dev          # Start dev server (port 8080)
+npm run dev          # Start dev server (port 3000)
 
 # Building
 npm run build        # Create production build in dist/
 npm run preview      # Preview production build
 
-# Testing
-npm run test         # Run tests with Vitest
-
 # Linting
-npm run lint         # Run ESLint
+npm run lint         # Run TypeScript type checking
 ```
 
 ## 🌐 Deployment Options

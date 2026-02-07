@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import HTMLFlipBook from 'react-pageflip';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -29,6 +30,8 @@ import {
 } from 'lucide-react';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
 import { useToast } from '@/hooks/use-toast';
+import { ContentTransition } from '@/components/lesson/PageTransition';
+import { cn } from '@/lib/utils';
 
 interface TextbookViewerProps {
   courseId: string;
@@ -109,6 +112,25 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [selection]);
+
+  // Keyboard navigation for textbook
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Left arrow: previous page
+      if (e.key === 'ArrowLeft' && currentPage > 0) {
+        e.preventDefault();
+        goToPrev();
+      }
+      // Right arrow: next page
+      else if (e.key === 'ArrowRight' && currentPage < (pages?.length || 1) - 1) {
+        e.preventDefault();
+        goToNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, pages?.length]);
 
   const handleFlip = useCallback((e: any) => {
     setCurrentPage(e.data);
@@ -267,6 +289,17 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
 
   return (
     <div className="flex flex-col items-center">
+      {/* Reading Progress Bar */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-1 z-50 bg-background/20 backdrop-blur-sm"
+      >
+        <motion.div
+          className="h-full bg-gradient-to-r from-primary via-secondary to-primary shadow-[0_0_10px_hsl(var(--primary)/0.8),0_0_20px_hsl(var(--primary)/0.4)]"
+          style={{ width: `${pages?.length ? ((currentPage + 1) / pages.length) * 100 : 0}%` }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+        />
+      </div>
+
       {/* Toolbar */}
       <div className="w-full max-w-4xl glass-card p-4 mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
@@ -284,9 +317,10 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
               <ScrollArea className="h-[calc(100vh-100px)] mt-4">
                 <div className="space-y-2">
                   {tableOfContents && Object.values(tableOfContents).map(({ chapter, firstPageIndex }) => (
-                    <button
+                    <motion.button
                       key={chapter.id}
                       onClick={() => goToPage(firstPageIndex)}
+                      whileHover={{ x: 4 }}
                       className="block w-full text-left p-3 rounded-lg hover:bg-primary/20 transition-all border border-transparent hover:border-primary/30"
                     >
                       <span className="font-medium text-foreground">{chapter.title}</span>
@@ -295,7 +329,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
                           Preview
                         </span>
                       )}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </ScrollArea>
@@ -329,16 +363,17 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
                 <ScrollArea className="h-[calc(100vh-200px)]">
                   <div className="space-y-2">
                     {searchResults?.map((result) => (
-                      <button
+                      <motion.button
                         key={result.id}
                         onClick={() => handleSearchResultClick(result)}
+                        whileHover={{ x: 4 }}
                         className="block w-full text-left p-3 rounded-lg hover:bg-primary/20 transition-all border border-transparent hover:border-primary/30"
                       >
                         <span className="text-sm font-medium text-cyan-300">{result.chapter.title}</span>
                         <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
                           {result.content.substring(0, 150)}...
                         </p>
-                      </button>
+                      </motion.button>
                     ))}
                     {searchQuery && !searchResults?.length && (
                       <p className="text-center text-muted-foreground py-4">
@@ -376,52 +411,59 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       </div>
 
       {/* Book */}
-      <div className="relative w-full max-w-4xl" style={{ perspective: '2000px' }}>
-        <HTMLFlipBook
-          ref={bookRef}
-          width={550}
-          height={700}
-          size="stretch"
-          minWidth={300}
-          maxWidth={600}
-          minHeight={400}
-          maxHeight={800}
-          showCover={false}
-          mobileScrollSupport={true}
-          onFlip={handleFlip}
-          className="mx-auto shadow-[0_0_60px_rgba(168,85,247,0.3)]"
-          style={{}}
-          startPage={0}
-          drawShadow={true}
-          flippingTime={800}
-          usePortrait={true}
-          startZIndex={0}
-          autoSize={true}
-          maxShadowOpacity={0.5}
-          showPageCorners={true}
-          disableFlipByClick={false}
-          swipeDistance={30}
-          clickEventForward={true}
-          useMouseEvents={true}
-        >
-          {pages.map((page, index) => (
-            <PageWrapper key={page.id}>
-              <BookPage
-                page={page}
-                pageIndex={index}
-                totalPages={pages.length}
-                highlights={highlights.filter(h => h.page_id === page.id)}
-                isBookmarked={bookmark?.page_id === page.id}
-                onBookmark={handleBookmark}
-                onTextSelect={index === currentPage ? handleTextSelect : undefined}
-              />
-            </PageWrapper>
-          ))}
-        </HTMLFlipBook>
-      </div>
+      <ContentTransition>
+        <div className="relative w-full max-w-4xl" style={{ perspective: '2000px' }}>
+          <HTMLFlipBook
+            ref={bookRef}
+            width={550}
+            height={700}
+            size="stretch"
+            minWidth={300}
+            maxWidth={600}
+            minHeight={400}
+            maxHeight={800}
+            showCover={false}
+            mobileScrollSupport={true}
+            onFlip={handleFlip}
+            className="mx-auto shadow-[0_0_60px_rgba(168,85,247,0.3)]"
+            style={{}}
+            startPage={0}
+            drawShadow={true}
+            flippingTime={800}
+            usePortrait={true}
+            startZIndex={0}
+            autoSize={true}
+            maxShadowOpacity={0.5}
+            showPageCorners={true}
+            disableFlipByClick={false}
+            swipeDistance={30}
+            clickEventForward={true}
+            useMouseEvents={true}
+          >
+            {pages.map((page, index) => (
+              <PageWrapper key={page.id}>
+                <BookPage
+                  page={page}
+                  pageIndex={index}
+                  totalPages={pages.length}
+                  highlights={highlights.filter(h => h.page_id === page.id)}
+                  isBookmarked={bookmark?.page_id === page.id}
+                  onBookmark={handleBookmark}
+                  onTextSelect={index === currentPage ? handleTextSelect : undefined}
+                />
+              </PageWrapper>
+            ))}
+          </HTMLFlipBook>
+        </div>
+      </ContentTransition>
 
       {/* Navigation */}
-      <div className="flex items-center gap-4 mt-6">
+      <motion.div 
+        className="flex items-center gap-4 mt-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <Button
           variant="outline"
           onClick={goToPrev}
@@ -434,13 +476,13 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
         <Button
           variant="outline"
           onClick={goToNext}
-          disabled={currentPage >= pages.length - 1}
+          disabled={currentPage >= (pages?.length || 1) - 1}
           className="border-primary/30 hover:bg-primary/20 hover:border-primary disabled:opacity-30"
         >
           Next
           <ChevronRight className="h-4 w-4 ml-2" />
         </Button>
-      </div>
+      </motion.div>
 
       {/* Highlight Toolbar - appears on text selection */}
       {selection && (

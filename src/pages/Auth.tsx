@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { PageMeta } from '@/components/layout/PageMeta';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -77,6 +78,12 @@ export default function Auth() {
 
   return (
     <div className="flex-1 flex items-center justify-center py-12 px-4 relative">
+      <PageMeta
+        title="Sign In"
+        description="Sign in or create your SoloSuccess Academy account to access courses and track your progress."
+        path="/auth"
+        noIndex
+      />
       {/* Cyber grid overlay */}
       <div className="cyber-grid" />
       

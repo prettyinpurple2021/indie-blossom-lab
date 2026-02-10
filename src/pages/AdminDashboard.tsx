@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,8 +9,7 @@ import { CourseEditor } from '@/components/admin/CourseEditor';
 import { TextbookEditor } from '@/components/admin/TextbookEditor';
 import { SeedCurriculumButton } from '@/components/admin/SeedCurriculumButton';
 import { QuickGenerateDialog } from '@/components/admin/QuickGenerateDialog';
-import { useAuth } from '@/hooks/useAuth';
-import { useIsAdmin, useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
+import { useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Shield, 
@@ -27,8 +26,6 @@ import {
 import { NeonSpinner } from '@/components/ui/neon-spinner';
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
   const { data: courses, isLoading: coursesLoading } = useAdminCourses();
   const updateCourse = useUpdateCourse();
   const { toast } = useToast();
@@ -36,20 +33,12 @@ export default function AdminDashboard() {
   const [isCreatingCourse, setIsCreatingCourse] = useState(false);
   const [activeTab, setActiveTab] = useState('courses');
 
-  const isLoading = authLoading || adminLoading;
-
-  // Loading state
-  if (isLoading) {
+  if (coursesLoading) {
     return (
       <div className="flex-1 flex items-center justify-center py-12">
         <NeonSpinner size="lg" />
       </div>
     );
-  }
-
-  // Not authenticated or not admin - redirect
-  if (!isAuthenticated || !isAdmin) {
-    return <Navigate to="/" replace />;
   }
 
   const togglePublish = async (courseId: string, currentlyPublished: boolean) => {

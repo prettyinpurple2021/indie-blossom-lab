@@ -16,6 +16,7 @@ import {
   BookOpen,
   Zap
 } from 'lucide-react';
+import { PageMeta } from '@/components/layout/PageMeta';
 
 export default function VerifyCertificate() {
   const { verificationCode } = useParams<{ verificationCode: string }>();
@@ -34,6 +35,11 @@ export default function VerifyCertificate() {
 
   return (
     <div className="min-h-screen cyber-bg">
+      <PageMeta
+        fullTitle="Verify Certificate | SoloSuccess Academy"
+        description="Verify the authenticity of a SoloSuccess Academy certificate of completion."
+        path={verificationCode ? `/verify/${verificationCode}` : undefined}
+      />
       <div className="cyber-grid" />
       
       {/* Header */}

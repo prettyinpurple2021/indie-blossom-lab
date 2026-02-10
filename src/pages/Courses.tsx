@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { phaseMetadata, formatPrice, getPhaseClasses, type CoursePhase } from '@/lib/courseData';
 import { ArrowRight, BookOpen, CheckCircle2, Lock, ShoppingCart, Terminal, Zap } from 'lucide-react';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
+import { PageMeta } from '@/components/layout/PageMeta';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -83,6 +84,7 @@ export default function Courses() {
 
   return (
     <section className="py-12">
+      <PageMeta title="Courses" description="Browse all SoloSuccess Academy courses. From mindset to pitch, build your business one course at a time." path="/courses" />
       <div className="container">
           {/* Page Header */}
           <div className="max-w-4xl mb-16">

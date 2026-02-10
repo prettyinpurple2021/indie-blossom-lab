@@ -21,6 +21,7 @@ import {
   Zap,
   Terminal
 } from 'lucide-react';
+import { PageMeta } from '@/components/layout/PageMeta';
 
 export default function Dashboard() {
   const { user, profile } = useAuth();
@@ -103,6 +104,7 @@ export default function Dashboard() {
 
   return (
     <div className="py-8">
+      <PageMeta title="Dashboard" path="/dashboard" noIndex />
       <div className="container">
         {/* Welcome Section */}
         <div className="mb-10">

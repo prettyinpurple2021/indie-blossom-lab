@@ -20,8 +20,7 @@ import {
   Video,
   Mic,
 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useIsAdmin, useAdminLessons, useAdminCourses, useUpdateLesson, Lesson, LessonType, QuizData, WorksheetData, ActivityData } from '@/hooks/useAdmin';
+import { useAdminLessons, useAdminCourses, useUpdateLesson, Lesson, LessonType, QuizData, WorksheetData, ActivityData } from '@/hooks/useAdmin';
 import { useTextbookChapters, useTextbookPages } from '@/hooks/useTextbook';
 import { useToast } from '@/hooks/use-toast';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
@@ -37,8 +36,6 @@ import {
 export default function AdminLessonDetail() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
   const { data: courses } = useAdminCourses();
   const { data: lessons, isLoading: lessonsLoading } = useAdminLessons(courseId);
   const { data: chapters } = useTextbookChapters(courseId);
@@ -95,19 +92,12 @@ export default function AdminLessonDetail() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasChanges]);
 
-  const isLoading = adminLoading || lessonsLoading;
-
-  if (isLoading) {
+  if (lessonsLoading) {
     return (
       <div className="flex-1 flex items-center justify-center py-12">
         <NeonSpinner size="lg" />
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    navigate('/admin');
-    return null;
   }
 
   if (!lesson || !course) {

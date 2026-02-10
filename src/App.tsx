@@ -4,38 +4,40 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { GamificationProvider } from "@/components/gamification/GamificationProvider";
+import { NeonSpinner } from "@/components/ui/neon-spinner";
+import { ErrorBoundary } from "@/components/layout/ErrorBoundary";
 
-// Layouts
+// Layouts (eager - needed for initial shell)
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 
-// Public Pages
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-
-// App Pages (Protected)
-import Dashboard from "./pages/Dashboard";
-import LessonViewer from "./pages/LessonViewer";
-import CourseProject from "./pages/CourseProject";
-import CourseDiscussions from "./pages/CourseDiscussions";
-import DiscussionDetail from "./pages/DiscussionDetail";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminAnalytics from "./pages/AdminAnalytics";
-import AdminLessonDetail from "./pages/AdminLessonDetail";
-import ContentGenerator from "./pages/ContentGenerator";
-import AISettings from "./pages/AISettings";
-import Gradebook from "./pages/Gradebook";
-import Textbook from "./pages/Textbook";
-import Certificates from "./pages/Certificates";
-import VerifyCertificate from "./pages/VerifyCertificate";
-import Leaderboard from "./pages/Leaderboard";
-import NotFound from "./pages/NotFound";
+// Lazy-loaded pages (split by route for smaller initial bundle)
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Courses = lazy(() => import("./pages/Courses"));
+const CourseDetail = lazy(() => import("./pages/CourseDetail"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const LessonViewer = lazy(() => import("./pages/LessonViewer"));
+const CourseProject = lazy(() => import("./pages/CourseProject"));
+const CourseDiscussions = lazy(() => import("./pages/CourseDiscussions"));
+const DiscussionDetail = lazy(() => import("./pages/DiscussionDetail"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
+const AdminLessonDetail = lazy(() => import("./pages/AdminLessonDetail"));
+const ContentGenerator = lazy(() => import("./pages/ContentGenerator"));
+const AISettings = lazy(() => import("./pages/AISettings"));
+const Gradebook = lazy(() => import("./pages/Gradebook"));
+const Textbook = lazy(() => import("./pages/Textbook"));
+const Certificates = lazy(() => import("./pages/Certificates"));
+const VerifyCertificate = lazy(() => import("./pages/VerifyCertificate"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,14 +50,27 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <TooltipProvider>
-        <GamificationProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-            {/* Public Routes - Marketing/Landing Pages */}
+    <ErrorBoundary>
+      <HelmetProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <TooltipProvider>
+          <GamificationProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+            <Suspense
+              fallback={
+                <div className="flex min-h-screen items-center justify-center cyber-bg">
+                  <div className="cyber-grid absolute inset-0" />
+                  <div className="flex flex-col items-center gap-4 relative z-10">
+                    <NeonSpinner size="lg" />
+                    <p className="text-sm text-muted-foreground font-mono">Loading...</p>
+                  </div>
+                </div>
+              }
+            >
+              <Routes>
+                {/* Public Routes - Marketing/Landing Pages */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
@@ -71,12 +86,14 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                <Route path="/admin/courses/:courseId/lessons/:lessonId" element={<AdminLessonDetail />} />
-                <Route path="/admin/content-generator" element={<ContentGenerator />} />
-                <Route path="/admin/ai-settings" element={<AISettings />} />
-                <Route path="/admin/gradebook" element={<Gradebook />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="courses/:courseId/lessons/:lessonId" element={<AdminLessonDetail />} />
+                  <Route path="content-generator" element={<ContentGenerator />} />
+                  <Route path="ai-settings" element={<AISettings />} />
+                  <Route path="gradebook" element={<Gradebook />} />
+                </Route>
                 
                 {/* Course learning routes (require purchase) */}
                 <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonViewer />} />
@@ -88,13 +105,16 @@ const App = () => (
                 <Route path="/leaderboard" element={<Leaderboard />} />
               </Route>
 
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
-        </GamificationProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+          </GamificationProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </HelmetProvider>
+    </ErrorBoundary>
   </QueryClientProvider>
 );
 

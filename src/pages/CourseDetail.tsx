@@ -35,6 +35,7 @@ import {
   Video
 } from 'lucide-react';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
+import { PageMeta } from '@/components/layout/PageMeta';
 
 export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -152,6 +153,11 @@ export default function CourseDetail() {
 
   return (
     <div className="min-h-screen flex flex-col cyber-bg">
+      <PageMeta
+        title={course.title}
+        description={course.description ?? undefined}
+        path={`/courses/${course.id}`}
+      />
       <Header />
       
       <main className="flex-1 relative">

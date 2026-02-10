@@ -42,8 +42,7 @@ import {
   Eye,
   Pencil,
 } from 'lucide-react';
-import { useIsAdmin, CoursePhase } from '@/hooks/useAdmin';
-import { useAuth } from '@/hooks/useAuth';
+import { CoursePhase } from '@/hooks/useAdmin';
 import { useContentGenerator, GenerateContext, ContentType, GeneratedBulkCurriculum } from '@/hooks/useContentGenerator';
 import { useSaveBulkCurriculum } from '@/hooks/useSaveBulkCurriculum';
 import { useToast } from '@/hooks/use-toast';
@@ -89,8 +88,6 @@ const buildDefaultPrompt = (
 
 export default function ContentGenerator() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin(user?.id);
   const { generateContent, isGenerating } = useContentGenerator();
   const { saveCurriculum, isSaving, saveProgress, isSuccess, savedCourseId } = useSaveBulkCurriculum();
   const { toast } = useToast();
@@ -135,32 +132,6 @@ export default function ContentGenerator() {
     setCustomPrompt(buildDefaultPrompt(activeTab, topic, courseTitle, courseDescription, lessonTitle, difficulty, questionCount));
     setShowPromptEditor(true);
   };
-
-  if (adminLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center py-12">
-        <NeonSpinner size="lg" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="flex-1 flex items-center justify-center py-12">
-        <Card className="max-w-md glass-card">
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>
-              This page is only accessible to administrators.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="neon" onClick={() => navigate('/')}>Return Home</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const handleGenerate = async () => {
     const context: GenerateContext = {

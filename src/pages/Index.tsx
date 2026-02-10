@@ -23,6 +23,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
+import { PageMeta } from '@/components/layout/PageMeta';
 
 export default function Index() {
   const { data: courses, isLoading } = useCourses();
@@ -65,6 +66,7 @@ export default function Index() {
 
   return (
     <div className="flex-1 relative z-10">
+      <PageMeta path="/" />
         {/* Hero Section */}
         <section className="relative overflow-hidden py-24 md:py-36">
           {/* Animated background effects */}

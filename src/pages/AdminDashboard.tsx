@@ -11,6 +11,8 @@ import { SeedCurriculumButton } from '@/components/admin/SeedCurriculumButton';
 import { QuickGenerateDialog } from '@/components/admin/QuickGenerateDialog';
 import { useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Shield, 
   BookOpen, 
@@ -32,6 +34,29 @@ export default function AdminDashboard() {
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [isCreatingCourse, setIsCreatingCourse] = useState(false);
   const [activeTab, setActiveTab] = useState('courses');
+
+  // Fetch real student count (unique users with purchases or progress)
+  const { data: studentCount } = useQuery({
+    queryKey: ['admin-student-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      return count || 0;
+    },
+  });
+
+  // Fetch real revenue (sum of purchases)
+  const { data: totalRevenue } = useQuery({
+    queryKey: ['admin-total-revenue'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('purchases')
+        .select('amount_cents');
+      if (!data) return 0;
+      return data.reduce((sum, p) => sum + p.amount_cents, 0);
+    },
+  });
 
   if (coursesLoading) {
     return (
@@ -108,7 +133,7 @@ export default function AdminDashboard() {
               <Users className="h-6 w-6 text-info" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-foreground">—</p>
+              <p className="text-2xl font-bold text-foreground">{studentCount ?? '—'}</p>
               <p className="text-sm text-muted-foreground">Total Students</p>
             </div>
           </div>
@@ -119,7 +144,11 @@ export default function AdminDashboard() {
               <DollarSign className="h-6 w-6 text-warning" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-foreground">—</p>
+              <p className="text-2xl font-bold text-foreground">
+                {totalRevenue != null 
+                  ? (totalRevenue / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) 
+                  : '—'}
+              </p>
               <p className="text-sm text-muted-foreground">Revenue</p>
             </div>
           </div>

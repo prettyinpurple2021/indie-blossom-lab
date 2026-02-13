@@ -203,6 +203,10 @@ npm run preview      # Preview production build
 npm run lint         # Run ESLint
 npm run lint:fix     # Run ESLint and auto-fix issues
 npm run type-check   # Run TypeScript type checking
+
+# Testing
+npm test             # Run Vitest test suite once
+npm run test:watch   # Run Vitest in watch mode
 ```
 
 ## 🌐 Deployment Options

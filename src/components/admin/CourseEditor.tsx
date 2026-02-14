@@ -1,3 +1,15 @@
+/**
+ * @file CourseEditor.tsx — Admin Course Create/Edit Form
+ *
+ * PURPOSE: Form for creating new courses or editing existing ones.
+ * Fields: title, description, discussion question, project details, plug-and-play asset.
+ * Uses useCreateCourse / useUpdateCourse mutations from useAdmin.ts.
+ *
+ * PRODUCTION TODO:
+ * - Add course cover image upload
+ * - Add rich text editor for description
+ * - Add course prerequisite selection
+ */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

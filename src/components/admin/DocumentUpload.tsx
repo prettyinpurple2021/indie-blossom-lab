@@ -1,3 +1,18 @@
+/**
+ * @file DocumentUpload.tsx — Document Parser Upload Component
+ *
+ * PURPOSE: Allows admins to upload documents (PDF, DOCX, TXT) which are
+ * parsed client-side via useDocumentParser. The extracted text is then
+ * used as context for AI content generation (bulk curriculum, lessons, etc.).
+ *
+ * SUPPORTED FORMATS: .pdf, .docx, .doc, .txt, .md, .csv
+ * MAX SIZE: 10MB
+ *
+ * PRODUCTION TODO:
+ * - Add server-side document parsing for larger files
+ * - Support drag-and-drop upload area
+ * - Add document preview before parsing
+ */
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

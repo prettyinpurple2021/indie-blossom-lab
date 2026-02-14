@@ -1,3 +1,12 @@
+/**
+ * @file ChapterDots.tsx — Mini Chapter Progress Navigation
+ *
+ * PURPOSE: Renders a row of dots — one per chapter — below the textbook.
+ * Active chapter is highlighted with a glow; clicking a dot jumps to
+ * that chapter's first page. Provides quick visual orientation.
+ *
+ * ACCESSIBILITY: Each dot has an aria-label and aria-current for screen readers.
+ */
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {

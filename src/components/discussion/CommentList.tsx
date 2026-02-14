@@ -1,3 +1,24 @@
+/**
+ * @file CommentList.tsx — Threaded Comment System for Discussions
+ *
+ * PURPOSE: Renders a list of comments with support for nested replies,
+ * comment creation, deletion (own comments only), and gamification
+ * (awards XP for posting comments via GamificationProvider).
+ *
+ * THREADING: Comments with parent_comment_id are grouped under their parent.
+ * Top-level comments render inline reply forms when "Reply" is clicked.
+ *
+ * NOTIFICATIONS: When a comment is posted on someone else's discussion,
+ * the notify-discussion-reply edge function is invoked (non-blocking).
+ *
+ * VALIDATION: Uses Zod schema — min 5 chars, max 2000 chars.
+ *
+ * PRODUCTION TODO:
+ * - Add comment editing (not just deletion)
+ * - Add @mention support for tagging other students
+ * - Implement real-time comment updates via Supabase Realtime
+ * - Add pagination for discussions with 50+ comments
+ */
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';

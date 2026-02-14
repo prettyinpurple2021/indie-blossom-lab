@@ -1,3 +1,17 @@
+/**
+ * @file BadgesDisplay.tsx — Achievement Badges Grid (Compact & Full Views)
+ *
+ * PURPOSE: Shows earned and available badges in two modes:
+ *   - Compact (showAll=false): shows up to 8 recent earned badges (dashboard)
+ *   - Full (showAll=true): all badges grouped by category with tabs (achievements page)
+ *
+ * DATA FLOW:
+ *   useAllBadges() → complete badge catalog from achievement_badges table
+ *   useUserBadges(userId) → user's earned badges with timestamps
+ *   Earned badges shown with colored gradient; unearned shown greyed out at 60% opacity
+ *
+ * CATEGORIES: lessons, courses, streaks, xp, community, projects
+ */
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BadgeCard } from './BadgeCard';

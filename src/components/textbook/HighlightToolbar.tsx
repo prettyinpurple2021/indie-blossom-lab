@@ -1,3 +1,17 @@
+/**
+ * @file HighlightToolbar.tsx — Floating Text Selection Toolbar
+ *
+ * PURPOSE: Appears as a floating toolbar near selected text in the textbook.
+ * Offers 5 highlight colors and an "Add Note" button. Positioned absolutely
+ * based on the selection's bounding rect.
+ *
+ * USAGE: TextbookViewer detects text selection → shows this toolbar at
+ * the selection position → user picks color or adds note → toolbar closes.
+ *
+ * PRODUCTION TODO:
+ * - Add "Create Flashcard" shortcut directly from toolbar
+ * - Improve positioning to avoid going off-screen on mobile
+ */
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Highlighter, StickyNote, X } from 'lucide-react';

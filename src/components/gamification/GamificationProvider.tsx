@@ -1,3 +1,26 @@
+/**
+ * @file GamificationProvider.tsx — Central Gamification Context
+ *
+ * PURPOSE: Wraps the app in a React Context that provides two key functions:
+ *   1. awardXP(action, bonusXP?) — awards XP and shows animated notification
+ *   2. checkAndAwardBadges() — evaluates badge criteria and shows unlock toasts
+ *
+ * HOW IT WORKS:
+ * - Reads user's gamification state (total_xp, streak) via useUserGamification
+ * - Reads achievement stats via useUserAchievements (lesson count, etc.)
+ * - awardXP() calls the mutation, then triggers a floating "+XP" notification
+ * - checkAndAwardBadges() compares stats against badge criteria, awards new ones
+ *
+ * LEVEL SYSTEM: Level = floor(totalXP / 500) + 1 (every 500 XP = 1 level)
+ *
+ * USAGE: Components call `const { awardXP } = useGamification()` to award XP
+ * after lesson completion, quiz pass, discussion post, etc.
+ *
+ * PRODUCTION TODO:
+ * - Debounce rapid XP awards (e.g., clicking complete multiple times)
+ * - Add sound effects for level-ups and badge unlocks
+ * - Consider moving badge checking to a backend trigger for reliability
+ */
 import { createContext, useContext, ReactNode, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { 

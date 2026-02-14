@@ -1,3 +1,24 @@
+/**
+ * @file FlashcardsPanel.tsx — Flashcard Management Side Panel
+ *
+ * PURPOSE: Provides a Sheet panel for managing flashcards within the textbook.
+ * Students can create cards manually, from highlighted text + notes, edit,
+ * delete, and launch study sessions.
+ *
+ * TABS:
+ * - "My Cards": lists all flashcards with due status, review counts
+ * - "Create from Highlights": shows highlights with notes as card templates
+ *
+ * DATA FLOW:
+ *   useFlashcards(courseId) → all user's cards for this course
+ *   useDueFlashcards(courseId) → cards where next_review_at <= now
+ *   useCreateFlashcard / useUpdateFlashcard / useDeleteFlashcard → CRUD mutations
+ *
+ * PRODUCTION TODO:
+ * - Add bulk import/export of flashcard decks
+ * - Support shared flashcard decks between students
+ * - Add tagging/categorization for large card sets
+ */
 import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';

@@ -1,3 +1,30 @@
+/**
+ * @file TextbookViewer.tsx — Interactive Flipbook-Style Textbook Reader
+ *
+ * PURPOSE: Renders textbook pages using react-pageflip for a realistic book
+ * experience with highlighting, bookmarks, search, flashcards, vocabulary
+ * glossary, mini games, and reading milestones.
+ *
+ * DATA FLOW:
+ *   useAllTextbookPages(courseId) → flat page list with chapter metadata
+ *   useTextbookBookmark(courseId) → user's last-read position
+ *   useTextbookHighlights(pageIds) → user's saved highlights
+ *
+ * KEY FEATURES:
+ * - Keyboard navigation (← → Home End B ?) + touch swipe gestures
+ * - Text selection → highlight toolbar → save highlight/note to DB
+ * - Glossary extraction from **bold** terms in markdown content
+ * - Mini game parsing from [SCRAMBLE:] and [FILLBLANK:] tags
+ * - Reading milestones with XP awards + confetti celebrations
+ * - Full-text search across all textbook pages
+ * - Bookmark persistence (upsert per user + course)
+ *
+ * PRODUCTION TODO:
+ * - Add full-text search via Postgres tsvector for better performance
+ * - Implement offline reading with service workers
+ * - Add print-friendly view for individual chapters
+ * - Consider virtualization for textbooks with 200+ pages
+ */
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { motion } from 'framer-motion';

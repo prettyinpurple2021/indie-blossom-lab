@@ -1,3 +1,27 @@
+/**
+ * @file useDiscussions.ts — Discussion Forum Data Hooks
+ *
+ * PURPOSE: CRUD operations for course discussion threads and comments.
+ * Supports threaded replies (parent_comment_id), pinned discussions,
+ * and comment count aggregation.
+ *
+ * PRIVACY NOTE: Uses profiles_public view (not profiles table) to fetch
+ * display names and avatars, ensuring email/notification preferences are
+ * never exposed to other students.
+ *
+ * DATA MODEL:
+ *   courses → discussions (1:N) → discussion_comments (1:N, self-referencing for threads)
+ *
+ * SECURITY: RLS policies ensure users can only delete their own comments/discussions.
+ * Admin can pin/delete any discussion.
+ *
+ * PRODUCTION TODO:
+ * - Add real-time updates via Supabase Realtime for live discussions
+ * - Implement pagination for courses with 100+ discussions
+ * - Add content moderation (flagging, admin review queue)
+ * - Support markdown formatting in discussion content
+ * - Add search within discussions
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

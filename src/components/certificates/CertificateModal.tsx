@@ -1,3 +1,14 @@
+/**
+ * @file CertificateModal.tsx — Course Completion Certificate Celebration Dialog
+ *
+ * PURPOSE: Shows a congratulatory modal when a student completes a course.
+ * Displays a themed certificate preview with the student's name, course title,
+ * and verification code. Provides download (PDF), share (clipboard), and
+ * social image export options.
+ *
+ * TRIGGERED BY: CourseDetail page when all lessons are completed and certificate
+ * is generated via useGenerateCertificate().
+ */
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

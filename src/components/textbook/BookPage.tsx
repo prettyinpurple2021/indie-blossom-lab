@@ -1,3 +1,27 @@
+/**
+ * @file BookPage.tsx — Single Textbook Page Component
+ *
+ * PURPOSE: Renders one page of the textbook with markdown-like content,
+ * highlighted text overlays, embedded quizzes, and mini games.
+ *
+ * RENDERING PIPELINE:
+ * 1. Raw content string → split by highlights into segments
+ * 2. Each segment → parsed for markdown headings (#, ##, ###), lists (-)
+ * 3. Highlighted segments get colored background + optional note tooltip
+ * 4. Embedded quiz (if present) renders as interactive radio group
+ * 5. Mini game (if present) renders WordScramble or FillBlank widget
+ *
+ * TEXT SELECTION:
+ * - onMouseUp detects user text selection within contentRef
+ * - Calculates start/end offsets relative to page content string
+ * - Bubbles selection data up to TextbookViewer for highlight creation
+ *
+ * PRODUCTION TODO:
+ * - Replace simple markdown parsing with a proper markdown renderer (remark/rehype)
+ * - Add syntax highlighting for code blocks
+ * - Support image embedding in page content
+ * - Improve offset calculation for multi-paragraph selections
+ */
 import React, { forwardRef, useState, useRef, useEffect, useMemo } from 'react';
 import { TextbookPage, TextbookChapter, EmbeddedQuiz, TextbookHighlight } from '@/hooks/useTextbook';
 import { Button } from '@/components/ui/button';

@@ -1,3 +1,21 @@
+/**
+ * @file HighlightsPanel.tsx — Highlights & Notes Management Side Panel
+ *
+ * PURPOSE: Displays all user highlights across the textbook, grouped by
+ * "Notes" (highlights with attached notes) and "Highlights" (color-only).
+ * Supports inline note editing, deletion, and click-to-navigate to the
+ * highlighted page.
+ *
+ * DATA FLOW:
+ *   highlights prop (from TextbookViewer) → rendered as HighlightCard components
+ *   useUpdateHighlight → edit note text on a highlight
+ *   useDeleteHighlight → remove a highlight entirely
+ *
+ * PRODUCTION TODO:
+ * - Add export highlights as markdown/PDF
+ * - Add search/filter within highlights
+ * - Support highlight color changes after creation
+ */
 import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';

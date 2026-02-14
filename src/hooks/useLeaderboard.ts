@@ -1,3 +1,20 @@
+/**
+ * @file useLeaderboard.ts — Leaderboard Data Hooks
+ *
+ * PURPOSE: Fetches ranked student data from the get-leaderboard edge function.
+ * Supports XP-based and badge-count-based leaderboards.
+ *
+ * SECURITY: Requires authenticated session. The edge function uses verify_jwt=true
+ * and queries only public profile data (display name, avatar) — no PII exposed.
+ *
+ * NOTE: Streak leaderboard was intentionally removed for privacy reasons
+ * (it exposed user activity patterns). XP and badges are sufficient.
+ *
+ * PRODUCTION TODO:
+ * - Add weekly/monthly time-scoped leaderboards
+ * - Implement leaderboard caching to reduce edge function calls
+ * - Add opt-out for students who don't want to appear on leaderboard
+ */
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

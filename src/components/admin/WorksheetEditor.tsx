@@ -1,3 +1,13 @@
+/**
+ * @file WorksheetEditor.tsx — Admin Worksheet Builder
+ *
+ * PURPOSE: Visual editor for creating worksheet exercises (fill-in,
+ * short-answer, reflection prompts). Data stored as JSON in lessons.worksheet_data.
+ *
+ * PRODUCTION TODO:
+ * - Add drag-and-drop reordering of worksheet items
+ * - Support file attachment fields for worksheet submissions
+ */
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

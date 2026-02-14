@@ -1,3 +1,25 @@
+/**
+ * @file useCertificates.ts — Certificate Generation & Verification Hooks
+ *
+ * PURPOSE: Manages the full certificate lifecycle — generating certificates
+ * on course completion, fetching user certificates, and public verification.
+ *
+ * VERIFICATION FLOW:
+ *   Student completes course → useGenerateCertificate() → inserts row with
+ *   unique SSA-XXXX-XXXX code → downloadable PDF via certificateGenerator.ts
+ *   Public verification via RPC function verify_certificate_by_code (no auth required)
+ *
+ * SECURITY:
+ * - Certificate generation requires authenticated user (RLS)
+ * - Verification uses a secure RPC function to prevent table enumeration
+ * - Duplicate prevention: checks existing certificate before insert
+ *
+ * PRODUCTION TODO:
+ * - Add admin certificate revocation capability
+ * - Implement certificate templates per course category
+ * - Add LinkedIn credential sharing integration
+ * - Consider blockchain-based verification for premium certificates
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

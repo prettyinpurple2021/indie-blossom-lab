@@ -1,3 +1,23 @@
+/**
+ * @file useProfile.ts — User Profile & Achievement Stats Hooks
+ *
+ * PURPOSE: Manages user profile data (display name, bio, avatar, notification
+ * preferences) and aggregates achievement statistics from multiple tables.
+ *
+ * AVATAR UPLOAD FLOW:
+ *   File selected → uploadAvatar() → uploads to 'avatars' storage bucket
+ *   → returns public URL → useUpdateAvatar() → saves URL to profiles table
+ *
+ * ACHIEVEMENT AGGREGATION (useUserAchievements):
+ *   Runs 5 parallel queries against: purchases, user_progress, course_projects,
+ *   discussions, discussion_comments — returns counts for badge checking.
+ *
+ * PRODUCTION TODO:
+ * - Add avatar image compression/resizing before upload
+ * - Cache achievement counts with longer stale time (they change infrequently)
+ * - Add profile completion percentage indicator
+ * - Support social links (Twitter, LinkedIn) on profile
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

@@ -1,3 +1,17 @@
+/**
+ * @file LessonList.tsx — Admin Sortable Lesson List
+ *
+ * PURPOSE: Displays lessons for a course with drag-and-drop reordering
+ * via @dnd-kit. Supports publish/unpublish toggle and lesson deletion.
+ * Clicking a lesson title navigates to AdminLessonDetail for editing.
+ *
+ * DnD FLOW: DndContext → SortableContext → SortableLessonItem components
+ * On drag end → reorder array → useReorderLessons mutation → updates order_number
+ *
+ * PRODUCTION TODO:
+ * - Add bulk actions (delete multiple, publish all)
+ * - Add lesson duplication
+ */
 import { useState } from 'react';
 import {
   DndContext,

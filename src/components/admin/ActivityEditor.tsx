@@ -1,3 +1,15 @@
+/**
+ * @file ActivityEditor.tsx — Admin Activity Builder
+ *
+ * PURPOSE: Visual editor for creating hands-on activities with objectives,
+ * step-by-step instructions, and deliverables. Data stored as JSON in
+ * lessons.activity_data. Supports different activity types (discussion,
+ * research, create, analyze).
+ *
+ * PRODUCTION TODO:
+ * - Add time estimates per step
+ * - Support peer review activities
+ */
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

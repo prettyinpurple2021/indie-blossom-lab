@@ -1,3 +1,16 @@
+/**
+ * @file CertificateCard.tsx — Certificate Display Card
+ *
+ * PURPOSE: Renders a single certificate as a card with themed header preview,
+ * course title, student name, verification code, and action buttons
+ * (Download PDF, Share link, View verification page).
+ *
+ * THEMING: Each certificate gets a unique color theme based on the course title
+ * via getThemeByCourseTitle() from certificateThemes.ts.
+ *
+ * PDF GENERATION: Download triggers downloadCertificate() from certificateGenerator.ts
+ * which uses jsPDF to create a styled PDF entirely client-side.
+ */
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

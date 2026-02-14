@@ -1,3 +1,23 @@
+/**
+ * @file FlashcardViewer.tsx — Spaced Repetition Flashcard Study Session
+ *
+ * PURPOSE: Presents due flashcards in a flip-card UI with SM-2 quality ratings.
+ * Students rate their recall (Again/Hard/Good/Easy) after revealing the answer,
+ * which feeds back into the SM-2 algorithm (see useFlashcards.ts) to schedule
+ * the next review date.
+ *
+ * SESSION FLOW:
+ * 1. Load due cards → snapshot into sessionCards state
+ * 2. Show front (question) → user clicks to flip → show back (answer)
+ * 3. User rates quality (1-5) → useReviewFlashcard mutation → next card
+ * 4. Session complete screen with option to restart
+ *
+ * PRODUCTION TODO:
+ * - Add audio pronunciation for vocabulary cards
+ * - Track session statistics (accuracy, time per card)
+ * - Award XP for completed flashcard sessions
+ * - Add "undo" for accidental ratings
+ */
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

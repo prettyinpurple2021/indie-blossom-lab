@@ -1,3 +1,22 @@
+/**
+ * @file TextbookEditor.tsx — Admin Textbook Chapter & Page Manager
+ *
+ * PURPOSE: Full CRUD interface for managing textbook content. Supports:
+ * - Creating/editing/deleting chapters with ordering
+ * - Creating/editing/deleting pages within chapters
+ * - Embedded quiz creation within pages
+ * - Preview toggle for free/preview chapters
+ *
+ * DATA FLOW:
+ *   useTextbookChapters → chapter list → expand → useTextbookPages → page list
+ *   useCreateChapter/Page, useUpdateChapter/Page, useDeleteChapter/Page → mutations
+ *
+ * PRODUCTION TODO:
+ * - Add drag-and-drop chapter/page reordering
+ * - Add markdown preview for page content
+ * - Support bulk page import from documents
+ * - Add page content character/word count
+ */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

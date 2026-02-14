@@ -1,3 +1,12 @@
+/**
+ * @file DiscussionList.tsx — Discussion Thread List for Course Forums
+ *
+ * PURPOSE: Renders a list of discussion threads for a course with author
+ * avatars, pinned status, comment counts, and relative timestamps.
+ * Each discussion links to DiscussionDetail page.
+ *
+ * SORTING: Pinned discussions always appear first, then by creation date (newest first).
+ */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';

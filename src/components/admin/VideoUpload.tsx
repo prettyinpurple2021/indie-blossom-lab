@@ -1,3 +1,18 @@
+/**
+ * @file VideoUpload.tsx — Video File Upload Component
+ *
+ * PURPOSE: Handles video file upload to Supabase Storage for lesson video content.
+ * Shows upload progress, current video URL, and supports URL-only input as
+ * an alternative to file upload (for external video hosting).
+ *
+ * STORAGE: Files uploaded to 'lesson-videos' bucket under {courseId}/{lessonId}/ path.
+ *
+ * PRODUCTION TODO:
+ * - Add video transcoding pipeline for adaptive bitrate streaming
+ * - Support YouTube/Vimeo URL embedding
+ * - Add video thumbnail generation
+ * - Implement chunked upload for large files (>100MB)
+ */
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -1,3 +1,20 @@
+/**
+ * @file CurriculumPreviewEditor.tsx — AI-Generated Curriculum Review & Edit
+ *
+ * PURPOSE: After bulk curriculum generation via AI, this editor lets admins
+ * review and modify all generated content before saving to the database.
+ * Supports editing course details, individual lessons, textbook chapters/pages,
+ * and final exam questions.
+ *
+ * WORKFLOW: Generate content → CurriculumPreviewEditor → review/edit → Save to DB
+ * The save operation uses useSaveBulkCurriculum which creates course, lessons,
+ * chapters, pages, and exam in a single transaction.
+ *
+ * PRODUCTION TODO:
+ * - Add undo/redo for edits
+ * - Add diff view showing AI vs edited content
+ * - Support selective saving (e.g., save course but regenerate lessons)
+ */
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

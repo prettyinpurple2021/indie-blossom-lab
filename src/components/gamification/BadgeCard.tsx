@@ -1,3 +1,17 @@
+/**
+ * @file BadgeCard.tsx — Single Achievement Badge Display
+ *
+ * PURPOSE: Renders a circular badge icon with gradient coloring based on
+ * category (lessons=blue, courses=purple, streaks=orange, etc.).
+ * Unearned badges appear greyed out with an overlay.
+ *
+ * DYNAMIC ICON LOADING: Badge icons are stored as kebab-case strings in the DB
+ * (e.g., "book-open"). This component converts them to PascalCase and looks
+ * them up in Lucide's `icons` export. Falls back to Trophy if not found.
+ *
+ * SIZES: sm (48px), md (64px), lg (80px) — used in different contexts
+ * (compact dashboard view vs full achievements page).
+ */
 import { cn } from '@/lib/utils';
 import { AchievementBadge } from '@/hooks/useGamification';
 import { icons } from 'lucide-react';

@@ -1,3 +1,15 @@
+/**
+ * @file LessonEditor.tsx — Admin Lesson Create/Edit Form
+ *
+ * PURPOSE: Tabbed form for creating/editing lessons. Supports lesson types:
+ * text, video, quiz, worksheet, activity. Content tab switches editor based
+ * on type. Media tab provides video upload. AI content generation available.
+ *
+ * PRODUCTION TODO:
+ * - Add auto-save draft functionality
+ * - Add markdown preview for text content
+ * - Add lesson scheduling (publish date)
+ */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,9 +61,9 @@ export function LessonEditor({ courseId, lesson, nextOrderNumber, onClose }: Les
       const lessonData = {
         title: title.trim(),
         type,
-        content: content || null,
-        video_url: videoUrl || null,
-        duration_minutes: duration ? parseInt(duration) : null,
+        content: content || undefined,
+        video_url: videoUrl || undefined,
+        duration_minutes: duration ? parseInt(duration) : undefined,
         quiz_data: type === 'quiz' ? quizData : null,
         worksheet_data: type === 'worksheet' ? worksheetData : null,
         activity_data: type === 'activity' ? activityData : null,

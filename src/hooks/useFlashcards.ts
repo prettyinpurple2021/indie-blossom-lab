@@ -1,3 +1,26 @@
+/**
+ * @file useFlashcards.ts — Spaced Repetition Flashcard Hooks
+ *
+ * PURPOSE: CRUD operations for user flashcards + SM-2 spaced repetition
+ * algorithm for scheduling reviews.
+ *
+ * SM-2 ALGORITHM (SuperMemo 2):
+ * - Quality ratings: 0 (blackout) to 5 (perfect recall)
+ * - Quality < 3 = fail → reset interval to 0
+ * - Quality >= 3 = pass → increase interval by ease factor
+ * - Ease factor adjusts per card based on performance history
+ * - Minimum ease factor is 1.3 to prevent cards from becoming impossible
+ *
+ * DATA MODEL:
+ *   user_flashcards: per-user, per-course, optionally linked to a highlight
+ *   Fields: front_text, back_text, ease_factor, interval_days, repetitions,
+ *           next_review_at, last_reviewed_at
+ *
+ * PRODUCTION TODO:
+ * - Add bulk card creation from AI-generated content
+ * - Track review accuracy statistics over time
+ * - Support card tagging and deck organization
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 

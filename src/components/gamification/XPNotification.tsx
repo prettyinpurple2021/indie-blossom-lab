@@ -1,3 +1,17 @@
+/**
+ * @file XPNotification.tsx — Animated XP & Badge Unlock Notifications
+ *
+ * PURPOSE: Provides floating notification toasts for XP awards and badge unlocks.
+ * Two exports:
+ *   1. XPNotification component — renders a single notification with auto-dismiss
+ *   2. useXPNotification hook — manages a queue of notifications with stacking
+ *
+ * ANIMATION: Notifications appear for 2.5s then fade out over 0.5s.
+ * Multiple notifications stack vertically (60px offset per notification).
+ *
+ * USAGE: GamificationProvider uses useXPNotification() to show notifications
+ * when awardXP() or checkAndAwardBadges() succeed.
+ */
 import { useEffect, useState } from 'react';
 import { Zap, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';

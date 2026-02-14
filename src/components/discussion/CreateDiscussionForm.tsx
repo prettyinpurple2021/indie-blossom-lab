@@ -1,3 +1,14 @@
+/**
+ * @file CreateDiscussionForm.tsx — New Discussion Thread Creation Form
+ *
+ * PURPOSE: Form for creating a new discussion thread within a course.
+ * Validates title (5-200 chars) and content (20-5000 chars) via Zod.
+ * Awards XP for starting a discussion via GamificationProvider.
+ *
+ * PRODUCTION TODO:
+ * - Add markdown preview for content
+ * - Support tagging discussions by topic (e.g., "question", "tip", "resource")
+ */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

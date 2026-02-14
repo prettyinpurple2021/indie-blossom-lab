@@ -1,3 +1,12 @@
+/**
+ * @file SeedCurriculumButton.tsx — Demo Data Seeder
+ *
+ * PURPOSE: Seeds the database with sample curriculum data (courses, lessons,
+ * textbook chapters/pages) from the curriculumData.ts static dataset.
+ * Useful for development and demo environments. Shows progress during seeding.
+ *
+ * WARNING: Only intended for dev/demo use — not for production.
+ */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

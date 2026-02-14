@@ -1,3 +1,15 @@
+/**
+ * @file XPDisplay.tsx — XP Level & Streak Display Widget
+ *
+ * PURPOSE: Shows the student's current XP, level, and streak in two modes:
+ *   - compact: small pill badges for header/sidebar (tooltip on hover)
+ *   - full: card with progress bar showing XP within current level
+ *
+ * LEVEL CALCULATION: Level = floor(XP / 500) + 1, progress bar shows XP % within level.
+ *
+ * REAL-TIME: Subscribes to gamification changes via useGamificationRealtime
+ * so XP updates appear instantly without page refresh.
+ */
 import { Zap, Flame, TrendingUp } from 'lucide-react';
 import { useUserGamification, useGamificationRealtime } from '@/hooks/useGamification';
 import { useAuth } from '@/hooks/useAuth';

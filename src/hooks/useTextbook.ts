@@ -1,3 +1,24 @@
+/**
+ * @file useTextbook.ts — Textbook Data Hooks (Chapters, Pages, Highlights, Bookmarks)
+ *
+ * PURPOSE: Provides all database interactions for the textbook feature.
+ * Split into student-facing hooks (read chapters/pages, manage highlights
+ * and bookmarks) and admin hooks (CRUD chapters and pages).
+ *
+ * DATA MODEL:
+ *   courses → textbook_chapters (1:N) → textbook_pages (1:N)
+ *   users → user_textbook_highlights (1:N, per page)
+ *   users → user_textbook_bookmarks (1:1 per course, upsert)
+ *
+ * SECURITY: RLS ensures students only see/edit their own highlights and bookmarks.
+ * Admin mutations rely on admin role RLS policies.
+ *
+ * PRODUCTION TODO:
+ * - Add pagination for textbooks with 100+ pages
+ * - Implement full-text search via Postgres tsvector
+ * - Add real-time collaboration (shared highlights for study groups)
+ * - Cache pages in localStorage for offline reading
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';

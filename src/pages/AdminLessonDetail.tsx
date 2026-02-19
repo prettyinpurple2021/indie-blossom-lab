@@ -21,7 +21,7 @@ import {
   Video,
   Mic,
 } from 'lucide-react';
-import { useAdminLessons, useAdminCourses, useUpdateLesson, Lesson, LessonType, QuizData, WorksheetData, ActivityData } from '@/hooks/useAdmin';
+import { useAdminLessons, useAdminCourses, useUpdateLesson, Lesson, LessonType, QuizData, WorksheetData, ActivityData, migrateWorksheetData, migrateActivityData } from '@/hooks/useAdmin';
 import { useTextbookChapters, useTextbookPages } from '@/hooks/useTextbook';
 import { useToast } from '@/hooks/use-toast';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
@@ -65,8 +65,8 @@ export default function AdminLessonDetail() {
       setContent(lesson.content || '');
       setVideoUrl(lesson.video_url || '');
       setQuizData(lesson.quiz_data);
-      setWorksheetData(lesson.worksheet_data);
-      setActivityData(lesson.activity_data);
+      setWorksheetData(migrateWorksheetData(lesson.worksheet_data));
+      setActivityData(migrateActivityData(lesson.activity_data));
     }
   });
 
@@ -75,8 +75,8 @@ export default function AdminLessonDetail() {
     if (lesson.content) setContent(lesson.content);
     if (lesson.video_url) setVideoUrl(lesson.video_url);
     if (lesson.quiz_data) setQuizData(lesson.quiz_data);
-    if (lesson.worksheet_data) setWorksheetData(lesson.worksheet_data);
-    if (lesson.activity_data) setActivityData(lesson.activity_data);
+    if (lesson.worksheet_data) setWorksheetData(migrateWorksheetData(lesson.worksheet_data));
+    if (lesson.activity_data) setActivityData(migrateActivityData(lesson.activity_data));
   }
 
   // Browser beforeunload warning for unsaved changes
@@ -328,9 +328,9 @@ export default function AdminLessonDetail() {
           >
             <ClipboardList className="h-4 w-4" />
             <span className="hidden sm:inline">Worksheet</span>
-            {worksheetData && (
+            {worksheetData?.worksheets?.length ? (
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-success shadow-[0_0_6px_hsl(var(--success))]" title="Has worksheet" />
-            )}
+            ) : null}
           </TabsTrigger>
           <TabsTrigger 
             value="activity"
@@ -338,9 +338,9 @@ export default function AdminLessonDetail() {
           >
             <Zap className="h-4 w-4" />
             <span className="hidden sm:inline">Activity</span>
-            {activityData && (
+            {activityData?.activities?.length ? (
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-success shadow-[0_0_6px_hsl(var(--success))]" title="Has activity" />
-            )}
+            ) : null}
           </TabsTrigger>
           <TabsTrigger 
             value="textbook"

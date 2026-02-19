@@ -22,13 +22,14 @@
  * - Consider adding a top notification banner slot
  * - Add breadcrumb navigation for deeply nested routes
  */
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NotepadWidget } from '@/components/notepad/NotepadWidget';
 
 export function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -74,6 +75,9 @@ export function AppLayout() {
             <Outlet />
           </main>
         </div>
+
+        {/* Floating notepad widget — available on all authenticated pages */}
+        <NotepadWidget courseId={null} />
       </div>
     </SidebarProvider>
   );

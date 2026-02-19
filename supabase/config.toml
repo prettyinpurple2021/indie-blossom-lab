@@ -38,3 +38,6 @@ verify_jwt = false
 
 [functions.bulk-generate-lessons]
 verify_jwt = false
+
+[functions.bulk-generate-textbooks]
+verify_jwt = false

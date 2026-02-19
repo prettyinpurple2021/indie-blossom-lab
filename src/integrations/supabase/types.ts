@@ -587,6 +587,59 @@ export type Database = {
           },
         ]
       }
+      student_notes: {
+        Row: {
+          content: string
+          course_id: string | null
+          created_at: string
+          height: number | null
+          id: string
+          is_minimized: boolean
+          position_x: number | null
+          position_y: number | null
+          title: string
+          updated_at: string
+          user_id: string
+          width: number | null
+        }
+        Insert: {
+          content?: string
+          course_id?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          is_minimized?: boolean
+          position_x?: number | null
+          position_y?: number | null
+          title?: string
+          updated_at?: string
+          user_id: string
+          width?: number | null
+        }
+        Update: {
+          content?: string
+          course_id?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          is_minimized?: boolean
+          position_x?: number | null
+          position_y?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_notes_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       textbook_chapters: {
         Row: {
           course_id: string

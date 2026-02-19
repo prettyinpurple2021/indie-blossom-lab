@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.notify-discussion-reply]
 verify_jwt = false
+
+[functions.bulk-generate-lessons]
+verify_jwt = false

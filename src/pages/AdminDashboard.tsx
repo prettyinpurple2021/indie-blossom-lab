@@ -8,6 +8,7 @@ import { LessonList } from '@/components/admin/LessonList';
 import { CourseEditor } from '@/components/admin/CourseEditor';
 import { TextbookEditor } from '@/components/admin/TextbookEditor';
 import { SeedCurriculumButton } from '@/components/admin/SeedCurriculumButton';
+import { BulkGenerateButton } from '@/components/admin/BulkGenerateButton';
 import { QuickGenerateDialog } from '@/components/admin/QuickGenerateDialog';
 import { useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
@@ -261,6 +262,7 @@ export default function AdminDashboard() {
 
           {/* Seed Curriculum Button */}
           <SeedCurriculumButton />
+          <BulkGenerateButton />
 
           {/* Create Course Button / Form */}
           {!isCreatingCourse ? (

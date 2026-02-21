@@ -169,6 +169,54 @@ export function useMarkLessonComplete() {
 }
 
 /**
+ * Mutation: Submit a quiz score for a lesson.
+ *
+ * Upserts the user_progress row with the quiz score.
+ * If the score meets or exceeds passingScore, the lesson is also
+ * marked as completed automatically.
+ */
+export function useSubmitQuizScore() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      lessonId,
+      score,
+      passingScore,
+    }: {
+      userId: string;
+      lessonId: string;
+      score: number;         // 0-100 percentage
+      passingScore: number;  // Minimum % required to pass
+    }) => {
+      const passed = score >= passingScore;
+      const { data, error } = await supabase
+        .from('user_progress')
+        .upsert(
+          {
+            user_id: userId,
+            lesson_id: lessonId,
+            quiz_score: score,
+            completed: passed,
+            completed_at: passed ? new Date().toISOString() : null,
+          },
+          { onConflict: 'user_id,lesson_id' }
+        )
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['user-progress', variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['course-progress', variables.userId] });
+    },
+  });
+}
+
+/**
  * Mutation: Save personal notes for a lesson.
  * Uses the same UPSERT pattern as lesson completion.
  */

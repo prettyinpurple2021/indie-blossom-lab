@@ -46,47 +46,70 @@ export interface Course {
 }
 
 /**
- * Lesson type enum — matches the full DB enum `lesson_type`.
- * Each type determines which interactive component renders in LessonViewer.
+ * Lesson type enum — the different content formats a lesson can have.
+ * Matches the full `lesson_type` enum in the database.
  */
 export type LessonType = 'text' | 'video' | 'quiz' | 'assignment' | 'worksheet' | 'activity';
 
-/** Shape of a single quiz question stored in quiz_data JSONB */
+// ============================================================================
+// STRUCTURED DATA TYPES FOR INTERACTIVE LESSON TYPES
+// ============================================================================
+
+/** A single multiple-choice quiz question */
 export interface QuizQuestion {
+  id: string;
   question: string;
-  options: string[];
-  correct_answer: number;        // Index of correct option (0-based)
-  explanation?: string;           // Shown after answering
+  options: string[];        // Answer choices (typically 4)
+  correctAnswer: number;    // 0-based index of the correct option
+  explanation?: string;     // Shown to students after they answer
 }
 
-/** Shape of quiz_data JSONB column */
+/** Quiz data stored in lessons.quiz_data JSONB column */
 export interface QuizData {
   questions: QuizQuestion[];
-  passing_score?: number;         // Percentage needed to pass (default 70)
+  passingScore: number;     // Minimum % to pass (0–100)
 }
 
-/** Shape of a single worksheet exercise stored in worksheet_data JSONB */
-export interface WorksheetExercise {
-  type: string;                   // e.g., 'reflection', 'framework', 'checklist'
-  title: string;
-  instructions: string;
-  content?: string;               // Mini-lesson or teaching content
-  exercise_prompt?: string;       // What the student should do
-}
-
-/** Shape of worksheet_data JSONB column (array format) */
-export type WorksheetData = WorksheetExercise[];
-
-/** Shape of a single activity step stored in activity_data JSONB */
+/** A single step within an activity */
 export interface ActivityStep {
-  step_number: number;
+  id: string;
   title: string;
-  instructions: string;
-  type?: string;                  // e.g., 'action', 'reflect', 'create'
+  description: string;
 }
 
-/** Shape of activity_data JSONB column (array format) */
-export type ActivityData = ActivityStep[];
+/** A single activity within a lesson */
+export interface SingleActivity {
+  id: string;
+  title: string;
+  instructions: string;
+  type: 'reflection' | 'exercise' | 'case-study' | 'brainstorm';
+  steps: ActivityStep[];
+}
+
+/** Activity data stored in lessons.activity_data JSONB column */
+export interface ActivityData {
+  activities: SingleActivity[];
+}
+
+/** A single prompt section within a worksheet */
+export interface WorksheetSection {
+  id: string;
+  title: string;
+  prompts: string[];
+}
+
+/** A single worksheet within a lesson */
+export interface SingleWorksheet {
+  id: string;
+  title: string;
+  instructions: string;
+  sections: WorksheetSection[];
+}
+
+/** Worksheet data stored in lessons.worksheet_data JSONB column */
+export interface WorksheetData {
+  worksheets: SingleWorksheet[];
+}
 
 /**
  * Lesson interface — matches the `lessons` database table.
@@ -101,9 +124,10 @@ export interface Lesson {
   content: string | null;                  // Markdown/HTML content for text lessons
   video_url: string | null;                // URL for video lessons (Supabase Storage)
   duration_minutes: number | null;         // Estimated time to complete
-  quiz_data: QuizData | null;              // Quiz questions (for quiz-type or supplemental)
-  worksheet_data: WorksheetData | null;    // Worksheet exercises
-  activity_data: ActivityData | null;      // Step-by-step activity
+  quiz_data: QuizData | null;              // Structured quiz data for 'quiz' type lessons
+  activity_data: ActivityData | null;      // Structured activity steps for 'activity' type
+  worksheet_data: WorksheetData | null;    // Structured worksheet prompts for 'worksheet' type
+  is_published: boolean;                   // Only published lessons are visible to students
   created_at: string;
   updated_at: string;
 }

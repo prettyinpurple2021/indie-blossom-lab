@@ -36,7 +36,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useCourse, useCourseLessons, useHasPurchasedCourse } from '@/hooks/useCourses';
-import { useCourseProgress, useMarkLessonComplete } from '@/hooks/useProgress';
+import { useCourseProgress, useMarkLessonComplete, useSubmitQuizScore, useUpdateLessonNotes } from '@/hooks/useProgress';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
@@ -86,6 +86,8 @@ export default function LessonViewer() {
   const { data: existingCertificate } = useCourseCertificate(user?.id, courseId);
   const generateCertificate = useGenerateCertificate();
   const markComplete = useMarkLessonComplete();
+  const submitQuizScore = useSubmitQuizScore();
+  const updateNotes = useUpdateLessonNotes();
   const setContinueLater = useSetContinueLater();
 
   const isLoading = courseLoading || lessonsLoading || purchaseLoading || progressLoading;
@@ -101,10 +103,43 @@ export default function LessonViewer() {
     p => p.lesson_id === lessonId && p.completed
   ) ?? false;
 
+  // Retrieve the current lesson's saved progress record (for notes & quiz score)
+  const currentProgress = progressData?.progress?.find(p => p.lesson_id === lessonId) ?? null;
+
   // Memoized toggle handlers for keyboard navigation - must be before early returns
   const handleToggleAITutor = useCallback(() => {
     setShowAITutor(prev => !prev);
   }, []);
+
+  /** Called when a quiz is submitted — saves score and auto-marks complete if passed */
+  const handleQuizSubmit = async (score: number) => {
+    if (!user?.id || !lessonId || !currentLesson?.quiz_data) return;
+    const { passingScore } = currentLesson.quiz_data;
+    try {
+      await submitQuizScore.mutateAsync({ userId: user.id, lessonId, score, passingScore });
+      if (score >= passingScore) {
+        toast({ title: '🎉 Quiz Passed!', description: `You scored ${score}%. Lesson marked complete!` });
+        // Check for new badges
+        await awardXP('LESSON_COMPLETE');
+        setTimeout(() => checkAndAwardBadges(), 1000);
+      } else {
+        toast({ title: `Quiz submitted — ${score}%`, description: `You need ${passingScore}% to pass. Review the answers and try again!` });
+      }
+    } catch {
+      toast({ title: 'Error saving quiz score', variant: 'destructive' });
+    }
+  };
+
+  /** Called when worksheet or assignment responses are saved */
+  const handleSaveNotes = async (notes: string) => {
+    if (!user?.id || !lessonId) return;
+    try {
+      await updateNotes.mutateAsync({ userId: user.id, lessonId, notes });
+      toast({ title: 'Saved', description: 'Your response has been saved.' });
+    } catch {
+      toast({ title: 'Error saving response', variant: 'destructive' });
+    }
+  };
 
   const handleMarkComplete = async () => {
     if (!user?.id || !lessonId) return;
@@ -327,6 +362,10 @@ export default function LessonViewer() {
                 <div className="glass-card p-6 md:p-8">
                   <LessonContent
                     lesson={currentLesson}
+                    savedNotes={currentProgress?.notes ?? null}
+                    quizScore={currentProgress?.quiz_score ?? null}
+                    onQuizSubmit={handleQuizSubmit}
+                    onSaveNotes={handleSaveNotes}
                     isCompleted={isCompleted}
                     existingNotes={progressData?.progress?.find(p => p.lesson_id === lessonId)?.notes ?? null}
                     userId={user?.id}

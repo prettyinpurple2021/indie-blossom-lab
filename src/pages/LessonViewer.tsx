@@ -366,23 +366,27 @@ export default function LessonViewer() {
                     quizScore={currentProgress?.quiz_score ?? null}
                     onQuizSubmit={handleQuizSubmit}
                     onSaveNotes={handleSaveNotes}
+                    isCompleted={isCompleted}
+                    existingNotes={progressData?.progress?.find(p => p.lesson_id === lessonId)?.notes ?? null}
                   />
 
                   {/* Completion & Navigation */}
                   <div className="mt-12 pt-8 border-t border-primary/20 space-y-6">
-                    {/* Mark Complete Button */}
-                    <div className="flex justify-center">
-                      <Button
-                        variant={isCompleted ? 'outline' : 'neon'}
-                        size="lg"
-                        onClick={handleMarkComplete}
-                        disabled={markComplete.isPending}
-                        className="gap-2 transition-all duration-300"
-                      >
-                        <CheckCircle2 className={`h-5 w-5 transition-colors ${isCompleted ? 'text-success' : ''}`} />
-                        {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
-                      </Button>
-                    </div>
+                     {/* Mark Complete Button — hidden for assignment type since submission handles it */}
+                    {currentLesson.type !== 'assignment' && (
+                      <div className="flex justify-center">
+                        <Button
+                          variant={isCompleted ? 'outline' : 'neon'}
+                          size="lg"
+                          onClick={handleMarkComplete}
+                          disabled={markComplete.isPending}
+                          className="gap-2 transition-all duration-300"
+                        >
+                          <CheckCircle2 className={`h-5 w-5 transition-colors ${isCompleted ? 'text-success' : ''}`} />
+                          {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+                        </Button>
+                      </div>
+                    )}
 
                     {/* Navigation */}
                     <div className="flex items-center justify-between gap-4">

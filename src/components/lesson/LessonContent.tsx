@@ -1,3 +1,17 @@
+/**
+ * @file LessonContent.tsx — Main Lesson Content Renderer
+ * 
+ * Renders different content based on the lesson type:
+ * - text: Rich text content with formatting
+ * - video: Embedded video player + text content
+ * - quiz: Text content + interactive quiz (TODO: QuizPlayer)
+ * - assignment: Text content + inline submission form
+ * - worksheet: Text content + worksheet exercises (TODO: WorksheetViewer)
+ * - activity: Text content + step-by-step player (TODO: ActivityPlayer)
+ * 
+ * This component handles TYPE BRANCHING — the key missing piece
+ * that ensures each lesson type gets its appropriate interactive UI.
+ */
 import DOMPurify from 'dompurify';
 import { type Lesson } from '@/lib/courseData';
 import { Badge } from '@/components/ui/badge';
@@ -6,8 +20,11 @@ import { QuizViewer } from './QuizViewer';
 import { ActivityViewer } from './ActivityViewer';
 import { WorksheetViewer } from './WorksheetViewer';
 import { AssignmentViewer } from './AssignmentViewer';
+import { FileText, Video, Sparkles, PenLine, BookOpen, Zap } from 'lucide-react';
+import { AssignmentSubmission } from './AssignmentSubmission';
 
 interface LessonContentProps {
+  /** The lesson to render */
   lesson: Lesson;
   /** The student's saved notes for this lesson (used by worksheet & assignment) */
   savedNotes?: string | null;
@@ -17,6 +34,10 @@ interface LessonContentProps {
   onQuizSubmit?: (score: number) => void;
   /** Called when worksheet / assignment responses are saved */
   onSaveNotes?: (notes: string) => void;
+  /** Whether the current user has completed this lesson */
+  isCompleted?: boolean;
+  /** Existing notes/submission from user_progress (used for assignments) */
+  existingNotes?: string | null;
 }
 
 // Sanitize and format content to prevent XSS attacks
@@ -43,6 +64,8 @@ export function LessonContent({
   onQuizSubmit,
   onSaveNotes,
 }: LessonContentProps) {
+export function LessonContent({ lesson, isCompleted = false, existingNotes = null }: LessonContentProps) {
+  /** Returns the icon for the lesson type badge */
   const getTypeIcon = () => {
     switch (lesson.type) {
       case 'video':
@@ -55,11 +78,16 @@ export function LessonContent({
         return <Activity className="h-4 w-4" />;
       case 'worksheet':
         return <FileQuestion className="h-4 w-4" />;
+      case 'worksheet':
+        return <BookOpen className="h-4 w-4" />;
+      case 'activity':
+        return <Zap className="h-4 w-4" />;
       default:
         return <FileText className="h-4 w-4" />;
     }
   };
 
+  /** Returns a human-readable label for the lesson type */
   const getTypeName = () => {
     switch (lesson.type) {
       case 'video':
@@ -72,6 +100,10 @@ export function LessonContent({
         return 'Activity';
       case 'worksheet':
         return 'Worksheet';
+      case 'worksheet':
+        return 'Worksheet';
+      case 'activity':
+        return 'Activity';
       default:
         return 'Reading';
     }
@@ -96,7 +128,7 @@ export function LessonContent({
         </h1>
       </div>
 
-      {/* Video Player */}
+      {/* Video Player — shown for video-type lessons */}
       {lesson.type === 'video' && lesson.video_url && (
         <div className="aspect-video bg-black/50 rounded-lg overflow-hidden border border-primary/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
           {lesson.video_url.includes('youtube.com') || lesson.video_url.includes('youtu.be') ? (
@@ -136,6 +168,7 @@ export function LessonContent({
       )}
 
       {/* Text / Instructional Content (shown for ALL types as introductory text) */}
+      {/* Text Content — shown for ALL lesson types that have content */}
       {lesson.content && (
         <div className="prose prose-invert max-w-none">
           <div 
@@ -216,6 +249,49 @@ export function LessonContent({
 
       {/* Placeholder for text lessons without content */}
       {lesson.type === 'text' && !lesson.content && (
+      {/* === TYPE-SPECIFIC INTERACTIVE SECTIONS === */}
+
+      {/* Assignment Submission Form — shown for assignment-type lessons */}
+      {lesson.type === 'assignment' && (
+        <AssignmentSubmission
+          lesson={lesson}
+          isCompleted={isCompleted}
+          existingNotes={existingNotes}
+        />
+      )}
+
+      {/* Quiz Player — placeholder for future implementation */}
+      {lesson.type === 'quiz' && !lesson.content && (
+        <div className="bg-black/30 border border-secondary/20 border-dashed rounded-lg p-8 text-center">
+          <div className="h-16 w-16 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]">
+            <Sparkles className="h-8 w-8 text-secondary" />
+          </div>
+          <p className="text-muted-foreground">Interactive quiz coming soon</p>
+        </div>
+      )}
+
+      {/* Worksheet Viewer — placeholder for future implementation */}
+      {lesson.type === 'worksheet' && !lesson.content && (
+        <div className="bg-black/30 border border-accent/20 border-dashed rounded-lg p-8 text-center">
+          <div className="h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_hsl(var(--accent)/0.3)]">
+            <BookOpen className="h-8 w-8 text-accent" />
+          </div>
+          <p className="text-muted-foreground">Interactive worksheet coming soon</p>
+        </div>
+      )}
+
+      {/* Activity Player — placeholder for future implementation */}
+      {lesson.type === 'activity' && !lesson.content && (
+        <div className="bg-black/30 border border-primary/20 border-dashed rounded-lg p-8 text-center">
+          <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+            <Zap className="h-8 w-8 text-primary" />
+          </div>
+          <p className="text-muted-foreground">Interactive activity coming soon</p>
+        </div>
+      )}
+
+      {/* Fallback: Lessons with no content AND not a special type */}
+      {!lesson.content && lesson.type === 'text' && (
         <div className="bg-black/30 border border-primary/20 border-dashed rounded-lg p-8 text-center">
           <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
             <FileText className="h-8 w-8 text-primary" />

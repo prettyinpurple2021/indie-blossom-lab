@@ -1,5 +1,7 @@
 # SoloSuccess Academy – Curriculum Reference
 
+> **Note:** The canonical curriculum reference has moved to the project wiki. See [`docs/Curriculum.md`](docs/Curriculum.md) for the up-to-date version.
+
 This document provides a full reference of the SoloSuccess Academy curriculum, organized across three sections:
 
 1. **Courses** – Name and brief description of each of the 10 courses.

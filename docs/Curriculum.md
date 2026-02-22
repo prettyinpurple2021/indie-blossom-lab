@@ -129,14 +129,14 @@ SoloSuccess Academy delivers a 10-course entrepreneurship curriculum structured 
 | 5 | Writing Hooks That Stop the Scroll | The psychology of the "first 3 seconds" and how to write headlines that force clicks. |
 | 6 | Assignment – The "1-Hour Month" Challenge | Plan and schedule an entire month of content in a single 1-hour sitting. |
 | 7 | Analytics: Measuring What Matters | Which metrics actually lead to money (clicks/conversions) vs. vanity metrics (likes). |
-| 8 | Quiz – Platform Algorithms | Test your knowledge on what different social platforms prioritize in 2026. |
+| 8 | Quiz – Platform Algorithms | Test your knowledge on what different social platforms prioritize in their current algorithms. |
 
 ### Activities & Assessments
 
 | Lesson | Name | Type | Description |
 |--------|------|------|-------------|
 | 6 | Assignment – The "1-Hour Month" Challenge | Assignment | Plan and schedule an entire month of social media content in a single 1-hour work session using AI and templates. |
-| 8 | Quiz – Platform Algorithms | Quiz | Test your knowledge on what different social media platforms prioritize in their algorithms in 2026. |
+| 8 | Quiz – Platform Algorithms | Quiz | Test your knowledge on what different social media platforms prioritize in their current algorithms. |
 
 ---
 

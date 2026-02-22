@@ -4,7 +4,7 @@
 
 ## Copyright Notice
 
-Copyright © 2024–2026. All Rights Reserved.
+Copyright © 2024–present. All Rights Reserved.
 
 **SoloSuccess Academy** and all associated content, source code, design, curriculum, images, ideas, and intellectual property are the exclusive property of the creator and owner of this project.
 
@@ -34,7 +34,7 @@ This project was developed by its creator with the assistance of the following A
 - **GitHub Copilot** — Code completion and assistance
 - **Google Gemini** — Ideation and content drafting
 
-The use of these tools does not diminish, transfer, or dilute the creator's ownership of or rights to the resulting work. All AI-assisted output has been reviewed, curated, and integrated by the creator and forms part of this proprietary project.
+The use of these tools is not intended to diminish, transfer, or dilute the creator's ownership of or rights to the resulting work; however, actual intellectual property rights may depend on applicable law and the terms of service of each tool. This disclosure does not constitute legal advice, and readers should consult qualified legal counsel for definitive guidance. All AI-assisted output has been reviewed, curated, and integrated by the creator and forms part of this proprietary project.
 
 ---
 

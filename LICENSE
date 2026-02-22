@@ -1,6 +1,6 @@
 PROPRIETARY AND CONFIDENTIAL
 
-Copyright (c) 2024–2026. All Rights Reserved.
+Copyright (c) 2024. All Rights Reserved.
 
 NOTICE: This software, its source code, design, content, curriculum, images, ideas,
 and all associated intellectual property ("the Work") are the exclusive property of
@@ -22,13 +22,17 @@ Specifically, and without limitation, the following are strictly prohibited:
   6. Incorporating any portion of the Work into another product or service.
 
 The construction details, architecture, database schema, and internal workings of
-this project are proprietary and confidential and must not be disclosed publicly.
+this project are proprietary to the owner. Even if this repository is publicly
+accessible for review, no license is granted to use, reproduce, distribute, or
+create derivative works from the Work except as expressly authorized in writing
+by the owner.
 
-This project is NOT open source. Its presence in a version control system confers
-no rights of any kind on any party other than the owner.
+This project is NOT open source. Public availability of this repository, including
+its presence in any version control system, does not grant any license or rights
+of any kind on any party other than the owner.
 
 THE WORK IS PROVIDED WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE OWNER BE
 LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR IN CONNECTION
 WITH THE WORK OR THE USE OF THE WORK.
 
-For licensing inquiries, contact the project owner directly.
+For licensing or permission inquiries, contact the project owner directly.

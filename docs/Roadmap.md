@@ -87,4 +87,4 @@ This page tracks the planned features and development milestones for SoloSuccess
 
 ---
 
-*Last updated: 2026. Roadmap is subject to change without notice.*
+*Last updated: February 2026. Roadmap is subject to change without notice.*

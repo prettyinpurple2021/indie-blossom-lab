@@ -97,9 +97,9 @@ bun install
 Create a `.env` file in the project root:
 
 ```env
-VITE_SUPABASE_URL=https://uiayptizkarnbomkajot.supabase.co
+VITE_SUPABASE_URL=https://fkqzwlpwdgdiwpsvhavt.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-VITE_SUPABASE_PROJECT_ID=uiayptizkarnbomkajot
+VITE_SUPABASE_PROJECT_ID=fkqzwlpwdgdiwpsvhavt
 ```
 
 > **Note**: For local development with a new Supabase project, you'll need to create your own project and update these values.
@@ -235,7 +235,33 @@ If creating a fresh Supabase project:
 3. Run migrations from `supabase/migrations/` in order
 4. Enable Email auth in Authentication settings
 5. Create storage buckets: `avatars`, `lesson-videos`, `project-files`
-6. Deploy Edge Functions using Supabase CLI
+6. Deploy Edge Functions (see below)
+
+### Deploying Edge Functions (no local Docker)
+
+To deploy functions to your **hosted** Supabase project (no `supabase start` or Docker needed):
+
+1. **Find your project ref** (one of these methods):
+   - **Dashboard URL**: Open your project in [Supabase Dashboard](https://supabase.com/dashboard) → the URL will be `https://supabase.com/dashboard/project/[PROJECT_REF]` — copy that `[PROJECT_REF]` part
+   - **Project Settings**: Dashboard → **Project Settings** → **General** → look for **Reference ID**
+   - **From your `.env`**: Check `VITE_SUPABASE_URL` — it's the part before `.supabase.co` (e.g., `https://[PROJECT_REF].supabase.co`)
+
+2. **Link the CLI to your project**:
+   ```bash
+   npx supabase link --project-ref [YOUR_PROJECT_REF]
+   ```
+   Replace `[YOUR_PROJECT_REF]` with the actual ref from step 1.
+   
+   If you see *"necessary privileges"*: the logged-in account must be **Owner** or **Administrator** of the project. Check [Access Control](https://supabase.com/docs/guides/platform/access-control) and your [Dashboard → Account → Access Tokens](https://supabase.com/dashboard/account/tokens). Re-login with `npx supabase login` if needed.
+
+3. **Deploy a function** (or all):
+   ```bash
+   npx supabase functions deploy send-notification-email
+   # or deploy all:
+   npx supabase functions deploy
+   ```
+
+4. Set any **secrets** (e.g. SMTP) in the Dashboard under **Project → Edge Functions → Secrets**, or via CLI.
 
 ## 📄 License
 

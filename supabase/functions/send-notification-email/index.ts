@@ -1,5 +1,18 @@
+/// <reference path="../deno.d.ts" />
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+/** Minimal type for Supabase client used in this function (avoids URL-import type gaps in IDE). */
+interface SupabaseClientLike {
+  auth: {
+    getUser(token: string): Promise<{ data: { user?: { id: string } }; error: unknown }>;
+    admin: { getUserById(id: string): Promise<{ data?: { user?: { email?: string } }; error?: unknown }> };
+  };
+  from(table: string): {
+    select(cols: string): { eq(a: string, b: unknown): { eq(a: string, b: unknown): { single(): Promise<{ data: unknown; error: unknown }> }; single(): Promise<{ data: unknown; error: unknown }> }; eq(a: string, b: unknown): { single(): Promise<{ data: unknown; error: unknown }> } };
+    insert(row: unknown): Promise<{ error?: unknown }>;
+  };
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -47,6 +60,12 @@ async function sendEmail({ to, subject, html }: EmailRequest): Promise<void> {
   await client.close();
 }
 
+interface ProfileRow {
+  display_name?: string | null;
+  email_notifications?: boolean | null;
+  course_updates?: boolean | null;
+}
+
 interface NotificationPayload {
   type: "grade_review" | "progress_reminder";
   userId: string;
@@ -78,7 +97,7 @@ serve(async (req: Request): Promise<Response> => {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    ) as SupabaseClientLike;
 
     // Verify the caller is an admin
     const token = authHeader.replace("Bearer ", "");
@@ -117,11 +136,12 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    const { data: profile } = await supabase
+    const { data: profileData } = await supabase
       .from("profiles")
       .select("display_name, email_notifications, course_updates")
       .eq("id", userId)
       .single();
+    const profile = profileData as ProfileRow | null;
 
     // Check notification preferences
     if (!profile?.email_notifications) {

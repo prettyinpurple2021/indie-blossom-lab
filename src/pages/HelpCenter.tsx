@@ -6,7 +6,7 @@
  */
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, HelpCircle, Send, BookOpen, Gamepad2, UserCog, Scale, Info } from 'lucide-react';
+import { Search, HelpCircle, Send, BookOpen, Gamepad2, UserCog, Scale, Info, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/accordion';
 import { PageMeta } from '@/components/layout/PageMeta';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 /* ── FAQ Data ─────────────────────────────────────────── */
 
@@ -161,6 +162,7 @@ const faqCategories: FaqCategory[] = [
 export default function HelpCenter() {
   const [searchQuery, setSearchQuery] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
 
   /* Filter FAQ items by search query */
   const filteredCategories = useMemo(() => {
@@ -179,23 +181,27 @@ export default function HelpCenter() {
       .filter((cat) => cat.items.length > 0);
   }, [searchQuery]);
 
-  /* Handle contact form submission */
-  const handleContactSubmit = (e: React.FormEvent) => {
+  /* Handle contact form submission — sends to edge function */
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
-      toast({
-        title: 'Missing fields',
-        description: 'Please fill in all fields before submitting.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Missing fields', description: 'Please fill in all fields before submitting.', variant: 'destructive' });
       return;
     }
-    // Show success toast (no backend needed yet)
-    toast({
-      title: 'Message sent!',
-      description: "Thank you for reaching out. We'll get back to you as soon as possible.",
-    });
-    setContactForm({ name: '', email: '', message: '' });
+    setSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('submit-contact', {
+        body: { ...contactForm, source: 'help-center' },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: 'Message sent!', description: "Thank you for reaching out. We'll get back to you as soon as possible." });
+      setContactForm({ name: '', email: '', message: '' });
+    } catch (err: any) {
+      toast({ title: 'Something went wrong', description: err.message || 'Please try again later.', variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -333,9 +339,9 @@ export default function HelpCenter() {
                     onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                   />
                 </div>
-                <Button type="submit" variant="neon" className="w-full">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Message
+                <Button type="submit" variant="neon" className="w-full" disabled={submitting}>
+                  {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                  {submitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             </CardContent>

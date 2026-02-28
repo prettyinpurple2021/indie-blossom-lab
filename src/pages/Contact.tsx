@@ -1,30 +1,44 @@
 /**
  * @file Contact.tsx — Contact Us Page
- * 
+ *
  * Public page with a contact form and support links.
- * No backend needed — form shows a success toast.
+ * Submissions are stored in the database via the submit-contact edge function.
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Send, Mail, HelpCircle, MessageSquare } from 'lucide-react';
+import { Send, Mail, HelpCircle, MessageSquare, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageMeta } from '@/components/layout/PageMeta';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
       toast({ title: 'Missing fields', description: 'Please fill in all required fields.', variant: 'destructive' });
       return;
     }
-    toast({ title: 'Message sent!', description: "Thanks for reaching out — we'll respond as soon as possible." });
-    setForm({ name: '', email: '', subject: '', message: '' });
+    setSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('submit-contact', {
+        body: { ...form, source: 'contact' },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: 'Message sent!', description: "Thanks for reaching out — we'll respond as soon as possible." });
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch (err: any) {
+      toast({ title: 'Something went wrong', description: err.message || 'Please try again later.', variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -80,9 +94,9 @@ export default function Contact() {
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                     />
                   </div>
-                  <Button type="submit" variant="neon" className="w-full">
-                    <Send className="h-4 w-4 mr-2" />
-                    Send Message
+                  <Button type="submit" variant="neon" className="w-full" disabled={submitting}>
+                    {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                    {submitting ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               </CardContent>

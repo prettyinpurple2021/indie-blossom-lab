@@ -564,9 +564,22 @@ export default function CourseDetail() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Download your plug-and-play asset for this course.
+                        {course.plug_and_play_asset}
                       </p>
-                      <Button variant="outline" className="w-full border-primary/30 hover:bg-primary/10 hover:border-primary/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)]">
+                      <Button
+                        variant="outline"
+                        className="w-full border-primary/30 hover:bg-primary/10 hover:border-primary/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)]"
+                        onClick={() => {
+                          /* Build the public URL for the asset stored in the course-assets bucket.
+                             The file path convention is: course-assets/{courseId}/{plug_and_play_asset} */
+                          const { data } = supabase.storage
+                            .from('course-assets')
+                            .getPublicUrl(`${course.id}/${course.plug_and_play_asset}`);
+                          if (data?.publicUrl) {
+                            window.open(data.publicUrl, '_blank');
+                          }
+                        }}
+                      >
                         <Download className="mr-2 h-4 w-4" />
                         Download Asset
                       </Button>

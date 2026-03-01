@@ -1436,6 +1436,33 @@ export type Database = {
           },
         ]
       }
+      xp_config: {
+        Row: {
+          action_key: string
+          created_at: string
+          id: string
+          label: string
+          updated_at: string
+          xp_amount: number
+        }
+        Insert: {
+          action_key: string
+          created_at?: string
+          id?: string
+          label?: string
+          updated_at?: string
+          xp_amount?: number
+        }
+        Update: {
+          action_key?: string
+          created_at?: string
+          id?: string
+          label?: string
+          updated_at?: string
+          xp_amount?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       leaderboard_view: {
@@ -1468,6 +1495,11 @@ export type Database = {
       }
     }
     Functions: {
+      award_xp: {
+        Args: { _action?: string; _user_id: string; _xp_amount: number }
+        Returns: Json
+      }
+      get_overall_progress: { Args: { _user_id: string }; Returns: Json }
       has_purchased_course: {
         Args: { _course_id: string; _user_id: string }
         Returns: boolean

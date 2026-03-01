@@ -1,19 +1,19 @@
 /**
- * bulk-generate-assessments – Generates final exams AND final essays
- * for ALL courses that don't already have them.
+ * bulk-generate-assessments – Generates a SINGLE final exam OR essay
+ * for ONE course at a time.
  *
- * WHY: The generate-content function is per-item and requires admin auth
- * from the browser. This function runs server-side with the service role
- * so we can batch-generate all assessments in one call.
+ * WHY: Edge functions have a ~60s timeout, so we process one item per
+ * call. The admin UI loops through all courses client-side.
  *
+ * BODY: { courseId: string, type: "exam" | "essay" }
  * SECURITY: Admin-only (validates JWT + checks user_roles).
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { getCorsHeaders, corsResponse } from "../_shared/cors.ts";
 
-// The Lovable AI gateway endpoint
-const AI_GATEWAY = "https://ai.lovable.dev/api/generate";
+// Lovable AI gateway endpoint (edge-function compatible)
+const AI_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -61,39 +61,41 @@ serve(async (req) => {
       });
     }
 
+    // ── Parse request body ──────────────────────────────────────
+    const { courseId, type } = await req.json();
+    if (!courseId || !type || !["exam", "essay"].includes(type)) {
+      return new Response(
+        JSON.stringify({ error: "Required: courseId (uuid) and type ('exam' | 'essay')" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // ── Service role client for writes ──────────────────────────
     const serviceClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // ── Load all courses ────────────────────────────────────────
-    const { data: courses, error: coursesErr } = await serviceClient
+    // ── Load course info ────────────────────────────────────────
+    const { data: course, error: courseErr } = await serviceClient
       .from("courses")
       .select("id, title, description")
-      .order("order_number");
+      .eq("id", courseId)
+      .single();
 
-    if (coursesErr) throw coursesErr;
+    if (courseErr || !course) {
+      return new Response(
+        JSON.stringify({ error: "Course not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    // ── Check existing exams & essays ───────────────────────────
-    const { data: existingExams } = await serviceClient
-      .from("course_final_exams")
-      .select("course_id");
-    const { data: existingEssays } = await serviceClient
-      .from("course_essays")
-      .select("course_id");
-
-    const examCourseIds = new Set((existingExams || []).map((e: any) => e.course_id));
-    const essayCourseIds = new Set((existingEssays || []).map((e: any) => e.course_id));
-
-    const needExam = (courses || []).filter((c: any) => !examCourseIds.has(c.id));
-    const needEssay = (courses || []).filter((c: any) => !essayCourseIds.has(c.id));
-
-    const results: any = { exams: [], essays: [], errors: [] };
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableApiKey) throw new Error("LOVABLE_API_KEY not configured");
 
     // ── Helper: call AI ─────────────────────────────────────────
     async function callAI(systemPrompt: string, userPrompt: string): Promise<any> {
+      console.log(`Calling AI for ${type} – "${course!.title}"`);
       const response = await fetch(AI_GATEWAY, {
         method: "POST",
         headers: {
@@ -123,14 +125,15 @@ serve(async (req) => {
       return JSON.parse(text);
     }
 
-    // ── Exam system prompt ──────────────────────────────────────
-    const examSystemPrompt = `You are an expert assessment designer for SoloSuccess Academy.
+    // ── Generate based on type ──────────────────────────────────
+    if (type === "exam") {
+      const systemPrompt = `You are an expert assessment designer for SoloSuccess Academy.
 Create a comprehensive mixed-format final exam with three question types:
 1. Multiple Choice (MCQ) — ~50% of questions
 2. True/False — ~25% of questions
 3. Short Answer — ~25% of questions
 
-Generate in JSON format:
+You MUST respond with ONLY valid JSON, no extra text. Format:
 {
   "title": "Final Exam: [Course Title]",
   "instructions": "Clear exam instructions explaining all three question types",
@@ -143,11 +146,41 @@ Generate in JSON format:
 }
 Include 15 questions of varying difficulty covering the breadth of the course material.`;
 
-    // ── Essay system prompt ─────────────────────────────────────
-    const essaySystemPrompt = `You are an expert assessment designer for SoloSuccess Academy.
+      const userPrompt = `Create a 15-question mixed-format final exam for the course "${course.title}". Course description: ${course.description || "N/A"}`;
+      const examData = await callAI(systemPrompt, userPrompt);
+
+      const { error: upsertErr } = await serviceClient
+        .from("course_final_exams")
+        .upsert(
+          {
+            course_id: course.id,
+            title: examData.title || `Final Exam: ${course.title}`,
+            instructions: examData.instructions || "Answer all questions to the best of your ability.",
+            passing_score: examData.passingScore || 70,
+            question_count: examData.questions?.length || 15,
+            questions: examData.questions || [],
+          },
+          { onConflict: "course_id" }
+        );
+
+      if (upsertErr) throw upsertErr;
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          type: "exam",
+          courseId: course.id,
+          title: course.title,
+          questionCount: examData.questions?.length,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    } else {
+      // type === "essay"
+      const systemPrompt = `You are an expert assessment designer for SoloSuccess Academy.
 Create a final essay assignment with 3-5 essay topic options and a detailed grading rubric.
 
-Generate in JSON format:
+You MUST respond with ONLY valid JSON, no extra text. Format:
 {
   "title": "Final Essay: [Course Title]",
   "wordLimit": 1500,
@@ -167,78 +200,37 @@ Generate in JSON format:
 }
 Create essay topics that require students to synthesize course concepts and apply them to their own entrepreneurial journey.`;
 
-    // ── Generate exams sequentially (to avoid rate limits) ──────
-    for (const course of needExam) {
-      try {
-        const userPrompt = `Create a 15-question mixed-format final exam for the course "${course.title}". Course description: ${course.description || "N/A"}`;
-        const examData = await callAI(examSystemPrompt, userPrompt);
+      const userPrompt = `Create a final essay assignment for the course "${course.title}". Course description: ${course.description || "N/A"}`;
+      const essayData = await callAI(systemPrompt, userPrompt);
 
-        const { error: upsertErr } = await serviceClient
-          .from("course_final_exams")
-          .upsert(
-            {
-              course_id: course.id,
-              title: examData.title || `Final Exam: ${course.title}`,
-              instructions: examData.instructions || "Answer all questions to the best of your ability.",
-              passing_score: examData.passingScore || 70,
-              question_count: examData.questions?.length || 15,
-              questions: examData.questions || [],
-            },
-            { onConflict: "course_id" }
-          );
+      const { error: upsertErr } = await serviceClient
+        .from("course_essays")
+        .upsert(
+          {
+            course_id: course.id,
+            title: essayData.title || `Final Essay: ${course.title}`,
+            prompts: essayData.prompts || [],
+            rubric: essayData.rubric || { criteria: [], totalPoints: 100 },
+            word_limit: essayData.wordLimit || 1500,
+          },
+          { onConflict: "course_id" }
+        );
 
-        if (upsertErr) throw upsertErr;
-        results.exams.push({ courseId: course.id, title: course.title, questionCount: examData.questions?.length });
-      } catch (err: any) {
-        results.errors.push({ type: "exam", courseId: course.id, title: course.title, error: err.message });
-      }
+      if (upsertErr) throw upsertErr;
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          type: "essay",
+          courseId: course.id,
+          title: course.title,
+          promptCount: essayData.prompts?.length,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
-
-    // ── Generate essays sequentially ────────────────────────────
-    for (const course of needEssay) {
-      try {
-        const userPrompt = `Create a final essay assignment for the course "${course.title}". Course description: ${course.description || "N/A"}`;
-        const essayData = await callAI(essaySystemPrompt, userPrompt);
-
-        const { error: upsertErr } = await serviceClient
-          .from("course_essays")
-          .upsert(
-            {
-              course_id: course.id,
-              title: essayData.title || `Final Essay: ${course.title}`,
-              prompts: essayData.prompts || [],
-              rubric: essayData.rubric || { criteria: [], totalPoints: 100 },
-              word_limit: essayData.wordLimit || 1500,
-            },
-            { onConflict: "course_id" }
-          );
-
-        if (upsertErr) throw upsertErr;
-        results.essays.push({ courseId: course.id, title: course.title, promptCount: essayData.prompts?.length });
-      } catch (err: any) {
-        results.errors.push({ type: "essay", courseId: course.id, title: course.title, error: err.message });
-      }
-    }
-
-    // ── Summary ─────────────────────────────────────────────────
-    const skippedExams = (courses || []).length - needExam.length;
-    const skippedEssays = (courses || []).length - needEssay.length;
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        summary: {
-          examsGenerated: results.exams.length,
-          examsSkipped: skippedExams,
-          essaysGenerated: results.essays.length,
-          essaysSkipped: skippedEssays,
-          errors: results.errors.length,
-        },
-        details: results,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
   } catch (err: any) {
+    console.error("Assessment generation error:", err.message);
     return new Response(
       JSON.stringify({ error: err.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

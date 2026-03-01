@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.submit-contact]
 verify_jwt = false
+
+[functions.manage-api-keys]
+verify_jwt = false

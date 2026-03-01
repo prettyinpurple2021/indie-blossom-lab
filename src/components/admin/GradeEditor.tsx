@@ -4,11 +4,6 @@
  * PURPOSE: Allows admins to manually override quiz scores and add grading
  * notes for individual student submissions. Shows current score, allows
  * setting a new admin_override_score, and records the grader + timestamp.
- *
- * PRODUCTION TODO:
- * - Add rubric-based grading
- * - Support partial credit with per-question scoring
- * - Add grade history/audit trail
  */
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

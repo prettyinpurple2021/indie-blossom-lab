@@ -7,11 +7,6 @@
  *
  * SUPPORTED FORMATS: .pdf, .docx, .doc, .txt, .md, .csv
  * MAX SIZE: 10MB
- *
- * PRODUCTION TODO:
- * - Add server-side document parsing for larger files
- * - Support drag-and-drop upload area
- * - Add document preview before parsing
  */
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';

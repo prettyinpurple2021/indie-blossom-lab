@@ -108,8 +108,8 @@ export default function Contact() {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 p-6 space-y-3">
               <Mail className="h-8 w-8 text-primary" />
               <h3 className="font-display font-semibold">Email Us</h3>
-              <a href="mailto:support@solosuccess.academy" className="text-sm text-primary hover:underline font-mono block">
-                support@solosuccess.academy
+              <a href="mailto:support@solosuccessacademy.cloud" className="text-sm text-primary hover:underline font-mono block">
+                support@solosuccessacademy.cloud
               </a>
             </Card>
 

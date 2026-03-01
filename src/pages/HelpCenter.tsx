@@ -292,8 +292,8 @@ export default function HelpCenter() {
               </CardTitle>
               <p className="text-muted-foreground text-sm mt-2">
                 Send us a message and we'll get back to you as soon as possible. You can also reach us at{' '}
-                <a href="mailto:support@solosuccess.academy" className="text-primary hover:underline">
-                  support@solosuccess.academy
+                <a href="mailto:support@solosuccessacademy.cloud" className="text-primary hover:underline">
+                  support@solosuccessacademy.cloud
                 </a>
               </p>
             </CardHeader>

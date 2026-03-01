@@ -17,7 +17,7 @@
  * - Support bulk page import from documents
  * - Add page content character/word count
  */
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,6 +26,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   useTextbookChapters,
   useTextbookPages,
@@ -39,7 +53,9 @@ import {
   TextbookPage,
   EmbeddedQuiz,
 } from '@/hooks/useTextbook';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Plus,
   Trash2,
@@ -69,7 +85,55 @@ export function TextbookEditor({ courseId, courseTitle = 'Course' }: TextbookEdi
   const createChapter = useCreateChapter();
   const updateChapter = useUpdateChapter();
   const deleteChapter = useDeleteChapter();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // DnD sensors for chapter reordering
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  );
+
+  /**
+   * Handle drag-and-drop chapter reorder.
+   * Updates order_number for each affected chapter in parallel.
+   */
+  const handleChapterDragEnd = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id || !chapters) return;
+
+      const oldIndex = chapters.findIndex((c) => c.id === active.id);
+      const newIndex = chapters.findIndex((c) => c.id === over.id);
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      // Build reordered list
+      const reordered = [...chapters];
+      const [moved] = reordered.splice(oldIndex, 1);
+      reordered.splice(newIndex, 0, moved);
+
+      // Optimistic update
+      queryClient.setQueryData(['textbook-chapters', courseId], reordered);
+
+      // Update order numbers in DB
+      try {
+        const updates = reordered.map((ch, i) =>
+          supabase
+            .from('textbook_chapters')
+            .update({ order_number: i + 1 })
+            .eq('id', ch.id)
+        );
+        const results = await Promise.all(updates);
+        const error = results.find((r) => r.error)?.error;
+        if (error) throw error;
+        toast({ title: 'Chapters reordered!' });
+      } catch (error: any) {
+        // Revert on failure
+        queryClient.invalidateQueries({ queryKey: ['textbook-chapters', courseId] });
+        toast({ title: 'Reorder failed', description: error.message, variant: 'destructive' });
+      }
+    },
+    [chapters, courseId, queryClient, toast]
+  );
 
   const handleDeleteChapter = async (chapter: TextbookChapter) => {
     if (!confirm(`Delete chapter "${chapter.title}"? All pages will be deleted.`)) return;
@@ -186,70 +250,88 @@ export function TextbookEditor({ courseId, courseTitle = 'Course' }: TextbookEdi
               </CardContent>
             </Card>
           ) : (
-            chapters?.map((chapter, index) => (
-              <Card key={chapter.id} className="hover:bg-muted/50 transition-colors">
-                <CardContent className="py-4">
-                  <div className="flex items-center gap-4">
-                    <GripVertical className="h-5 w-5 text-muted-foreground" />
-                    
-                    <span className="text-sm font-medium text-muted-foreground w-8">
-                      {index + 1}.
-                    </span>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium truncate">{chapter.title}</h4>
-                        {chapter.is_preview && (
-                          <Badge variant="secondary" className="text-xs">Preview</Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => togglePreview(chapter)}
-                        title={chapter.is_preview ? 'Disable preview' : 'Enable preview'}
-                      >
-                        {chapter.is_preview ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedChapterId(chapter.id)}
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        Pages
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditingChapter(chapter)}
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteChapter(chapter)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleChapterDragEnd}>
+              <SortableContext items={chapters?.map((c) => c.id) || []} strategy={verticalListSortingStrategy}>
+                {chapters?.map((chapter, index) => (
+                  <SortableChapterItem
+                    key={chapter.id}
+                    chapter={chapter}
+                    index={index}
+                    onTogglePreview={togglePreview}
+                    onSelectPages={setSelectedChapterId}
+                    onEdit={setEditingChapter}
+                    onDelete={handleDeleteChapter}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Sortable chapter item for drag-and-drop reordering.
+ * Uses @dnd-kit/sortable for smooth drag interactions.
+ */
+function SortableChapterItem({
+  chapter,
+  index,
+  onTogglePreview,
+  onSelectPages,
+  onEdit,
+  onDelete,
+}: {
+  chapter: TextbookChapter;
+  index: number;
+  onTogglePreview: (chapter: TextbookChapter) => void;
+  onSelectPages: (id: string) => void;
+  onEdit: (chapter: TextbookChapter) => void;
+  onDelete: (chapter: TextbookChapter) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: chapter.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <Card ref={setNodeRef} style={style} className="hover:bg-muted/50 transition-colors">
+      <CardContent className="py-4">
+        <div className="flex items-center gap-4">
+          <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none">
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
+          </button>
+          <span className="text-sm font-medium text-muted-foreground w-8">{index + 1}.</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium truncate">{chapter.title}</h4>
+              {chapter.is_preview && <Badge variant="secondary" className="text-xs">Preview</Badge>}
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => onTogglePreview(chapter)}
+              title={chapter.is_preview ? 'Disable preview' : 'Enable preview'}>
+              {chapter.is_preview ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => onSelectPages(chapter.id)}>
+              <FileText className="h-4 w-4 mr-2" />Pages
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => onEdit(chapter)}>
+              <Save className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => onDelete(chapter)}
+              className="text-destructive hover:text-destructive">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

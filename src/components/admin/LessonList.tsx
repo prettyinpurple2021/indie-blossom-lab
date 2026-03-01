@@ -30,11 +30,12 @@ import {
 } from '@dnd-kit/sortable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useAdminLessons, useDeleteLesson, useUpdateLesson, useReorderLessons, useBulkPublishLessons, Lesson } from '@/hooks/useAdmin';
+import { useAdminLessons, useDeleteLesson, useUpdateLesson, useReorderLessons, useBulkPublishLessons, useDuplicateLesson, Lesson } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { LessonEditor } from './LessonEditor';
 import { SortableLessonItem } from './SortableLessonItem';
-import { Plus, FileText, Copy, Eye, EyeOff } from 'lucide-react';
+import { Plus, FileText, Copy, Eye, EyeOff, Trash2, CheckSquare } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
 
 interface LessonListProps {
@@ -44,10 +45,12 @@ interface LessonListProps {
 export function LessonList({ courseId }: LessonListProps) {
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const { data: lessons, isLoading } = useAdminLessons(courseId);
   const deleteLesson = useDeleteLesson();
   const updateLesson = useUpdateLesson();
   const reorderLessons = useReorderLessons();
+  const duplicateLesson = useDuplicateLesson();
   
   const bulkPublish = useBulkPublishLessons();
   const { toast } = useToast();
@@ -123,6 +126,49 @@ export function LessonList({ courseId }: LessonListProps) {
     }
   };
 
+  // Duplicate a lesson
+  const handleDuplicate = async (lesson: Lesson) => {
+    try {
+      await duplicateLesson.mutateAsync({ lesson, courseId });
+      toast({ title: `"${lesson.title}" duplicated!` });
+    } catch (error: any) {
+      toast({ title: 'Failed to duplicate', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  // Bulk delete selected lessons
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} selected lesson(s)? This cannot be undone.`)) return;
+
+    try {
+      for (const id of selectedIds) {
+        await deleteLesson.mutateAsync({ lessonId: id, courseId });
+      }
+      setSelectedIds(new Set());
+      toast({ title: `${selectedIds.size} lesson(s) deleted` });
+    } catch (error: any) {
+      toast({ title: 'Failed to delete', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (!lessons) return;
+    if (selectedIds.size === lessons.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(lessons.map(l => l.id)));
+    }
+  };
 
   /** Bulk publish/unpublish all lessons */
   const handleBulkPublish = async (isPublished: boolean) => {

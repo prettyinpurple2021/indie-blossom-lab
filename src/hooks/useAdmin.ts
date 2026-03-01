@@ -198,6 +198,8 @@ export function useIsAdmin(userId: string | undefined) {
       return !!data;
     },
     enabled: !!userId,
+    // Cache admin check for 5 minutes to avoid re-querying on every navigation
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -485,6 +487,52 @@ export function useReorderLessons() {
       const results = await Promise.all(promises);
       const error = results.find((r) => r.error)?.error;
       if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-lessons', variables.courseId] });
+    },
+  });
+}
+
+/**
+ * Duplicate an existing lesson within the same course.
+ * Creates a copy with "(Copy)" appended to the title and placed at the end.
+ */
+export function useDuplicateLesson() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ lesson, courseId }: { lesson: Lesson; courseId: string }) => {
+      // Get the next order number
+      const { data: existing } = await supabase
+        .from('lessons')
+        .select('order_number')
+        .eq('course_id', courseId)
+        .order('order_number', { ascending: false })
+        .limit(1);
+
+      const nextOrder = (existing?.[0]?.order_number || 0) + 1;
+
+      const { data, error } = await supabase
+        .from('lessons')
+        .insert([{
+          course_id: courseId,
+          title: `${lesson.title} (Copy)`,
+          type: lesson.type,
+          content: lesson.content,
+          video_url: lesson.video_url,
+          duration_minutes: lesson.duration_minutes,
+          quiz_data: lesson.quiz_data as Json,
+          worksheet_data: lesson.worksheet_data as Json,
+          activity_data: lesson.activity_data as Json,
+          order_number: nextOrder,
+          is_published: false, // Duplicates start unpublished
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return transformLesson(data);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-lessons', variables.courseId] });

@@ -82,7 +82,7 @@ export default function Dashboard() {
       if (!user?.id) return { progress: [], lessons: [] };
       
       const [lessonsResult, progressResult] = await Promise.all([
-        supabase.from('lessons').select('id, course_id'),
+        supabase.from('lessons').select('id, course_id, title, type, order_number'),
         supabase.from('user_progress').select('*').eq('user_id', user.id),
       ]);
 

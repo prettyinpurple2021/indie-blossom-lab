@@ -200,11 +200,14 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
    * Handle reading milestone XP awards.
    */
   const handleMilestoneReached = useCallback(
-    (type: 'chapter_complete' | 'halfway' | 'textbook_complete', xp: number) => {
+    async (type: 'chapter_complete' | 'halfway' | 'textbook_complete', xp: number) => {
       if (!user?.id) return;
-      awardXP.mutate({ userId: user.id, xpAmount: xp, action: `reading_${type}` });
+      // Award XP via the central gamification context (includes debouncing + notifications)
+      await awardXP(`reading_${type}` as any, xp);
+      // Check if any new badges were unlocked after XP award
+      await checkAndAwardBadges();
     },
-    [user?.id, awardXP]
+    [user?.id, awardXP, checkAndAwardBadges]
   );
 
   // Go to bookmarked page on load

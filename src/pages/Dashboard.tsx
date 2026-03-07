@@ -31,6 +31,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCourses } from '@/hooks/useCourses';
 import { useCertificateCount } from '@/hooks/useCertificates';
 import { useContinueLater } from '@/hooks/useContinueLater';
+import { useReadingStats, formatReadableTime } from '@/hooks/useReadingTime';
 import { phaseMetadata, formatPrice, getPhaseClasses, type CoursePhase } from '@/lib/courseData';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,6 +57,7 @@ export default function Dashboard() {
   const { data: courses } = useCourses();
   const { data: certificateCount } = useCertificateCount(user?.id);
   const { data: continueLater } = useContinueLater(user?.id);
+  const { data: readingStats } = useReadingStats(user?.id);
 
   // Fetch user purchases
   const { data: purchases, isError: purchasesError, error: purchasesErr, refetch: refetchPurchases } = useQuery({

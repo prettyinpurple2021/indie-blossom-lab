@@ -670,6 +670,9 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
             </TooltipContent>
           </Tooltip>
           
+          {/* Reading Timer */}
+          <ReadingTimer formattedTime={formattedTime} elapsedSeconds={elapsedSeconds} />
+
           <span className="text-sm text-cyan-300">
             Page <span className="text-primary font-bold">{currentPage + 1}</span> of {pages.length}
           </span>

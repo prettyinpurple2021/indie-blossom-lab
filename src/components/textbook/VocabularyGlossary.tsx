@@ -90,7 +90,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
         className="bg-black/95 backdrop-blur-xl border-l border-primary/30"
       >
         <SheetHeader>
-          <SheetTitle className="font-display text-cyan-300 flex items-center gap-2">
+          <SheetTitle className="font-display text-secondary flex items-center gap-2">
             <BookA className="h-5 w-5" />
             Vocabulary ({terms.length} terms)
           </SheetTitle>

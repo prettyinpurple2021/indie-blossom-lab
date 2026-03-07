@@ -157,10 +157,10 @@ export function AITutorChat({
       >
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-cyan-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.4)]">
-              <Bot className="h-4 w-4 text-cyan-400" />
+            <div className="h-8 w-8 rounded-full bg-secondary/20 flex items-center justify-center shadow-[0_0_15px_hsl(var(--secondary)/0.4)]">
+              <Bot className="h-4 w-4 text-secondary" />
             </div>
-            <span className="font-display font-medium text-cyan-300">AI Tutor</span>
+            <span className="font-display font-medium text-secondary">AI Tutor</span>
           </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-primary/20">

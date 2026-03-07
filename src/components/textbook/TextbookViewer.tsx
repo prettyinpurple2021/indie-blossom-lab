@@ -673,7 +673,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
           {/* Reading Timer */}
           <ReadingTimer formattedTime={formattedTime} elapsedSeconds={elapsedSeconds} />
 
-          <span className="text-sm text-cyan-300">
+          <span className="text-sm text-secondary">
             Page <span className="text-primary font-bold">{currentPage + 1}</span> of {pages.length}
           </span>
         </div>

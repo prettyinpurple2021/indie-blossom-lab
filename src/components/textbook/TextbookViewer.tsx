@@ -54,8 +54,10 @@ import { ReadingMilestones } from './ReadingMilestones';
 import { type MiniGameData } from './MiniGame';
 import { ExplainThisPanel } from './ExplainThisPanel';
 import { TextToSpeech } from './TextToSpeech';
+import { ReadingTimer } from './ReadingTimer';
 import { useAuth } from '@/hooks/useAuth';
 import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useReadingTime } from '@/hooks/useReadingTime';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -121,6 +123,20 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const { awardXP, checkAndAwardBadges } = useGamification();
+
+  // Reading time tracker — awards XP at 15m, 30m, 60m milestones
+  const { formattedTime, elapsedSeconds } = useReadingTime({
+    userId: user?.id,
+    courseId,
+    onMilestone: async (milestone) => {
+      toast({
+        title: `⏱️ ${milestone.label}`,
+        description: `+${milestone.xp} XP for sustained reading!`,
+      });
+      await awardXP('LESSON_COMPLETE', milestone.xp);
+      await checkAndAwardBadges();
+    },
+  });
 
   // Get all page IDs for fetching highlights
   const pageIds = useMemo(() => pages?.map(p => p.id) || [], [pages]);
@@ -654,6 +670,9 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
             </TooltipContent>
           </Tooltip>
           
+          {/* Reading Timer */}
+          <ReadingTimer formattedTime={formattedTime} elapsedSeconds={elapsedSeconds} />
+
           <span className="text-sm text-cyan-300">
             Page <span className="text-primary font-bold">{currentPage + 1}</span> of {pages.length}
           </span>

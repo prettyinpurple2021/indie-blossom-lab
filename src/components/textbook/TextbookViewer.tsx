@@ -55,7 +55,7 @@ import { type MiniGameData } from './MiniGame';
 import { ExplainThisPanel } from './ExplainThisPanel';
 import { TextToSpeech } from './TextToSpeech';
 import { useAuth } from '@/hooks/useAuth';
-import { useAwardXP, XP_VALUES } from '@/hooks/useGamification';
+import { useGamification } from '@/components/gamification/GamificationProvider';
 import { 
   ChevronLeft, 
   ChevronRight, 

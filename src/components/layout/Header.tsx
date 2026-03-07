@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin } from '@/hooks/useAdmin';
@@ -11,15 +12,21 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield, Zap, Search } from 'lucide-react';
+import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield, Zap, Search, Sun, Moon } from 'lucide-react';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { XPDisplay } from '@/components/gamification/XPDisplay';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export function Header() {
   const { user, profile, isAuthenticated, signOut } = useAuth();
   const { data: isAdmin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
 
   // Ctrl+K / Cmd+K keyboard shortcut to open search

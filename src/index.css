@@ -684,6 +684,14 @@
     box-shadow: 0 4px 30px hsl(270 50% 20% / 0.1);
   }
 
+  :root .header-glass,
+  .light .header-glass,
+  :not(.dark) .header-glass {
+    background: hsl(270 25% 98% / 0.85);
+    border-bottom: 1px solid hsl(270 30% 80% / 0.4);
+    box-shadow: 0 2px 15px hsl(270 30% 50% / 0.06);
+  }
+
   /* Legacy glass support */
   .glass {
     background: hsl(var(--card) / 0.6);

@@ -365,12 +365,19 @@
   }
 
   /* ====== NEON TEXT EFFECTS ====== */
+  /* Dark: full glow. Light: subtle soft shadow for readability. */
   
   .neon-text {
     text-shadow: 
       0 0 5px hsl(var(--glow-purple) / 0.5),
       0 0 20px hsl(var(--glow-purple) / 0.3),
       0 0 40px hsl(var(--glow-purple) / 0.2);
+  }
+
+  :root .neon-text,
+  .light .neon-text,
+  :not(.dark) .neon-text {
+    text-shadow: 0 1px 3px hsl(var(--glow-purple) / 0.2);
   }
 
   .neon-text-cyan {
@@ -380,11 +387,23 @@
       0 0 40px hsl(var(--glow-cyan) / 0.2);
   }
 
+  :root .neon-text-cyan,
+  .light .neon-text-cyan,
+  :not(.dark) .neon-text-cyan {
+    text-shadow: 0 1px 3px hsl(var(--glow-cyan) / 0.2);
+  }
+
   .neon-text-pink {
     text-shadow: 
       0 0 5px hsl(var(--glow-pink) / 0.5),
       0 0 20px hsl(var(--glow-pink) / 0.3),
       0 0 40px hsl(var(--glow-pink) / 0.2);
+  }
+
+  :root .neon-text-pink,
+  .light .neon-text-pink,
+  :not(.dark) .neon-text-pink {
+    text-shadow: 0 1px 3px hsl(var(--glow-pink) / 0.2);
   }
 
   /* ====== NEON BORDER GLOWS ====== */

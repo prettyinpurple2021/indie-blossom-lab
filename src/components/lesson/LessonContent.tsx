@@ -69,6 +69,7 @@ export function LessonContent({
   lesson,
   savedNotes,
   quizScore,
+  quizAttempts,
   activityScore,
   onQuizSubmit,
   onActivityProgress,

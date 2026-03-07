@@ -145,7 +145,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
                                 {item.definition}
                               </p>
                               {item.chapter && (
-                                <span className="text-xs text-cyan-400/60 mt-1 inline-block">
+                                <span className="text-xs text-secondary/60 mt-1 inline-block">
                                   {item.chapter}
                                 </span>
                               )}

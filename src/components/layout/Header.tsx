@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin } from '@/hooks/useAdmin';
@@ -11,15 +12,21 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield, Zap, Search } from 'lucide-react';
+import { User, LogOut, BookOpen, LayoutDashboard, Settings, Shield, Zap, Search, Sun, Moon } from 'lucide-react';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { XPDisplay } from '@/components/gamification/XPDisplay';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export function Header() {
   const { user, profile, isAuthenticated, signOut } = useAuth();
   const { data: isAdmin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
 
   // Ctrl+K / Cmd+K keyboard shortcut to open search
@@ -94,7 +101,28 @@ export function Header() {
           </nav>
 
           {/* Auth Section */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="h-9 w-9 hover:bg-primary/10"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="h-4 w-4 text-amber-400" />
+                  ) : (
+                    <Moon className="h-4 w-4 text-primary" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p className="text-xs">{theme === 'dark' ? 'Switch to Pastel Goth' : 'Switch to Cyberpunk'}</p>
+              </TooltipContent>
+            </Tooltip>
             {/* Global Search Button */}
             {isAuthenticated && (
               <Button

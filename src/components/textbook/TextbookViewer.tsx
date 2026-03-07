@@ -55,7 +55,7 @@ import { type MiniGameData } from './MiniGame';
 import { ExplainThisPanel } from './ExplainThisPanel';
 import { TextToSpeech } from './TextToSpeech';
 import { useAuth } from '@/hooks/useAuth';
-import { useAwardXP, XP_VALUES } from '@/hooks/useGamification';
+import { useGamification } from '@/components/gamification/GamificationProvider';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -120,7 +120,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
   const createHighlight = useCreateHighlight();
   const { toast } = useToast();
   const { user } = useAuth();
-  const awardXP = useAwardXP();
+  const { awardXP, checkAndAwardBadges } = useGamification();
 
   // Get all page IDs for fetching highlights
   const pageIds = useMemo(() => pages?.map(p => p.id) || [], [pages]);
@@ -200,11 +200,14 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
    * Handle reading milestone XP awards.
    */
   const handleMilestoneReached = useCallback(
-    (type: 'chapter_complete' | 'halfway' | 'textbook_complete', xp: number) => {
+    async (type: 'chapter_complete' | 'halfway' | 'textbook_complete', xp: number) => {
       if (!user?.id) return;
-      awardXP.mutate({ userId: user.id, xpAmount: xp, action: `reading_${type}` });
+      // Award XP via the central gamification context (includes debouncing + notifications)
+      await awardXP(`reading_${type}` as any, xp);
+      // Check if any new badges were unlocked after XP award
+      await checkAndAwardBadges();
     },
-    [user?.id, awardXP]
+    [user?.id, awardXP, checkAndAwardBadges]
   );
 
   // Go to bookmarked page on load

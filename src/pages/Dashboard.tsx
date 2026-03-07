@@ -23,6 +23,7 @@
  * - Consider server-side aggregation for stats to reduce client computation
  */
 import { Link } from 'react-router-dom';
+import { CourseJourneyMap } from '@/components/dashboard/CourseJourneyMap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -352,7 +353,7 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Purchased Courses */}
+            {/* Purchased Courses — Journey Maps */}
             <div>
               <h2 className="text-xl font-display font-semibold mb-4 flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
@@ -360,7 +361,7 @@ export default function Dashboard() {
               </h2>
               
               {purchases && purchases.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {purchases.map((purchase) => {
                     const course = purchase.courses as any;
                     const progress = courseProgressMap.get(purchase.course_id);
@@ -369,42 +370,67 @@ export default function Dashboard() {
                       : 0;
                     const phaseMeta = phaseMetadata[course?.phase as CoursePhase];
 
+                    // Build lesson nodes for the journey map
+                    const courseLessons = (progressData?.lessons || [])
+                      .filter((l: any) => l.course_id === purchase.course_id)
+                      .map((l: any) => ({
+                        id: l.id,
+                        title: l.title || `Lesson ${l.order_number || '?'}`,
+                        type: l.type || 'text',
+                        order_number: l.order_number || 0,
+                        completed: progressData?.progress?.some(
+                          (p: any) => p.lesson_id === l.id && p.completed
+                        ) || false,
+                      }));
+
                     return (
-                      <Card key={purchase.id} className="glass-card glass-card-hover">
-                        <CardContent className="p-5">
-                          <div className="flex items-start gap-4">
-                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0 ${getPhaseClasses(course?.phase)} shadow-[0_0_15px_currentColor/0.3]`}>
-                              <span className="text-lg">{phaseMeta?.icon}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="outline" className="text-xs border-primary/30">
-                                  Course {course?.order_number}
-                                </Badge>
-                                {progressPercent === 100 && (
-                                  <Badge className="bg-success/20 text-success border-success/30">
-                                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                                    Complete
+                      <Card key={purchase.id} className="glass-card glass-card-hover overflow-hidden">
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 ${getPhaseClasses(course?.phase)} shadow-[0_0_15px_currentColor/0.3]`}>
+                                <span className="text-base">{phaseMeta?.icon}</span>
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <Badge variant="outline" className="text-xs border-primary/30">
+                                    Course {course?.order_number}
                                   </Badge>
-                                )}
-                              </div>
-                              <h3 className="font-display font-medium truncate">{course?.title}</h3>
-                              <div className="mt-3">
-                                <div className="flex justify-between text-xs mb-1.5">
-                                  <span className="text-muted-foreground font-mono">
-                                    {progress?.completed || 0}/{progress?.total || 0} lessons
-                                  </span>
-                                  <span className="font-display text-primary">{progressPercent}%</span>
+                                  {progressPercent === 100 && (
+                                    <Badge className="bg-success/20 text-success border-success/30">
+                                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                                      Complete
+                                    </Badge>
+                                  )}
                                 </div>
-                                <Progress value={progressPercent} className="h-1.5" />
+                                <CardTitle className="text-base font-display">{course?.title}</CardTitle>
                               </div>
                             </div>
-                            <Button variant="outline" size="sm" asChild className="flex-shrink-0 border-primary/30 hover:bg-primary/10">
-                              <Link to={`/courses/${purchase.course_id}`}>
-                                <ArrowRight className="h-4 w-4" />
-                              </Link>
-                            </Button>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-mono text-primary">{progressPercent}%</span>
+                              <Button variant="outline" size="sm" asChild className="flex-shrink-0 border-primary/30 hover:bg-primary/10">
+                                <Link to={`/courses/${purchase.course_id}`}>
+                                  <ArrowRight className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            </div>
                           </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          {courseLessons.length > 0 ? (
+                            <CourseJourneyMap
+                              courseId={purchase.course_id}
+                              courseTitle={course?.title || ''}
+                              lessons={courseLessons}
+                            />
+                          ) : (
+                            <div className="py-4">
+                              <Progress value={progressPercent} className="h-1.5" />
+                              <p className="text-xs text-muted-foreground font-mono mt-2">
+                                {progress?.completed || 0}/{progress?.total || 0} lessons
+                              </p>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     );

@@ -212,16 +212,21 @@ function ResultsView({
   answers,
   score,
   passingScore,
+  attemptsUsed,
   onRetake,
 }: {
   questions: QuizQuestion[];
   answers: number[];
   score: number;
   passingScore: number;
+  /** Total attempts used (including this one) */
+  attemptsUsed: number;
   onRetake: () => void;
 }) {
   const passed = score >= passingScore;
   const correctCount = questions.filter((q, i) => answers[i] === q.correctAnswer).length;
+  const retriesLeft = MAX_QUIZ_ATTEMPTS - attemptsUsed;
+  const canRetake = retriesLeft > 0;
 
   return (
     <motion.div
@@ -254,13 +259,22 @@ function ResultsView({
         <p className="text-muted-foreground text-sm">
           {correctCount}/{questions.length} correct · Passing score: {passingScore}%
         </p>
+        {/* Attempt counter */}
+        <Badge variant="outline" className="mt-2 border-muted-foreground/30 font-mono text-xs">
+          Attempt {attemptsUsed}/{MAX_QUIZ_ATTEMPTS}
+        </Badge>
         <Progress
           value={score}
           className={`mt-4 h-2 ${passed ? '[&>div]:bg-success' : '[&>div]:bg-destructive'}`}
         />
-        {!passed && (
+        {!passed && canRetake && (
           <p className="text-sm text-muted-foreground mt-3">
-            You need {passingScore}% to pass. Review below and try again!
+            You need {passingScore}% to pass. You have {retriesLeft} retake{retriesLeft !== 1 ? 's' : ''} remaining.
+          </p>
+        )}
+        {!passed && !canRetake && (
+          <p className="text-sm text-destructive mt-3">
+            No retakes remaining. Your best score has been saved.
           </p>
         )}
       </div>
@@ -318,11 +332,17 @@ function ResultsView({
         })}
       </div>
 
-      {/* Retake */}
-      <Button variant="outline" onClick={onRetake} className="w-full gap-2">
-        <RotateCcw className="h-4 w-4" />
-        Retake Quiz
-      </Button>
+      {/* Retake — only if attempts remain */}
+      {canRetake ? (
+        <Button variant="outline" onClick={onRetake} className="w-full gap-2">
+          <RotateCcw className="h-4 w-4" />
+          Retake Quiz ({retriesLeft} retake{retriesLeft !== 1 ? 's' : ''} left)
+        </Button>
+      ) : (
+        <div className="text-center text-sm text-muted-foreground py-3 border border-muted/30 rounded-lg">
+          All {MAX_QUIZ_ATTEMPTS} attempts used — your best score is saved
+        </div>
+      )}
     </motion.div>
   );
 }

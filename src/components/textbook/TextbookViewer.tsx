@@ -563,7 +563,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
                     >
                       <span className="font-medium text-foreground">{chapter.title}</span>
                       {chapter.is_preview && (
-                        <span className="ml-2 text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded border border-green-500/30">
+                        <span className="ml-2 text-xs bg-success/20 text-success px-2 py-0.5 rounded border border-success/30">
                           Preview
                         </span>
                       )}

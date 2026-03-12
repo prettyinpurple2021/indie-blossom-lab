@@ -143,7 +143,7 @@ export default function VerifyCertificate() {
                     <div>
                       <p className="text-xs text-muted-foreground">Course</p>
                       <p className="font-medium text-sm truncate">
-                        {certificate.course_title.split(' ').slice(0, 2).join(' ')}...
+                        {certificate.course_title}
                       </p>
                     </div>
                   </div>

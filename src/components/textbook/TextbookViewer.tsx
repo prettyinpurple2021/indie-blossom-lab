@@ -252,9 +252,15 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
   // Keyboard navigation for textbook
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+      // Ignore if user is typing or interacting with an input-like control
+      const target = e.target as HTMLElement | null;
+      if (!target) {
+        return;
+      }
+      const interactiveRoot = target.closest(
+        'input, textarea, select, [contenteditable="true"], [data-interactive-region="true"]'
+      );
+      if (interactiveRoot) {
         return;
       }
 

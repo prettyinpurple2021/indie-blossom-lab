@@ -87,10 +87,10 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="bg-black/95 backdrop-blur-xl border-l border-primary/30"
+        className="bg-popover/95 backdrop-blur-xl border-l border-primary/30"
       >
         <SheetHeader>
-          <SheetTitle className="font-display text-cyan-300 flex items-center gap-2">
+          <SheetTitle className="font-display text-secondary flex items-center gap-2">
             <BookA className="h-5 w-5" />
             Vocabulary ({terms.length} terms)
           </SheetTitle>
@@ -104,7 +104,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
               placeholder="Search terms..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-9 bg-black/30 border-primary/30 focus:border-primary"
+              className="pl-9 bg-input border-primary/30 focus:border-primary"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
               {Object.entries(groupedTerms).map(([letter, letterTerms]) => (
                 <div key={letter}>
                   {/* Letter header */}
-                  <div className="sticky top-0 bg-black/80 backdrop-blur-sm py-1 px-2 mb-2 border-b border-primary/20">
+                  <div className="sticky top-0 surface-overlay-heavy backdrop-blur-sm py-1 px-2 mb-2 border-b border-primary/20">
                     <span className="text-lg font-display font-bold text-primary">
                       {letter}
                     </span>
@@ -145,7 +145,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
                                 {item.definition}
                               </p>
                               {item.chapter && (
-                                <span className="text-xs text-cyan-400/60 mt-1 inline-block">
+                                <span className="text-xs text-secondary/60 mt-1 inline-block">
                                   {item.chapter}
                                 </span>
                               )}

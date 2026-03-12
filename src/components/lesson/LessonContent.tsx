@@ -30,6 +30,8 @@ interface LessonContentProps {
   savedNotes?: string | null;
   /** The student's previous quiz score (null if never attempted) */
   quizScore?: number | null;
+  /** Number of quiz attempts already used (0-3) */
+  quizAttempts?: number;
   /** The student's previous activity score (null if never attempted) */
   activityScore?: number | null;
   /** Called when a quiz is submitted with the resulting score (0-100) */
@@ -53,9 +55,9 @@ const sanitizeAndFormat = (content: string): string => {
     .replace(/\n/g, '<br/>')
     .replace(/^/, '<p class="mb-4">')
     .replace(/$/, '</p>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-300">$1</strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-secondary">$1</strong>')
     .replace(/\*(.*?)\*/g, '<em class="text-primary/80">$1</em>')
-    .replace(/`(.*?)`/g, '<code class="bg-primary/20 px-1.5 py-0.5 rounded text-sm text-cyan-300 border border-primary/30">$1</code>');
+    .replace(/`(.*?)`/g, '<code class="bg-primary/20 px-1.5 py-0.5 rounded text-sm text-secondary border border-primary/30">$1</code>');
 
   return DOMPurify.sanitize(formatted, {
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'h1', 'h2', 'h3', 'ul', 'ol', 'li'],
@@ -67,6 +69,7 @@ export function LessonContent({
   lesson,
   savedNotes,
   quizScore,
+  quizAttempts,
   activityScore,
   onQuizSubmit,
   onActivityProgress,
@@ -182,6 +185,7 @@ export function LessonContent({
           <QuizPlayer
             quizData={lesson.quiz_data}
             initialScore={quizScore}
+            attemptCount={quizAttempts ?? 0}
             onComplete={onQuizSubmit ?? (() => {})}
           />
         </div>

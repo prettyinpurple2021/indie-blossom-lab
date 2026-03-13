@@ -38,6 +38,7 @@ export function Header() {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
+  const navOpacity = useScrollOpacity();
 
   // Ctrl+K / Cmd+K keyboard shortcut to open search
   useEffect(() => {
@@ -70,7 +71,10 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-[80] w-full header-glass">
+      <header
+        className="sticky top-0 z-[80] w-full header-glass transition-[background-color] duration-300"
+        style={{ '--nav-opacity': navOpacity } as React.CSSProperties}
+      >
         <div className="container flex h-16 items-center justify-between">
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center gap-3 group">

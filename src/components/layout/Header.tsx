@@ -229,10 +229,10 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-3">
-                <Button variant="ghost" asChild className="font-heading tracking-[0.1em] text-xs uppercase">
+                <Button variant="outline" asChild className="btn-cyber-chamfer font-heading tracking-[0.1em] text-xs uppercase min-w-[104px]">
                   <Link to="/auth">Sign In</Link>
                 </Button>
-                <Button variant="neon" asChild className="btn-cyber-chamfer">
+                <Button variant="neon" asChild className="btn-cyber-chamfer min-w-[124px]">
                   <Link to="/auth?mode=signup">Get Started</Link>
                 </Button>
               </div>

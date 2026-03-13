@@ -369,10 +369,14 @@ export function useTextbookSearch(courseId: string | undefined, query: string) {
 
       if (pagesError) throw pagesError;
 
-      return (pages || []).map(page => ({
-        ...page,
-        embedded_quiz: page.embedded_quiz as unknown as EmbeddedQuiz | null,
-        chapter: chapters.find(c => c.id === page.chapter_id)!,
+      return (pages || []).map(page => {
+        // Strip correctAnswer from embedded_quiz for security
+        const quiz = page.embedded_quiz as unknown as EmbeddedQuiz | null;
+        const safeQuiz = quiz ? { question: quiz.question, options: quiz.options, explanation: quiz.explanation } as EmbeddedQuiz : null;
+        return {
+          ...page,
+          embedded_quiz: safeQuiz,
+          chapter: chapters.find(c => c.id === page.chapter_id)!,
       }));
     },
     enabled: !!courseId && query.trim().length >= 2,

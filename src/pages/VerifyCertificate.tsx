@@ -38,7 +38,6 @@ export default function VerifyCertificate() {
         <div className="cyber-grid" />
         <ErrorView
           message="Invalid or missing verification code."
-          onRetry={undefined}
           backTo="/"
           backLabel="Go home"
         />

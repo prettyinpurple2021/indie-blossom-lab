@@ -61,7 +61,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
     const groups: Record<string, GlossaryTerm[]> = {};
     for (const term of filteredTerms) {
       const firstChar = term.term?.charAt(0) ?? '';
-      const letter = /[A-Za-z]/.test(firstChar) ? firstChar.toUpperCase() : '#';
+      const letter = /^\p{L}$/u.test(firstChar) ? firstChar.toUpperCase() : '#';
       if (!groups[letter]) groups[letter] = [];
       groups[letter].push(term);
     }

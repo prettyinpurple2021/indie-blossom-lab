@@ -689,70 +689,63 @@
   }
 
   /* ====== HEADER GLASS — CYBERPUNK COMMAND BAR ====== */
-  /* Dark: Deep tinted glass with neon cyan bottom glow
-     Light: Soft frosted lavender */
-  
+  /* Global dark-translucent glass style (no gray wash in any theme) */
+
   .header-glass {
-    background: rgba(5, 5, 5, 0.75);
+    background: hsl(var(--nav-surface) / 0.75);
     backdrop-filter: blur(20px) saturate(1.8);
     -webkit-backdrop-filter: blur(20px) saturate(1.8);
-    border-bottom: 1px solid hsl(270 80% 60%);
+    border-bottom: 1px solid hsl(var(--nav-neon-cyan) / 0.95);
     box-shadow:
-      0 4px 20px -5px hsl(270 80% 60% / 0.45),
-      0 1px 0 hsl(270 80% 60% / 0.1) inset;
+      0 4px 20px -5px hsl(var(--nav-neon-cyan) / 0.55),
+      0 1px 0 hsl(var(--nav-neon-amethyst) / 0.14) inset;
   }
 
-  :root .header-glass,
-  .light .header-glass,
-  :not(.dark) .header-glass {
-    background: hsl(270 25% 97% / 0.82);
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    border-bottom: 1px solid hsl(270 50% 65% / 0.4);
-    box-shadow: 0 2px 20px hsl(270 40% 50% / 0.1);
+  /* ====== NAV BRAND TYPOGRAPHY ====== */
+
+  .nav-brand-text {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--nav-text));
+    text-shadow: 0 0 14px hsl(var(--nav-neon-cyan) / 0.45);
+    line-height: 1;
+    white-space: nowrap;
   }
 
   /* ====== NAV LINK — CYBERPUNK STYLE ====== */
-  /* Uppercase, wide-tracked, Rajdhani/Orbitron, bright text */
 
   .nav-link-cyber {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-size: 0.8rem;
     font-weight: 600;
-    color: hsl(0 0% 100%);
+    line-height: 1;
+    color: hsl(var(--nav-text));
     transition: color 0.3s ease, text-shadow 0.3s ease;
-    padding-bottom: 4px;
-  }
-
-  :root .nav-link-cyber,
-  .light .nav-link-cyber,
-  :not(.dark) .nav-link-cyber {
-    color: hsl(270 30% 30%);
+    padding: 0;
+    min-height: 2rem;
   }
 
   /* Slide-up underline on hover */
   .nav-link-cyber::after {
     content: '';
     position: absolute;
-    bottom: 0;
     left: 0;
-    width: 100%;
+    right: 0;
+    bottom: 0;
     height: 2px;
-    background: hsl(185 100% 50%);
+    background: hsl(var(--nav-neon-cyan));
     transform: translateY(4px);
     opacity: 0;
     transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s ease;
-    box-shadow: 0 0 8px hsl(185 100% 50% / 0.7);
-  }
-
-  :root .nav-link-cyber::after,
-  .light .nav-link-cyber::after,
-  :not(.dark) .nav-link-cyber::after {
-    background: hsl(270 50% 55%);
-    box-shadow: 0 0 6px hsl(270 50% 55% / 0.4);
+    box-shadow: 0 0 9px hsl(var(--nav-neon-cyan) / 0.8);
   }
 
   .nav-link-cyber:hover::after,
@@ -762,77 +755,99 @@
   }
 
   .nav-link-cyber:hover {
-    color: hsl(185 100% 70%);
-    text-shadow: 0 0 12px hsl(185 100% 50% / 0.5);
-  }
-
-  :root .nav-link-cyber:hover,
-  .light .nav-link-cyber:hover,
-  :not(.dark) .nav-link-cyber:hover {
-    color: hsl(270 60% 45%);
-    text-shadow: 0 0 8px hsl(270 50% 55% / 0.3);
+    color: hsl(var(--nav-text-hover));
+    text-shadow: 0 0 12px hsl(var(--nav-neon-cyan) / 0.5);
   }
 
   /* Active state — neon pulse glow behind text */
   .nav-link-cyber.active {
-    color: hsl(185 100% 70%);
+    color: hsl(var(--nav-text-hover));
     text-shadow:
-      0 0 8px hsl(185 100% 50% / 0.6),
-      0 0 20px hsl(185 100% 50% / 0.3);
-    animation: nav-active-pulse 2.5s ease-in-out infinite;
-  }
-
-  :root .nav-link-cyber.active,
-  .light .nav-link-cyber.active,
-  :not(.dark) .nav-link-cyber.active {
-    color: hsl(270 60% 45%);
-    text-shadow: 0 0 10px hsl(270 50% 55% / 0.35);
-    animation: nav-active-pulse-light 2.5s ease-in-out infinite;
+      0 0 8px hsl(var(--nav-neon-cyan) / 0.65),
+      0 0 18px hsl(var(--nav-neon-cyan) / 0.35);
+    animation: nav-active-pulse 2.4s ease-in-out infinite;
   }
 
   @keyframes nav-active-pulse {
-    0%, 100% { text-shadow: 0 0 8px hsl(185 100% 50% / 0.5), 0 0 20px hsl(185 100% 50% / 0.2); }
-    50% { text-shadow: 0 0 14px hsl(185 100% 50% / 0.7), 0 0 30px hsl(185 100% 50% / 0.35); }
-  }
-
-  @keyframes nav-active-pulse-light {
-    0%, 100% { text-shadow: 0 0 6px hsl(270 50% 55% / 0.25); }
-    50% { text-shadow: 0 0 12px hsl(270 50% 55% / 0.4); }
+    0%, 100% {
+      text-shadow:
+        0 0 8px hsl(var(--nav-neon-cyan) / 0.6),
+        0 0 16px hsl(var(--nav-neon-cyan) / 0.25);
+    }
+    50% {
+      text-shadow:
+        0 0 14px hsl(var(--nav-neon-cyan) / 0.85),
+        0 0 28px hsl(var(--nav-neon-cyan) / 0.4);
+    }
   }
 
   /* ====== CYBER CHAMFERED BUTTON ====== */
-  /* Clipped corners with expanding dual-layer border */
+  /* Dual-layer border with expanding hover edge */
 
   .btn-cyber-chamfer {
     position: relative;
     z-index: 1;
+    isolation: isolate;
     clip-path: polygon(
       10px 0%, calc(100% - 10px) 0%,
       100% 10px, 100% calc(100% - 10px),
       calc(100% - 10px) 100%, 10px 100%,
       0% calc(100% - 10px), 0% 10px
     );
+    border: 1px solid hsl(var(--nav-neon-cyan) / 0.35);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--nav-surface) / 0.92),
+      hsl(255 35% 11% / 0.9)
+    );
+    color: hsl(var(--nav-text));
+    box-shadow:
+      0 0 0 1px hsl(var(--nav-neon-amethyst) / 0.12) inset,
+      0 0 18px hsl(var(--nav-neon-cyan) / 0.18);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .btn-cyber-chamfer::before,
+  .btn-cyber-chamfer::after {
+    content: '';
+    position: absolute;
+    clip-path: inherit;
+    pointer-events: none;
+    transition: all 0.35s ease;
   }
 
   .btn-cyber-chamfer::before {
-    content: '';
-    position: absolute;
     inset: -2px;
-    clip-path: polygon(
-      10px 0%, calc(100% - 10px) 0%,
-      100% 10px, 100% calc(100% - 10px),
-      calc(100% - 10px) 100%, 10px 100%,
-      0% calc(100% - 10px), 0% 10px
+    z-index: -2;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--nav-neon-cyan) / 0.46),
+      hsl(var(--nav-neon-amethyst) / 0.52)
     );
-    background: linear-gradient(135deg, hsl(185 100% 50% / 0.5), hsl(270 100% 70% / 0.5));
-    z-index: -1;
-    transition: all 0.4s ease;
   }
 
-  .btn-cyber-chamfer:hover::before {
+  .btn-cyber-chamfer::after {
     inset: -4px;
-    background: linear-gradient(135deg, hsl(185 100% 50% / 0.8), hsl(270 100% 70% / 0.8));
-    box-shadow: 0 0 20px hsl(185 100% 50% / 0.3);
+    z-index: -3;
+    opacity: 0;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--nav-neon-cyan) / 0.35),
+      hsl(var(--nav-neon-amethyst) / 0.4)
+    );
+  }
+
+  .btn-cyber-chamfer:hover {
+    transform: translateY(-1px) scale(1.02);
+    border-color: hsl(var(--nav-neon-cyan) / 0.7);
+    box-shadow:
+      0 0 0 1px hsl(var(--nav-neon-cyan) / 0.32) inset,
+      0 0 24px hsl(var(--nav-neon-cyan) / 0.3);
+  }
+
+  .btn-cyber-chamfer:hover::after {
+    inset: -6px;
+    opacity: 1;
   }
 
   /* Multi-layer expanding border for non-chamfered buttons */
@@ -846,7 +861,7 @@
     position: absolute;
     inset: -3px;
     border-radius: inherit;
-    border: 1px solid hsl(185 100% 50% / 0.4);
+    border: 1px solid hsl(var(--nav-neon-cyan) / 0.4);
     opacity: 0;
     transition: all 0.4s ease;
     z-index: -1;
@@ -855,25 +870,17 @@
   .btn-cyber:hover::before {
     inset: -6px;
     opacity: 1;
-    border-color: hsl(185 100% 50% / 0.6);
-    box-shadow: 0 0 20px hsl(185 100% 50% / 0.3);
+    border-color: hsl(var(--nav-neon-cyan) / 0.65);
+    box-shadow: 0 0 20px hsl(var(--nav-neon-cyan) / 0.35);
   }
 
   /* ====== MOBILE HEADER BAR (App Layout) ====== */
   .mobile-header-glass {
-    background: rgba(5, 5, 5, 0.75);
+    background: hsl(var(--nav-surface) / 0.75);
     backdrop-filter: blur(20px) saturate(1.8);
     -webkit-backdrop-filter: blur(20px) saturate(1.8);
-    border-bottom: 1px solid hsl(270 80% 60% / 0.5);
-    box-shadow: 0 4px 20px -5px hsl(270 80% 60% / 0.3);
-  }
-
-  :root .mobile-header-glass,
-  .light .mobile-header-glass,
-  :not(.dark) .mobile-header-glass {
-    background: hsl(270 25% 97% / 0.82);
-    border-bottom: 1px solid hsl(270 50% 65% / 0.3);
-    box-shadow: 0 2px 12px hsl(270 40% 50% / 0.06);
+    border-bottom: 1px solid hsl(var(--nav-neon-cyan) / 0.9);
+    box-shadow: 0 4px 20px -5px hsl(var(--nav-neon-cyan) / 0.45);
   }
 
   /* Legacy glass support */

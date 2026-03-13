@@ -1096,7 +1096,7 @@
 
   /* Flicker effect for extra cyberpunk feel */
   .animate-flicker {
-    animation: flicker 4s infinite;
+    animation: flicker 8s infinite;
   }
 
   @keyframes flicker {

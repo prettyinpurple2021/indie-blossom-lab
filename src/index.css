@@ -708,7 +708,7 @@
     text-transform: uppercase;
     font-size: 0.8rem;
     font-weight: 600;
-    color: hsl(0 0% 85%);
+    color: hsl(0 0% 100%);
     transition: color 0.3s ease, text-shadow 0.3s ease;
     padding-bottom: 4px;
   }

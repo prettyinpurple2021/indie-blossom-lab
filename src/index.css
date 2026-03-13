@@ -722,7 +722,7 @@
       transparent
     );
     box-shadow: 0 0 12px hsl(var(--nav-neon-cyan) / 0.7);
-    animation: nav-scanline 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: nav-scanline 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: none;
   }
 

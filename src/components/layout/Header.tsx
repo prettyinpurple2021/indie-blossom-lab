@@ -85,7 +85,7 @@ export function Header() {
           </Link>
 
           {/* ── Desktop Nav — cyber styled ── */}
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden md:flex items-center gap-8">
             <Link
               to="/courses"
               className={cn(

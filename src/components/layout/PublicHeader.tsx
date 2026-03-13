@@ -59,7 +59,7 @@ export function PublicHeader() {
         </Link>
 
         {/* ── Desktop Nav — Rajdhani uppercase cyber links ── */}
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-8">
           {routeLinks.map((item) => (
             <Link
               key={item.label}

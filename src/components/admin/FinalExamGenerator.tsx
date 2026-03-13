@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/accordion';
 import { NeonSpinner } from '@/components/ui/neon-spinner';
 import { FileText, Sparkles, CheckCircle, XCircle, HelpCircle } from 'lucide-react';
-import { useFinalExam, useGenerateFinalExam, type ExamQuestion } from '@/hooks/useFinalExam';
+import { useFinalExamAdmin, useGenerateFinalExam, type ExamQuestion } from '@/hooks/useFinalExam';
 
 interface FinalExamGeneratorProps {
   courses: { id: string; title: string; description: string | null }[];

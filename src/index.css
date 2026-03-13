@@ -1110,7 +1110,7 @@
 
   /* Neon text glow animation for H1 headings */
   .animate-neon-glow {
-    animation: neon-heading-glow 3s ease-in-out infinite alternate;
+    animation: neon-heading-glow 6s ease-in-out infinite alternate;
   }
 
   @keyframes neon-heading-glow {

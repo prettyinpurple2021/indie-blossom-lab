@@ -2,7 +2,7 @@
  * @file PublicHeader.tsx — Premium Cyberpunk Navigation Bar
  * 
  * Glassmorphism frosted-glass header with neon cyan border,
- * wide-set uppercase nav links with glitch/slide-up hover,
+ * wide-set uppercase nav links with slide-up hover effect,
  * active link glow, and theme toggle.
  */
 import { Link, useLocation } from 'react-router-dom';
@@ -18,14 +18,17 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-/* Navigation link items */
-const navItems = [
-  { to: '/', label: 'Home', isLink: true },
-  { to: '/courses', label: 'Courses', isLink: true },
-  { to: '#features', label: 'Features', isLink: false },
-  { to: '#pricing', label: 'Pricing', isLink: false },
-  { to: '/about', label: 'About', isLink: true },
-  { to: '/help', label: 'Help', isLink: true },
+/* Navigation link definitions */
+const routeLinks = [
+  { to: '/', label: 'Home' },
+  { to: '/courses', label: 'Courses' },
+  { to: '/about', label: 'About' },
+  { to: '/help', label: 'Help' },
+];
+
+const anchorLinks = [
+  { href: '#features', label: 'Features' },
+  { href: '#pricing', label: 'Pricing' },
 ];
 
 export function PublicHeader() {
@@ -49,34 +52,29 @@ export function PublicHeader() {
           </span>
         </Link>
 
-        {/* Desktop Navigation — wide-set uppercase cyber links */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {navItems.map((item) => {
-            const isActive = item.isLink && location.pathname === item.to;
-            if (item.isLink) {
-              return (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  className={cn(
-                    'nav-link-cyber text-muted-foreground font-heading py-1',
-                    isActive && 'active text-secondary'
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            }
-            return (
-              <a
-                key={item.label}
-                href={item.to}
-                className="nav-link-cyber text-muted-foreground font-heading py-1"
-              >
-                {item.label}
-              </a>
-            );
-        </nav>
+          {routeLinks.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className={cn(
+                'nav-link-cyber text-muted-foreground font-heading py-1',
+                location.pathname === item.to && 'active text-secondary'
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+          {anchorLinks.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="nav-link-cyber text-muted-foreground font-heading py-1"
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         {/* Auth Section */}
@@ -92,7 +90,7 @@ export function PublicHeader() {
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
-                  <Sun className="h-4 w-4 text-amber-400" />
+                  <Sun className="h-4 w-4 text-warning" />
                 ) : (
                   <Moon className="h-4 w-4 text-primary" />
                 )}
@@ -102,6 +100,7 @@ export function PublicHeader() {
               <p className="text-xs">{theme === 'dark' ? 'Switch to Pastel Goth' : 'Switch to Cyberpunk'}</p>
             </TooltipContent>
           </Tooltip>
+
           {!isLoading && isAuthenticated ? (
             <Button variant="neon" asChild className="btn-cyber">
               <Link to="/dashboard">Go to Dashboard</Link>
@@ -135,7 +134,7 @@ export function PublicHeader() {
         mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
       )}>
         <nav className="container py-4 flex flex-col gap-4">
-          {navItems.filter(i => i.isLink).map((item) => (
+          {routeLinks.map((item) => (
             <Link
               key={item.label}
               to={item.to}

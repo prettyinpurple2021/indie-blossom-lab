@@ -53,19 +53,30 @@ export function PublicHeader() {
         <nav className="hidden md:flex items-center gap-6">
           {navItems.map((item) => {
             const isActive = item.isLink && location.pathname === item.to;
-            const LinkComp = item.isLink ? Link : 'a';
+            if (item.isLink) {
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={cn(
+                    'nav-link-cyber text-muted-foreground font-heading py-1',
+                    isActive && 'active text-secondary'
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
             return (
-              <LinkComp
+              <a
                 key={item.label}
-                to={item.isLink ? item.to : undefined}
-                href={!item.isLink ? item.to : undefined}
-                className={cn(
-                  'nav-link-cyber text-muted-foreground font-heading py-1',
-                  isActive && 'active text-secondary'
-                )}
+                href={item.to}
+                className="nav-link-cyber text-muted-foreground font-heading py-1"
               >
                 {item.label}
-              </LinkComp>
+              </a>
+            );
+          })}
             );
           })}
         </nav>

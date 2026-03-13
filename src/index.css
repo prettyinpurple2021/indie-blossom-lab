@@ -1060,7 +1060,7 @@
 
   /* Orb glow for secondary */
   .animate-orb-glow-secondary {
-    animation: orb-glow-secondary 6s ease-in-out infinite;
+    animation: orb-glow-secondary 12s ease-in-out infinite;
   }
 
   @keyframes orb-glow-secondary {

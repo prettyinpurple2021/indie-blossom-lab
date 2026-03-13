@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,30 +19,9 @@ import {
 import { PageMeta } from '@/components/layout/PageMeta';
 import { ErrorView } from '@/components/ui/error-view';
 
-const FALLBACK_CERT_BG_COLOR = '#FDF5E6';
-const FALLBACK_CERT_PRIMARY_COLOR = '#8B4513';
-
 export default function VerifyCertificate() {
   const { verificationCode } = useParams<{ verificationCode: string }>();
   const { data: certificate, isLoading, error, refetch } = useVerifyCertificate(verificationCode);
-
-  const theme = useMemo(
-    () => (certificate ? getThemeByCourseTitle(certificate.course_title) : null),
-    [certificate]
-  );
-
-  if (!verificationCode) {
-    return (
-      <div className="min-h-screen cyber-bg flex items-center justify-center p-4">
-        <div className="cyber-grid" />
-        <ErrorView
-          message="Invalid or missing verification code."
-          backTo="/"
-          backLabel="Go home"
-        />
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -67,6 +45,8 @@ export default function VerifyCertificate() {
       </div>
     );
   }
+
+  const theme = certificate ? getThemeByCourseTitle(certificate.course_title) : null;
 
   return (
     <div className="min-h-screen cyber-bg">
@@ -125,7 +105,7 @@ export default function VerifyCertificate() {
               <div 
                 className="p-8"
                 style={{ 
-                  background: `linear-gradient(135deg, ${theme?.backgroundColor || FALLBACK_CERT_BG_COLOR} 0%, ${theme?.primaryColor || FALLBACK_CERT_PRIMARY_COLOR}10 100%)`
+                  background: `linear-gradient(135deg, ${theme?.backgroundColor || '#FDF5E6'} 0%, ${theme?.primaryColor || '#8B4513'}10 100%)`
                 }}
               >
                 <div className="text-center mb-8">
@@ -160,10 +140,10 @@ export default function VerifyCertificate() {
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                     <BookOpen className="h-5 w-5 text-secondary" />
-                    <div className="min-w-0">
+                    <div>
                       <p className="text-xs text-muted-foreground">Course</p>
                       <p className="font-medium text-sm truncate">
-                        {certificate.course_title}
+                        {certificate.course_title.split(' ').slice(0, 2).join(' ')}...
                       </p>
                     </div>
                   </div>

@@ -21,8 +21,6 @@ import { MessageCircle, Send, X, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 
-const MIN_COMMENT_LENGTH = 2;
-
 interface InlineCommentsProps {
   /** The textbook page ID */
   pageId: string;
@@ -178,7 +176,7 @@ function CommentThread({ pageId, paragraphIndex, onClose }: {
 
   const handleSubmit = () => {
     const trimmed = newComment.trim();
-    if (!trimmed || trimmed.length < MIN_COMMENT_LENGTH) return;
+    if (!trimmed || trimmed.length < 2) return;
     createComment.mutate(trimmed);
   };
 
@@ -187,7 +185,7 @@ function CommentThread({ pageId, paragraphIndex, onClose }: {
       initial={{ opacity: 0, x: 20, scale: 0.95 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 20, scale: 0.95 }}
-      className="fixed right-4 top-1/4 z-50 w-80 max-w-[calc(100vw-2rem)] bg-popover backdrop-blur-xl border border-primary/30 rounded-xl shadow-[0_0_40px_rgba(168,85,247,0.3)] overflow-hidden"
+      className="fixed right-4 top-1/4 z-50 w-80 max-w-[calc(100vw-2rem)] bg-black/95 backdrop-blur-xl border border-primary/30 rounded-xl shadow-[0_0_40px_rgba(168,85,247,0.3)] overflow-hidden"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}
@@ -211,7 +209,7 @@ function CommentThread({ pageId, paragraphIndex, onClose }: {
             </p>
           )}
           {comments.map((comment) => (
-            <div key={comment.id} className="bg-popover rounded-lg p-2.5 border border-primary/10">
+            <div key={comment.id} className="bg-white/5 rounded-lg p-2.5 border border-primary/10">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
@@ -241,7 +239,7 @@ function CommentThread({ pageId, paragraphIndex, onClose }: {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Share your thoughts..."
-              className="min-h-[60px] text-sm bg-input border-primary/20 focus:border-primary resize-none"
+              className="min-h-[60px] text-sm bg-black/30 border-primary/20 focus:border-primary resize-none"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

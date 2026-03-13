@@ -1572,7 +1572,16 @@ export type Database = {
         Args: { _action?: string; _user_id: string; _xp_amount: number }
         Returns: Json
       }
+      get_exam_for_student: { Args: { _course_id: string }; Returns: Json }
       get_overall_progress: { Args: { _user_id: string }; Returns: Json }
+      grade_and_submit_exam: {
+        Args: { _answers: Json; _exam_id: string }
+        Returns: Json
+      }
+      has_completed_course: {
+        Args: { _course_id: string; _user_id: string }
+        Returns: boolean
+      }
       has_purchased_course: {
         Args: { _course_id: string; _user_id: string }
         Returns: boolean

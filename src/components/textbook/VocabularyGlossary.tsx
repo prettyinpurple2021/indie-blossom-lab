@@ -60,8 +60,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
   const groupedTerms = useMemo(() => {
     const groups: Record<string, GlossaryTerm[]> = {};
     for (const term of filteredTerms) {
-      const firstChar = term.term?.charAt(0) ?? '';
-      const letter = /^\p{L}$/u.test(firstChar) ? firstChar.toUpperCase() : '#';
+      const letter = term.term[0]?.toUpperCase() || '#';
       if (!groups[letter]) groups[letter] = [];
       groups[letter].push(term);
     }
@@ -105,7 +104,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
               placeholder="Search terms..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-9 bg-input border-primary/30 focus:border-primary"
+              className="pl-9 bg-black/30 border-primary/30 focus:border-primary"
             />
           </div>
         </div>
@@ -121,7 +120,7 @@ export function VocabularyGlossary({ terms, className }: VocabularyGlossaryProps
               {Object.entries(groupedTerms).map(([letter, letterTerms]) => (
                 <div key={letter}>
                   {/* Letter header */}
-                  <div className="sticky top-0 surface-overlay-heavy backdrop-blur-sm py-1 px-2 mb-2 border-b border-primary/20">
+                  <div className="sticky top-0 bg-black/80 backdrop-blur-sm py-1 px-2 mb-2 border-b border-primary/20">
                     <span className="text-lg font-display font-bold text-primary">
                       {letter}
                     </span>

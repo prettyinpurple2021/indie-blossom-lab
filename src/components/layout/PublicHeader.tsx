@@ -116,14 +116,9 @@ export function PublicHeader() {
               <Link to="/dashboard">Dashboard</Link>
             </Button>
           ) : !isLoading ? (
-            <div className="hidden md:flex items-center gap-3">
-              <Button variant="outline" asChild className="btn-cyber-chamfer font-heading tracking-[0.1em] text-xs uppercase min-w-[104px]">
-                <Link to="/auth">Sign In</Link>
-              </Button>
-              <Button variant="neon" asChild className="btn-cyber-chamfer min-w-[124px]">
-                <Link to="/auth?mode=signup">Get Started</Link>
-              </Button>
-            </div>
+            <Button variant="outline" asChild className="hidden md:inline-flex btn-cyber-chamfer font-heading tracking-[0.1em] text-xs uppercase min-w-[104px]">
+              <Link to="/auth">Sign In</Link>
+            </Button>
           ) : null}
 
           {/* Mobile menu toggle */}
@@ -161,9 +156,6 @@ export function PublicHeader() {
             <div className="flex flex-col gap-2 pt-4 border-t border-secondary/35">
               <Button variant="outline" asChild className="btn-cyber-chamfer justify-start font-heading tracking-[0.1em] uppercase text-xs">
                 <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
-              </Button>
-              <Button variant="neon" asChild className="btn-cyber-chamfer">
-                <Link to="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
               </Button>
             </div>
           )}

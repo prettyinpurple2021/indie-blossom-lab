@@ -298,7 +298,7 @@ export default function Index() {
       {/* ═══════════════════════════════════════
           COURSE JOURNEY — TIMELINE LAYOUT
           ═══════════════════════════════════════ */}
-      <section className="py-24">
+      <section className="py-24 nebula-section">
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">

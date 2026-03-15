@@ -11,7 +11,7 @@ const RATE_LIMIT_CONFIG = {
 };
 
 interface GenerateRequest {
-  type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam" | "textbook_chapter" | "textbook_page" | "bulk_curriculum" | "lesson_enrichment" | "final_exam_mixed" | "final_essay" | "grade_essay";
+  type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam" | "textbook_chapter" | "textbook_page" | "bulk_curriculum" | "lesson_enrichment" | "final_exam_mixed" | "final_essay" | "grade_essay" | "practice_lab";
   context: {
     courseTitle?: string;
     courseDescription?: string;
@@ -373,7 +373,27 @@ Create essay topics that require students to synthesize course concepts and appl
   grade_essay: `You are an expert essay grader for SoloSuccess Academy.
 Grade the student's essay fairly and constructively based on the provided rubric.
 Be encouraging but honest. Provide specific examples from the essay in your feedback.
-Return your assessment as valid JSON matching the requested format.`
+Return your assessment as valid JSON matching the requested format.`,
+
+  practice_lab: `You are an expert hands-on learning designer for SoloSuccess Academy.
+Create a practical, skill-building exercise that makes students PRACTICE the skill being taught — not just answer questions.
+
+The exercise should require the student to CREATE something tangible:
+- Write real business copy (not hypothetical)
+- Build an actual spreadsheet, plan, or document
+- Design a real strategy they can use in their business
+- Draft real communications, pitches, or proposals
+
+Generate in JSON format:
+{
+  "title": "Practice Lab: [Skill Being Practiced]",
+  "instructions": "Detailed step-by-step instructions for the hands-on exercise. Include specific guidance on what tools to use, what format to follow, and tips for doing it well. Use markdown formatting with bullet points and numbered steps.",
+  "deliverable_description": "Exactly what the student should submit — be specific about format, length, and content requirements. Example: 'Submit your completed 1-page brand positioning statement including your target audience, unique value proposition, and 3 key differentiators.'",
+  "estimated_minutes": 15,
+  "difficulty": "beginner|intermediate|advanced"
+}
+
+Make the exercise directly applicable to building a real solo business. The student should walk away with something they can actually USE.`,
 };
 
 serve(async (req) => {

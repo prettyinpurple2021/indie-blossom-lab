@@ -13,6 +13,7 @@ import { EnrichLessonsButton } from '@/components/admin/EnrichLessonsButton';
 import { BulkGenerateButton } from '@/components/admin/BulkGenerateButton';
 import { BulkGenerateTextbooksButton } from '@/components/admin/BulkGenerateTextbooksButton';
 import { BulkGenerateSupplementalButton } from '@/components/admin/BulkGenerateSupplementalButton';
+import { BulkGeneratePracticeLabsButton } from '@/components/admin/BulkGeneratePracticeLabsButton';
 import { QuickGenerateDialog } from '@/components/admin/QuickGenerateDialog';
 import { useAdminCourses, useUpdateCourse } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
@@ -270,6 +271,7 @@ export default function AdminDashboard() {
           <BulkGenerateButton />
           <BulkGenerateTextbooksButton />
           <BulkGenerateSupplementalButton />
+          <BulkGeneratePracticeLabsButton />
 
           {/* Create Course Button / Form */}
           {!isCreatingCourse ? (

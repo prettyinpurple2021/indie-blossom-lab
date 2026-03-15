@@ -588,6 +588,16 @@ Include a detailed grading rubric.`;
         case "grade_essay":
           // grade_essay uses customPrompt exclusively (set by the client)
           break;
+
+        case "practice_lab":
+          userPrompt = `Create a hands-on practice lab exercise for:
+Course: ${context.courseTitle || "Solo Business"}
+Lesson: ${context.lessonTitle || "Lesson"}
+Lesson Type: ${context.lessonType || "text"}
+
+The exercise must require the student to CREATE something tangible and directly applicable to their solo business.
+Return ONLY valid JSON matching the format specified in the system prompt.`;
+          break;
       }
     } else if (context.documentContent) {
       // If custom prompt is provided but also has document, prepend document
@@ -643,7 +653,7 @@ Include a detailed grading rubric.`;
 
     // Try to parse JSON from the response for structured content types
     let parsedContent = generatedContent;
-    const jsonContentTypes = ["course_outline", "quiz", "worksheet", "activity", "exam", "textbook_chapter", "textbook_page", "bulk_curriculum", "lesson_enrichment", "final_exam_mixed", "final_essay", "grade_essay"];
+    const jsonContentTypes = ["course_outline", "quiz", "worksheet", "activity", "exam", "textbook_chapter", "textbook_page", "bulk_curriculum", "lesson_enrichment", "final_exam_mixed", "final_essay", "grade_essay", "practice_lab"];
     if (jsonContentTypes.includes(type)) {
       try {
         // Extract JSON from markdown code blocks if present
@@ -651,8 +661,17 @@ Include a detailed grading rubric.`;
         const jsonString = jsonMatch ? jsonMatch[1] : generatedContent;
         parsedContent = JSON.parse(jsonString.trim());
       } catch {
-        // If parsing fails, return raw content
-        console.log("Could not parse JSON, returning raw content");
+        // Fallback: try to find a JSON object in the raw text
+        try {
+          const objMatch = generatedContent.match(/\{[\s\S]*"[^"]+"\s*:[\s\S]*\}/);
+          if (objMatch) {
+            parsedContent = JSON.parse(objMatch[0]);
+          } else {
+            console.log("Could not parse JSON, returning raw content");
+          }
+        } catch {
+          console.log("Could not parse JSON even with fallback, returning raw content");
+        }
       }
     }
 

@@ -142,7 +142,7 @@ export default function Index() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="secondary" asChild className="text-lg px-10 h-14 btn-cyber border border-secondary/40">
+                <Button size="lg" asChild className="text-lg px-10 h-14 btn-cyber bg-gradient-to-r from-[hsl(220_80%_55%)] to-[hsl(270_80%_55%)] text-primary-foreground shadow-[0_0_20px_hsl(245_80%_55%/0.4)] hover:shadow-[0_0_30px_hsl(245_80%_55%/0.5)] hover:scale-[1.02] transition-all duration-300">
                   <Link to="/courses">
                     <Play className="mr-2 h-5 w-5" />
                     View Courses

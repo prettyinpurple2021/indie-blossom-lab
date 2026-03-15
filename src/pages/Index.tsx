@@ -152,7 +152,8 @@ export default function Index() {
             </UIFrame>
 
             {/* Academy highlights */}
-            <div className="flex flex-wrap items-center justify-center gap-8 mt-16 pt-10 border-t border-primary/20">
+            <div className="flex flex-wrap items-center justify-center gap-8 mt-16 pt-10 border-t border-primary/20 relative">
+              <div className="cosmic-divider absolute top-0 left-0 right-0" />
               {[
                 { value: '10', label: 'Expert Courses', hoverColor: 'group-hover:text-primary' },
                 { value: '3', label: 'Learning Phases', hoverColor: 'group-hover:text-secondary' },

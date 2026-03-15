@@ -11,7 +11,7 @@ const RATE_LIMIT_CONFIG = {
 };
 
 interface GenerateRequest {
-  type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam" | "textbook_chapter" | "textbook_page" | "bulk_curriculum" | "lesson_enrichment" | "final_exam_mixed" | "final_essay" | "grade_essay";
+  type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam" | "textbook_chapter" | "textbook_page" | "bulk_curriculum" | "lesson_enrichment" | "final_exam_mixed" | "final_essay" | "grade_essay" | "practice_lab";
   context: {
     courseTitle?: string;
     courseDescription?: string;

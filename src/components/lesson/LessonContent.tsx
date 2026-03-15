@@ -22,6 +22,8 @@ import { WorksheetViewer } from './WorksheetViewer';
 import { AssignmentSubmission } from './AssignmentSubmission';
 import { ActivityStepPlayer } from './ActivityStepPlayer';
 import { WorksheetPlayer } from './WorksheetPlayer';
+import { PracticeLabPlayer } from './PracticeLabPlayer';
+import { usePracticeLab } from '@/hooks/usePracticeLabs';
 
 interface LessonContentProps {
   /** The lesson to render */

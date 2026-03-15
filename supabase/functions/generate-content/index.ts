@@ -588,6 +588,16 @@ Include a detailed grading rubric.`;
         case "grade_essay":
           // grade_essay uses customPrompt exclusively (set by the client)
           break;
+
+        case "practice_lab":
+          userPrompt = `Create a hands-on practice lab exercise for:
+Course: ${context.courseTitle || "Solo Business"}
+Lesson: ${context.lessonTitle || "Lesson"}
+Lesson Type: ${context.lessonType || "text"}
+
+The exercise must require the student to CREATE something tangible and directly applicable to their solo business.
+Return ONLY valid JSON matching the format specified in the system prompt.`;
+          break;
       }
     } else if (context.documentContent) {
       // If custom prompt is provided but also has document, prepend document

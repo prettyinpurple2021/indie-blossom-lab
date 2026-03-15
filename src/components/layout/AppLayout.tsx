@@ -30,6 +30,8 @@ import { NeonSpinner } from '@/components/ui/neon-spinner';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NotepadWidget } from '@/components/notepad/NotepadWidget';
+import { NebulaBackground } from '@/components/landing/NebulaBackground';
+import { StarField } from '@/components/landing/StarField';
 
 export function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();

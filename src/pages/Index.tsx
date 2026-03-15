@@ -197,7 +197,7 @@ export default function Index() {
               { icon: GraduationCap, title: 'Career Changers', desc: 'Transitioning from corporate? Graduate with a professional portfolio and investor-ready pitch.', color: 'accent' },
               { icon: Users, title: 'Indie Hackers', desc: 'Already building? Fill the gaps in your knowledge with targeted courses on branding, sales, and automation.', color: 'primary' },
             ].map((item) => (
-              <div key={item.title} className="data-card p-6 group cursor-default">
+              <div key={item.title} className="data-card p-6 group cursor-default nebula-glow-hover">
                 <div className={`h-14 w-14 rounded-xl bg-${item.color}/10 border border-${item.color}/30 flex items-center justify-center mb-4 transition-all duration-300`}>
                   <item.icon className={`h-7 w-7 text-${item.color}`} />
                 </div>

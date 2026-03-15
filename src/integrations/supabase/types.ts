@@ -740,6 +740,103 @@ export type Database = {
         }
         Relationships: []
       }
+      practice_labs: {
+        Row: {
+          created_at: string
+          deliverable_description: string
+          difficulty: string
+          estimated_minutes: number | null
+          id: string
+          instructions: string
+          lesson_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deliverable_description: string
+          difficulty?: string
+          estimated_minutes?: number | null
+          id?: string
+          instructions: string
+          lesson_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deliverable_description?: string
+          difficulty?: string
+          estimated_minutes?: number | null
+          id?: string
+          instructions?: string
+          lesson_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_labs_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: true
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practice_submissions: {
+        Row: {
+          ai_feedback: string | null
+          ai_feedback_at: string | null
+          created_at: string
+          file_urls: string[] | null
+          id: string
+          practice_lab_id: string
+          score: number | null
+          status: string
+          submission_content: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_feedback?: string | null
+          ai_feedback_at?: string | null
+          created_at?: string
+          file_urls?: string[] | null
+          id?: string
+          practice_lab_id: string
+          score?: number | null
+          status?: string
+          submission_content?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_feedback?: string | null
+          ai_feedback_at?: string | null
+          created_at?: string
+          file_urls?: string[] | null
+          id?: string
+          practice_lab_id?: string
+          score?: number | null
+          status?: string
+          submission_content?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_submissions_practice_lab_id_fkey"
+            columns: ["practice_lab_id"]
+            isOneToOne: false
+            referencedRelation: "practice_labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

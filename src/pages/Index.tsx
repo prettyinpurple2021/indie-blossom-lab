@@ -124,7 +124,7 @@ export default function Index() {
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight mb-8 leading-tight">
               <span className="text-foreground animate-neon-glow inline-block">BUILD YOUR</span>
               <br />
-              <span className="text-gradient animate-flicker">DREAM BUSINESS</span>
+              <span className="text-nebula animate-flicker">DREAM BUSINESS</span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-sans">

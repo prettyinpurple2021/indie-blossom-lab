@@ -271,6 +271,7 @@ export default function AdminDashboard() {
           <BulkGenerateButton />
           <BulkGenerateTextbooksButton />
           <BulkGenerateSupplementalButton />
+          <BulkGeneratePracticeLabsButton />
 
           {/* Create Course Button / Form */}
           {!isCreatingCourse ? (

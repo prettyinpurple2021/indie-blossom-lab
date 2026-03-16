@@ -3,12 +3,27 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { getCorsHeaders, corsResponse } from "../_shared/cors.ts";
 
-// Rate limit: 20 requests per hour per admin
-const RATE_LIMIT_CONFIG = {
+// Rate limits are split by generation type so long-running admin bulk tools
+// can use a larger bucket without weakening limits for everything else.
+const DEFAULT_RATE_LIMIT_CONFIG = {
   endpoint: "generate-content",
   maxRequests: 20,
   windowMinutes: 60,
 };
+
+function getRateLimitConfig(type: GenerateRequest["type"]) {
+  // Practice labs are generated in large admin batches (up to 78 lessons),
+  // so they need their own higher per-hour allowance.
+  if (type === "practice_lab") {
+    return {
+      endpoint: "generate-content:practice_lab",
+      maxRequests: 120,
+      windowMinutes: 60,
+    };
+  }
+
+  return DEFAULT_RATE_LIMIT_CONFIG;
+}
 
 interface GenerateRequest {
   type: "course_outline" | "lesson_content" | "quiz" | "worksheet" | "activity" | "exam" | "textbook_chapter" | "textbook_page" | "bulk_curriculum" | "lesson_enrichment" | "final_exam_mixed" | "final_essay" | "grade_essay" | "practice_lab";

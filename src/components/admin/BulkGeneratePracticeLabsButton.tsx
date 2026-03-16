@@ -37,6 +37,19 @@ export function BulkGeneratePracticeLabsButton() {
     setLogs(prev => [...prev, { message, type, timestamp: new Date() }]);
   };
 
+  /** Small sleep helper so retry timing stays centralized and easy to read. */
+  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  /**
+   * Extract retryAfter seconds from the edge function error message when present.
+   * The invoke() client wraps the JSON body into the error text, so we parse it out.
+   */
+  const extractRetryAfterSeconds = (error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error ?? '');
+    const match = message.match(/"retryAfter"\s*:\s*(\d+)/i);
+    return match ? Number(match[1]) : null;
+  };
+
   /** Main generation function */
   const handleGenerate = async () => {
     setIsGenerating(true);

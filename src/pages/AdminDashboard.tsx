@@ -394,6 +394,15 @@ export default function AdminDashboard() {
                             <BookText className="h-4 w-4" />
                             <span className="hidden xl:inline ml-2">Textbook</span>
                           </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleManageCourse(course.id, 'milestones')}
+                            className="border-accent/50 hover:border-accent hover:bg-accent/10 hover:text-accent"
+                          >
+                            <Target className="h-4 w-4" />
+                            <span className="hidden xl:inline ml-2">Milestones</span>
+                          </Button>
                           <AssetUpload
                             courseId={course.id}
                             currentAsset={course.plug_and_play_asset}

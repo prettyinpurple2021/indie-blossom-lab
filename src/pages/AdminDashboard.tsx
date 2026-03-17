@@ -475,6 +475,40 @@ export default function AdminDashboard() {
             </div>
           )}
         </TabsContent>
+
+        <TabsContent value="milestones">
+          {selectedCourseId && (
+            <div className="space-y-4">
+              {/* Breadcrumb + Back button */}
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => {
+                    setSelectedCourseId(null);
+                    setActiveTab('courses');
+                  }}
+                  className="hover:bg-primary/10 hover:text-primary shrink-0"
+                  title="Back to Courses"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <CourseBreadcrumb
+                  segments={[
+                    { label: 'Admin', href: '/admin' },
+                    { label: selectedCourse?.title || 'Course' },
+                    { label: 'Milestones' },
+                  ]}
+                />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold neon-text">{selectedCourse?.title} - Milestones & Rubric</h2>
+                <p className="text-sm text-muted-foreground">Manage project checkpoints and scoring criteria</p>
+              </div>
+              <MilestoneEditor courseId={selectedCourseId} courseTitle={selectedCourse?.title} />
+            </div>
+          )}
+        </TabsContent>
       </Tabs>
     </div>
   );

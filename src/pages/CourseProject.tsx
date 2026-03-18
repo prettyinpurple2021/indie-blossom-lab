@@ -20,6 +20,7 @@ import { ProjectSubmissionForm } from '@/components/project/ProjectSubmissionFor
 import { ProjectFeedback } from '@/components/project/ProjectFeedback';
 import { MilestoneCard } from '@/components/project/MilestoneCard';
 import { GraduationGate } from '@/components/project/GraduationGate';
+import { PortfolioAssembler } from '@/components/project/PortfolioAssembler';
 import { CourseBreadcrumb } from '@/components/navigation/CourseBreadcrumb';
 import { useCourse, useHasPurchasedCourse } from '@/hooks/useCourses';
 import { useCourseProject } from '@/hooks/useProjects';

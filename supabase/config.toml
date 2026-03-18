@@ -22,7 +22,7 @@ verify_jwt = false
 verify_jwt = false  # Called from webhook/cron context without user JWT
 
 [functions.check-student-progress]
-verify_jwt = true   # Requires admin JWT; do not set false (sensitive student data + email)
+verify_jwt = false  # Cron/background jobs use API keys, not user JWTs; function enforces auth internally
 
 [functions.generate-image]
 verify_jwt = false

@@ -19,10 +19,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-notification-email]
-verify_jwt = false
+verify_jwt = false  # Called from webhook/cron context without user JWT
 
 [functions.check-student-progress]
-verify_jwt = false
+verify_jwt = true   # Requires admin JWT; do not set false (sensitive student data + email)
 
 [functions.generate-image]
 verify_jwt = false

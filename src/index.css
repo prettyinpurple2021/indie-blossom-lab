@@ -1130,17 +1130,11 @@
     }
   }
 
-  /* Floating particles drift */
+  /* Floating particles drift — translate only, no scale to prevent shake */
   @keyframes particle-drift {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-    50% {
-      transform: translate(30px, -40px) scale(1.5);
-    }
-    100% {
-      transform: translate(-20px, 20px) scale(0.8);
-    }
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(30px, -40px); }
+    100% { transform: translate(-20px, 20px); }
   }
 
   /* Scanning line for UI frames */
@@ -1202,6 +1196,7 @@
     filter: blur(80px);
     mix-blend-mode: screen;
     opacity: 0;
+    will-change: opacity;
     animation: nebula-breathe 18s ease-in-out infinite;
   }
 
@@ -1229,23 +1224,12 @@
     animation-delay: -12s;
   }
 
+  /* Opacity-only breathing — no scale/rotate to prevent layout shake */
   @keyframes nebula-breathe {
-    0%, 100% {
-      opacity: 0.3;
-      transform: scale(1) rotate(0deg);
-    }
-    25% {
-      opacity: 0.5;
-      transform: scale(1.08) rotate(3deg);
-    }
-    50% {
-      opacity: 0.6;
-      transform: scale(1.15) rotate(-2deg);
-    }
-    75% {
-      opacity: 0.45;
-      transform: scale(1.05) rotate(1deg);
-    }
+    0%, 100% { opacity: 0.3; }
+    25%      { opacity: 0.5; }
+    50%      { opacity: 0.6; }
+    75%      { opacity: 0.45; }
   }
 
   /* Star twinkle effect — tiny glint on elements */
@@ -1253,11 +1237,12 @@
     animation: star-twinkle 6s ease-in-out infinite;
   }
 
+  /* Opacity-only twinkle — no scale to prevent layout shake */
   @keyframes star-twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(0.8); }
-    20% { opacity: 1; transform: scale(1.2); }
-    40% { opacity: 0.3; transform: scale(0.9); }
-    60% { opacity: 0.9; transform: scale(1.1); }
+    0%, 100% { opacity: 0.2; }
+    20% { opacity: 1; }
+    40% { opacity: 0.3; }
+    60% { opacity: 0.9; }
     80% { opacity: 0.15; transform: scale(0.85); }
   }
 

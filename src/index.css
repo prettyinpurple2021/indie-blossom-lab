@@ -692,10 +692,9 @@
   /* Global dark-translucent glass style (no gray wash in any theme) */
 
   .header-glass {
-    --nav-opacity: 0.75;
+    --nav-opacity: 0.92;
     background: hsl(var(--nav-surface) / var(--nav-opacity));
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    /* backdrop-blur removed — causes flashing over animated backgrounds */
     border-bottom: 1px solid hsl(var(--nav-neon-cyan) / 0.95);
     box-shadow:
       0 4px 20px -5px hsl(var(--nav-neon-cyan) / 0.55),
@@ -908,8 +907,7 @@
 
   /* ====== MOBILE HEADER BAR (App Layout) ====== */
   .mobile-header-glass {
-    background: hsl(var(--nav-surface) / 0.75);
-    backdrop-filter: blur(20px) saturate(1.8);
+    background: hsl(var(--nav-surface) / 0.92);
     -webkit-backdrop-filter: blur(20px) saturate(1.8);
     border-bottom: 1px solid hsl(var(--nav-neon-cyan) / 0.9);
     box-shadow: 0 4px 20px -5px hsl(var(--nav-neon-cyan) / 0.45);
@@ -1028,16 +1026,8 @@
   }
 
   @keyframes orb-glow {
-    0%, 100% { 
-      opacity: 0.6;
-      transform: scale(1);
-      filter: blur(48px);
-    }
-    50% { 
-      opacity: 1;
-      transform: scale(1.1);
-      filter: blur(64px);
-    }
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
   }
 
   /* Orb glow with color shift for primary */
@@ -1046,16 +1036,8 @@
   }
 
   @keyframes orb-glow-primary {
-    0%, 100% { 
-      opacity: 0.5;
-      transform: scale(1);
-      background: hsl(270 100% 70% / 0.15);
-    }
-    50% { 
-      opacity: 0.9;
-      transform: scale(1.15);
-      background: hsl(270 100% 70% / 0.25);
-    }
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.7; }
   }
 
   /* Orb glow for secondary */
@@ -1064,16 +1046,8 @@
   }
 
   @keyframes orb-glow-secondary {
-    0%, 100% { 
-      opacity: 0.5;
-      transform: scale(1);
-      background: hsl(185 100% 55% / 0.12);
-    }
-    50% { 
-      opacity: 0.85;
-      transform: scale(1.12);
-      background: hsl(185 100% 55% / 0.22);
-    }
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.65; }
   }
 
   /* Orb glow for accent */
@@ -1082,16 +1056,8 @@
   }
 
   @keyframes orb-glow-accent {
-    0%, 100% { 
-      opacity: 0.5;
-      transform: scale(1);
-      background: hsl(320 100% 65% / 0.12);
-    }
-    50% { 
-      opacity: 0.85;
-      transform: scale(1.1);
-      background: hsl(320 100% 65% / 0.22);
-    }
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.65; }
   }
 
   /* Flicker effect for extra cyberpunk feel */
@@ -1099,13 +1065,9 @@
     animation: flicker 8s infinite;
   }
 
+  /* Flicker disabled — was causing visible glitching */
   @keyframes flicker {
     0%, 100% { opacity: 1; }
-    92% { opacity: 1; }
-    93% { opacity: 0.8; }
-    94% { opacity: 1; }
-    96% { opacity: 0.9; }
-    97% { opacity: 1; }
   }
 
   /* Neon text glow animation for H1 headings */
@@ -1130,17 +1092,11 @@
     }
   }
 
-  /* Floating particles drift */
+  /* Floating particles drift — translate only, no scale to prevent shake */
   @keyframes particle-drift {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-    50% {
-      transform: translate(30px, -40px) scale(1.5);
-    }
-    100% {
-      transform: translate(-20px, 20px) scale(0.8);
-    }
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(30px, -40px); }
+    100% { transform: translate(-20px, 20px); }
   }
 
   /* Scanning line for UI frames */
@@ -1202,6 +1158,7 @@
     filter: blur(80px);
     mix-blend-mode: screen;
     opacity: 0;
+    will-change: opacity;
     animation: nebula-breathe 18s ease-in-out infinite;
   }
 
@@ -1229,23 +1186,12 @@
     animation-delay: -12s;
   }
 
+  /* Opacity-only breathing — no scale/rotate to prevent layout shake */
   @keyframes nebula-breathe {
-    0%, 100% {
-      opacity: 0.3;
-      transform: scale(1) rotate(0deg);
-    }
-    25% {
-      opacity: 0.5;
-      transform: scale(1.08) rotate(3deg);
-    }
-    50% {
-      opacity: 0.6;
-      transform: scale(1.15) rotate(-2deg);
-    }
-    75% {
-      opacity: 0.45;
-      transform: scale(1.05) rotate(1deg);
-    }
+    0%, 100% { opacity: 0.3; }
+    25%      { opacity: 0.5; }
+    50%      { opacity: 0.6; }
+    75%      { opacity: 0.45; }
   }
 
   /* Star twinkle effect — tiny glint on elements */
@@ -1253,11 +1199,12 @@
     animation: star-twinkle 6s ease-in-out infinite;
   }
 
+  /* Opacity-only twinkle — no scale to prevent layout shake */
   @keyframes star-twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(0.8); }
-    20% { opacity: 1; transform: scale(1.2); }
-    40% { opacity: 0.3; transform: scale(0.9); }
-    60% { opacity: 0.9; transform: scale(1.1); }
+    0%, 100% { opacity: 0.2; }
+    20% { opacity: 1; }
+    40% { opacity: 0.3; }
+    60% { opacity: 0.9; }
     80% { opacity: 0.15; transform: scale(0.85); }
   }
 

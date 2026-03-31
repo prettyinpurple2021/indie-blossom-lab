@@ -148,8 +148,8 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
             );
           };
 
-          // Check if this is a paragraph line (not heading/list/empty)
-          const isParagraph = !line.startsWith('#') && !line.startsWith('- ') && line.trim() !== '';
+          // Check if this is a paragraph line (not heading/list/empty/special)
+          const isParagraph = !line.startsWith('#') && !line.startsWith('- ') && !line.startsWith('> ') && !/^(-{3,}|_{3,}|\*{3,})$/.test(line.trim()) && line.trim() !== '';
           const currentParagraphIdx = isParagraph ? pIdx++ : -1;
 
           // Comment button for paragraphs
@@ -161,39 +161,66 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
             />
           ) : null;
 
+          // ── Horizontal rule — decorative gradient divider
+          if (/^(-{3,}|_{3,}|\*{3,})$/.test(line.trim())) {
+            return (
+              <div key={key} className="my-6 relative">
+                <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-3 text-primary/30 text-xs">◆</div>
+              </div>
+            );
+          }
+
+          // ── Blockquote — callout style
+          if (line.startsWith('> ')) {
+            return (
+              <blockquote key={key} className="my-3 pl-4 py-2 pr-3 border-l-3 border-primary/40 bg-primary/5 rounded-r-md italic text-foreground/80 text-sm relative">
+                <span className="absolute -left-1 top-0 text-primary/20 text-2xl font-serif leading-none">"</span>
+                {wrapWithHighlight(line.slice(2))}
+              </blockquote>
+            );
+          }
+
+          // ── Headings with decorative left-border accent
           if (line.startsWith('# ')) {
             return (
-              <h1 key={key} className="text-2xl font-display font-bold mb-4 text-cyan-300">
-                {wrapWithHighlight(line.slice(2))}
+              <h1 key={key} className="text-2xl font-display font-bold mb-4 pl-3 border-l-[3px] border-gradient-to-b from-primary to-secondary relative" style={{ borderImage: 'linear-gradient(180deg, hsl(185 100% 58%), hsl(270 85% 67%)) 1' }}>
+                <span className="text-cyan-300">{wrapWithHighlight(line.slice(2))}</span>
               </h1>
             );
           }
           if (line.startsWith('## ')) {
             return (
-              <h2 key={key} className="text-xl font-display font-semibold mb-3 text-primary">
-                {wrapWithHighlight(line.slice(3))}
+              <h2 key={key} className="text-xl font-display font-semibold mb-3 pl-3 border-l-[3px]" style={{ borderImage: 'linear-gradient(180deg, hsl(270 85% 67%), hsl(185 100% 58%)) 1' }}>
+                <span className="text-primary">{wrapWithHighlight(line.slice(3))}</span>
               </h2>
             );
           }
           if (line.startsWith('### ')) {
             return (
-              <h3 key={key} className="text-lg font-display font-medium mb-2 text-purple-300">
-                {wrapWithHighlight(line.slice(4))}
+              <h3 key={key} className="text-lg font-display font-medium mb-2 pl-3 border-l-[3px] border-purple-400/40">
+                <span className="text-purple-300">{wrapWithHighlight(line.slice(4))}</span>
               </h3>
             );
           }
+
+          // ── List items with custom markers
           if (line.startsWith('- ')) {
             return (
-              <li key={key} className="ml-4 mb-1 text-foreground/90 list-disc">
+              <li key={key} className="ml-4 mb-1.5 text-foreground/90 list-none pl-4 relative before:content-['▹'] before:absolute before:left-0 before:text-primary before:font-bold">
                 {wrapWithHighlight(line.slice(2))}
               </li>
             );
           }
+
+          // ── Empty lines
           if (line.trim() === '') {
             return <br key={key} />;
           }
+
+          // ── Regular paragraphs
           return (
-            <p key={key} className="group mb-2 text-foreground/90 leading-relaxed relative">
+            <p key={key} className="group mb-2.5 text-foreground/90 leading-relaxed relative">
               {wrapWithHighlight(line)}
               {commentBtn}
             </p>

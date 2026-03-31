@@ -275,10 +275,15 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
         >
           {renderedContent}
 
-          {/* Embedded Quiz — answer checked server-side */}
+          {/* Embedded Quiz — styled with gradient border */}
           {page.embedded_quiz && (
-            <div className="mt-6 p-4 bg-black/40 rounded-lg border border-primary/30 shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-              <h4 className="font-display font-semibold mb-3 text-cyan-300">Quick Check</h4>
+            <div className="mt-8 p-5 bg-black/40 rounded-lg border border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.1)] relative overflow-hidden">
+              {/* Gradient top accent */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/60 via-secondary/60 to-accent/60" />
+              <h4 className="font-display font-semibold mb-3 text-cyan-300 flex items-center gap-2">
+                <span className="h-6 w-6 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-xs">✓</span>
+                Quick Check
+              </h4>
               <p className="mb-4 text-foreground/90">{page.embedded_quiz.question}</p>
               
               <RadioGroup
@@ -290,9 +295,10 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
                   <div
                     key={idx}
                     className={cn(
-                      "flex items-center space-x-2 p-2 rounded border border-transparent transition-all",
-                      showResult && quizResult && idx === quizResult.correctAnswer && "bg-green-500/20 border-green-500/30",
-                      showResult && quizResult && quizAnswer === idx && idx !== quizResult.correctAnswer && "bg-red-500/20 border-red-500/30"
+                      "flex items-center space-x-2 p-2.5 rounded-lg border transition-all",
+                      !showResult && "border-transparent hover:border-primary/20 hover:bg-primary/5",
+                      showResult && quizResult && idx === quizResult.correctAnswer && "bg-green-500/15 border-green-500/30",
+                      showResult && quizResult && quizAnswer === idx && idx !== quizResult.correctAnswer && "bg-red-500/15 border-red-500/30"
                     )}
                   >
                     <RadioGroupItem value={idx.toString()} id={`option-${pageIndex}-${idx}`} />
@@ -326,14 +332,15 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
               )}
 
               {showResult && quizResult?.explanation && (
-                <p className={cn(
-                  "mt-4 text-sm p-2 rounded border",
+                <div className={cn(
+                  "mt-4 text-sm p-3 rounded-lg border",
                   isCorrect 
-                    ? "bg-green-500/10 text-green-300 border-green-500/30" 
-                    : "bg-primary/10 text-primary border-primary/30"
+                    ? "bg-green-500/8 text-green-300 border-green-500/25" 
+                    : "bg-primary/8 text-primary border-primary/25"
                 )}>
+                  <span className="font-medium mr-1">💡</span>
                   {quizResult.explanation}
-                </p>
+                </div>
               )}
             </div>
           )}
@@ -346,10 +353,11 @@ export const BookPage = forwardRef<HTMLDivElement, BookPageProps>(
           )}
         </div>
 
-        {/* Page number */}
-        <div className="mt-4 pt-2 border-t border-primary/30 text-center">
+        {/* Page number — styled footer */}
+        <div className="mt-4 pt-2 border-t border-primary/30 text-center relative">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           <span className="text-sm text-cyan-400">
-            Page <span className="text-primary font-bold">{pageIndex + 1}</span> of {totalPages}
+            Page <span className="text-primary font-bold font-mono">{pageIndex + 1}</span> of {totalPages}
           </span>
         </div>
       </div>

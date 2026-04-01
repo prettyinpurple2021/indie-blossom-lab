@@ -182,23 +182,23 @@ export default function CourseDetail() {
         <div className="cyber-grid" />
         
         {/* Hero Section */}
-        <section className="relative py-12 border-b border-primary/20">
-          {/* Animated glow orbs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-orb-glow-primary" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1.5s' }} />
+        <section className="relative py-8 sm:py-12 border-b border-primary/20">
+          {/* Animated glow orbs — smaller on mobile */}
+          <div className="absolute top-0 left-1/4 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl animate-orb-glow-primary" />
+          <div className="absolute bottom-0 right-1/4 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl animate-orb-glow-secondary" style={{ animationDelay: '1.5s' }} />
           
-          <div className="container relative z-10">
-            <Button variant="ghost" asChild className="mb-6 hover:bg-primary/10 hover:text-primary transition-all">
+          <div className="container relative z-10 px-4 sm:px-6">
+            <Button variant="ghost" asChild className="mb-4 sm:mb-6 hover:bg-primary/10 hover:text-primary transition-all">
               <Link to="/courses">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 All Courses
               </Link>
             </Button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
               {/* Course Info */}
               <div className="lg:col-span-2">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                   <Badge className={`${phaseMeta.colorClass} shadow-[0_0_15px_currentColor/0.3]`}>
                     {phaseMeta.icon} {phaseMeta.label}
                   </Badge>
@@ -207,33 +207,33 @@ export default function CourseDetail() {
                   </Badge>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-display font-bold mb-4 neon-text">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-3 sm:mb-4 neon-text">
                   {course.title}
                 </h1>
 
-                <p className="text-lg text-muted-foreground mb-6">
+                <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
                   {course.description}
                 </p>
 
-                {/* Stats */}
-                <div className="flex flex-wrap items-center gap-6 text-sm">
+                {/* Stats — scrollable row on mobile */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 md:gap-6 text-xs sm:text-sm">
                   {hasPurchased && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      <span>Your progress: {progressData?.completedCount ?? 0}/{progressData?.lessonCount ?? 0} lessons</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-success/10 border border-success/20">
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success flex-shrink-0" />
+                      <span>{progressData?.completedCount ?? 0}/{progressData?.lessonCount ?? 0} lessons</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                    <BookOpen className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                    <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                     <span>{lessons?.length || 0} Lessons</span>
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
-                    <MessageSquare className="h-4 w-4 text-secondary" />
-                    <span>AI Tutor Included</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
+                    <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary flex-shrink-0" />
+                    <span>AI Tutor</span>
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
-                    <Target className="h-4 w-4 text-accent" />
-                    <span>Course Project</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent/10 border border-accent/20">
+                    <Target className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
+                    <span>Project</span>
                   </div>
                 </div>
               </div>
@@ -325,12 +325,12 @@ export default function CourseDetail() {
         </section>
 
         {/* Course Content */}
-        <section className="py-12 relative z-10">
-          <div className="container">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section className="py-8 sm:py-12 relative z-10">
+          <div className="container px-4 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
               {/* Lessons List */}
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-display font-semibold mb-6 neon-text">Course Content</h2>
+                <h2 className="text-xl sm:text-2xl font-display font-semibold mb-4 sm:mb-6 neon-text">Course Content</h2>
                 
                 <div className="space-y-3">
                   {lessons?.map((lesson, index) => {

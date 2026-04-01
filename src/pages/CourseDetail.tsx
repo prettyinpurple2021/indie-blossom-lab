@@ -325,12 +325,12 @@ export default function CourseDetail() {
         </section>
 
         {/* Course Content */}
-        <section className="py-12 relative z-10">
-          <div className="container">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section className="py-8 sm:py-12 relative z-10">
+          <div className="container px-4 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
               {/* Lessons List */}
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-display font-semibold mb-6 neon-text">Course Content</h2>
+                <h2 className="text-xl sm:text-2xl font-display font-semibold mb-4 sm:mb-6 neon-text">Course Content</h2>
                 
                 <div className="space-y-3">
                   {lessons?.map((lesson, index) => {

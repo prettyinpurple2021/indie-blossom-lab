@@ -242,13 +242,13 @@ Make the content practical, motivating, and immediately useful for solo founders
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
         temperature: 0.7,
-        max_tokens: 8000,
+        max_tokens: 16000,
       }),
     });
 
@@ -277,14 +277,62 @@ Make the content practical, motivating, and immediately useful for solo founders
       throw new Error("No content generated from AI");
     }
 
-    // Parse the JSON response
+    // --- Robust JSON extraction (handles markdown fences, truncation, etc.) ---
+    function extractJsonFromResponse(response: string): unknown {
+      // Strip markdown code fences
+      let cleaned = response
+        .replace(/```json\s*/gi, "")
+        .replace(/```\s*/g, "")
+        .trim();
+
+      // Find JSON boundaries
+      const jsonStart = cleaned.search(/[\{\[]/);
+      const jsonEnd = cleaned.lastIndexOf(
+        jsonStart !== -1 && cleaned[jsonStart] === "[" ? "]" : "}"
+      );
+
+      if (jsonStart === -1 || jsonEnd === -1) {
+        throw new Error("No JSON object found in response");
+      }
+
+      cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+
+      // First attempt: direct parse
+      try {
+        return JSON.parse(cleaned);
+      } catch (_e) {
+        // Fix common LLM issues: trailing commas, control characters
+        cleaned = cleaned
+          .replace(/,\s*}/g, "}")
+          .replace(/,\s*]/g, "]")
+          .replace(/[\x00-\x1F\x7F]/g, " ");
+
+        try {
+          return JSON.parse(cleaned);
+        } catch (_e2) {
+          // Last resort: try to repair truncated JSON by closing open structures
+          let repaired = cleaned;
+          const openBraces = (repaired.match(/{/g) || []).length;
+          const closeBraces = (repaired.match(/}/g) || []).length;
+          const openBrackets = (repaired.match(/\[/g) || []).length;
+          const closeBrackets = (repaired.match(/]/g) || []).length;
+
+          // Remove any trailing partial string/key (ends with unclosed quote)
+          repaired = repaired.replace(/,?\s*"[^"]*$/, "");
+
+          for (let i = 0; i < openBrackets - closeBrackets; i++) repaired += "]";
+          for (let i = 0; i < openBraces - closeBraces; i++) repaired += "}";
+
+          return JSON.parse(repaired);
+        }
+      }
+    }
+
     let textbookData;
     try {
-      const jsonMatch = generated.match(/```(?:json)?\s*([\s\S]*?)```/);
-      const jsonStr = jsonMatch ? jsonMatch[1] : generated;
-      textbookData = JSON.parse(jsonStr.trim());
-    } catch {
-      console.error("Failed to parse textbook JSON:", generated.substring(0, 500));
+      textbookData = extractJsonFromResponse(generated) as any;
+    } catch (parseErr) {
+      console.error("Failed to parse textbook JSON:", generated.substring(0, 1000));
       throw new Error("Failed to parse AI-generated textbook content");
     }
 

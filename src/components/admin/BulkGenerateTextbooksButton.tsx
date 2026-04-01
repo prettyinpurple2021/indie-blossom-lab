@@ -109,7 +109,7 @@ export function BulkGenerateTextbooksButton() {
     } finally {
       setIsRunning(false);
     }
-  }, [toast]);
+  }, [toast, forceRegenerate]);
 
   const successCount = results.filter(r => r.status === 'success').length;
   const totalChapters = results.reduce((sum, r) => sum + r.chaptersCreated, 0);

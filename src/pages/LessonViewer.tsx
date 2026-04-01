@@ -376,7 +376,7 @@ export default function LessonViewer() {
           <PageTransition>
             <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 lg:p-12">
               <ContentTransition>
-                <div className="glass-card p-6 md:p-8">
+                <div className="glass-card p-4 sm:p-6 md:p-8">
                   <LessonContent
                     lesson={currentLesson}
                     savedNotes={currentProgress?.notes ?? null}

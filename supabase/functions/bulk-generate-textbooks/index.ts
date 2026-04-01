@@ -66,6 +66,7 @@ serve(async (req) => {
     // --- Parse request ---
     const body = await req.json();
     const requestedCourseId = body.courseId;
+    const force = body.force === true; // Force regenerate existing textbooks
 
     // --- Use service role for DB writes ---
     const serviceClient = createClient(

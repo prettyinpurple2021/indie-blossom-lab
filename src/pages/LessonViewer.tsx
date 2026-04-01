@@ -284,16 +284,16 @@ export default function LessonViewer() {
         onToggleAITutor={handleToggleAITutor}
       />
 
-      {/* Top Navigation Bar */}
-      <header className="h-14 border-b border-primary/20 bg-background/60 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-40 shadow-[0_4px_20px_hsl(var(--primary)/0.15)]">
+      {/* Top Navigation Bar — tighter on mobile */}
+      <header className="h-12 sm:h-14 border-b border-primary/20 bg-background/60 backdrop-blur-xl flex items-center px-3 sm:px-4 gap-2 sm:gap-4 sticky top-0 z-40 shadow-[0_4px_20px_hsl(var(--primary)/0.15)]">
         {/* Mobile Sidebar Toggle */}
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden hover:bg-primary/20">
-              <Menu className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="lg:hidden hover:bg-primary/20 h-8 w-8 sm:h-9 sm:w-9">
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-80 bg-background/90 backdrop-blur-xl border-r border-primary/30">
+          <SheetContent side="left" className="p-0 w-72 sm:w-80 bg-background/90 backdrop-blur-xl border-r border-primary/30">
             <LessonSidebar
               lessons={lessons || []}
               currentLessonId={lessonId || ''}
@@ -330,10 +330,10 @@ export default function LessonViewer() {
               }
             }}
             disabled={setContinueLater.isPending}
-            className="gap-2 border-primary/30 hover:bg-primary/10"
+            className="gap-1.5 sm:gap-2 border-primary/30 hover:bg-primary/10 h-8 sm:h-9 px-2 sm:px-3"
           >
-            <Bookmark className="h-4 w-4" />
-            <span className="hidden sm:inline">Continue later</span>
+            <Bookmark className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline text-xs sm:text-sm">Continue later</span>
           </Button>
         )}
 
@@ -342,10 +342,10 @@ export default function LessonViewer() {
           variant={showAITutor ? 'neon' : 'outline'}
           size="sm"
           onClick={() => setShowAITutor(true)}
-          className="gap-2 border-secondary/50 hover:border-secondary"
+          className="gap-1.5 sm:gap-2 border-secondary/50 hover:border-secondary h-8 sm:h-9 px-2 sm:px-3"
         >
-          <Bot className="h-4 w-4" />
-          <span className="hidden sm:inline">AI Tutor</span>
+          <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline text-xs sm:text-sm">AI Tutor</span>
         </Button>
       </header>
 

@@ -41,7 +41,7 @@ export function BulkGenerateTextbooksButton() {
     try {
       while (true) {
         const { data, error } = await supabase.functions.invoke('bulk-generate-textbooks', {
-          body: {},
+          body: { force: forceRegenerate },
         });
 
         if (error) {

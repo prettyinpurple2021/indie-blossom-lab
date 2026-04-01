@@ -374,7 +374,7 @@ export default function LessonViewer() {
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
           <PageTransition>
-            <div className="max-w-4xl mx-auto p-6 md:p-8 lg:p-12">
+            <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 lg:p-12">
               <ContentTransition>
                 <div className="glass-card p-6 md:p-8">
                   <LessonContent

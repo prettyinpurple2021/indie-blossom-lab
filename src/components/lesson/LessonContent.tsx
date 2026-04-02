@@ -170,6 +170,76 @@ const sanitizeAndFormat = (content: string): string => {
   });
 };
 
+const getEmbeddedVideoSrc = (rawUrl: string): { type: 'youtube' | 'vimeo' | 'raw'; src: string } => {
+  try {
+    const url = new URL(rawUrl);
+    const hostname = url.hostname.toLowerCase();
+
+    // Normalize common YouTube hostnames
+    const isYouTubeHost =
+      hostname === 'youtube.com' ||
+      hostname === 'www.youtube.com' ||
+      hostname === 'm.youtube.com' ||
+      hostname === 'youtu.be' ||
+      hostname === 'www.youtu.be';
+
+    if (isYouTubeHost) {
+      let videoId: string | null = null;
+
+      if (hostname === 'youtu.be' || hostname === 'www.youtu.be') {
+        // Short URL format: https://youtu.be/<id>
+        videoId = url.pathname.replace(/^\/+/, '');
+      } else {
+        // Standard watch or embed URL: https://www.youtube.com/watch?v=<id>
+        videoId = url.searchParams.get('v');
+        if (!videoId && url.pathname.startsWith('/embed/')) {
+          videoId = url.pathname.replace(/^\/embed\//, '');
+        }
+      }
+
+      if (videoId) {
+        const embedSrc = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}${url.search}`;
+        return { type: 'youtube', src: embedSrc };
+      }
+
+      // If we couldn't confidently extract an ID, fall back to the raw URL
+      return { type: 'raw', src: rawUrl };
+    }
+
+    // Normalize common Vimeo hostnames
+    const isVimeoHost =
+      hostname === 'vimeo.com' ||
+      hostname === 'www.vimeo.com' ||
+      hostname === 'player.vimeo.com';
+
+    if (isVimeoHost) {
+      let videoId: string | null = null;
+
+      if (hostname === 'player.vimeo.com') {
+        // player URLs: https://player.vimeo.com/video/<id>
+        videoId = url.pathname.replace(/^\/video\//, '').replace(/^\/+/, '');
+      } else {
+        // Standard URLs: https://vimeo.com/<id>
+        videoId = url.pathname.replace(/^\/+/, '');
+      }
+
+      if (videoId) {
+        const embedSrc = `https://player.vimeo.com/video/${encodeURIComponent(videoId)}${url.search}`;
+        return { type: 'vimeo', src: embedSrc };
+      }
+
+      // If we couldn't confidently extract an ID, fall back to the raw URL
+      return { type: 'raw', src: rawUrl };
+    }
+
+    // Unknown host: do not transform, render as provided
+    return { type: 'raw', src: rawUrl };
+  } catch {
+    // Malformed URL: fall back to raw string
+    return { type: 'raw', src: rawUrl };
+  }
+};
+
 export function LessonContent({
   lesson,
   savedNotes,
@@ -219,76 +289,6 @@ export function LessonContent({
         return 'Worksheet';
       default:
         return 'Reading';
-    }
-  };
-
-  const getEmbeddedVideoSrc = (rawUrl: string): { type: 'youtube' | 'vimeo' | 'raw'; src: string } => {
-    try {
-      const url = new URL(rawUrl);
-      const hostname = url.hostname.toLowerCase();
-
-      // Normalize common YouTube hostnames
-      const isYouTubeHost =
-        hostname === 'youtube.com' ||
-        hostname === 'www.youtube.com' ||
-        hostname === 'm.youtube.com' ||
-        hostname === 'youtu.be' ||
-        hostname === 'www.youtu.be';
-
-      if (isYouTubeHost) {
-        let videoId: string | null = null;
-
-        if (hostname === 'youtu.be' || hostname === 'www.youtu.be') {
-          // Short URL format: https://youtu.be/<id>
-          videoId = url.pathname.replace(/^\/+/, '');
-        } else {
-          // Standard watch or embed URL: https://www.youtube.com/watch?v=<id>
-          videoId = url.searchParams.get('v');
-          if (!videoId && url.pathname.startsWith('/embed/')) {
-            videoId = url.pathname.replace(/^\/embed\//, '');
-          }
-        }
-
-        if (videoId) {
-          const embedSrc = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`;
-          return { type: 'youtube', src: embedSrc };
-        }
-
-        // If we couldn't confidently extract an ID, fall back to the raw URL
-        return { type: 'raw', src: rawUrl };
-      }
-
-      // Normalize common Vimeo hostnames
-      const isVimeoHost =
-        hostname === 'vimeo.com' ||
-        hostname === 'www.vimeo.com' ||
-        hostname === 'player.vimeo.com';
-
-      if (isVimeoHost) {
-        let videoId: string | null = null;
-
-        if (hostname === 'player.vimeo.com') {
-          // player URLs: https://player.vimeo.com/video/<id>
-          videoId = url.pathname.replace(/^\/video\//, '').replace(/^\/+/, '');
-        } else {
-          // Standard URLs: https://vimeo.com/<id>
-          videoId = url.pathname.replace(/^\/+/, '');
-        }
-
-        if (videoId) {
-          const embedSrc = `https://player.vimeo.com/video/${encodeURIComponent(videoId)}`;
-          return { type: 'vimeo', src: embedSrc };
-        }
-
-        // If we couldn't confidently extract an ID, fall back to the raw URL
-        return { type: 'raw', src: rawUrl };
-      }
-
-      // Unknown host: do not transform, render as provided
-      return { type: 'raw', src: rawUrl };
-    } catch {
-      // Malformed URL: fall back to raw string
-      return { type: 'raw', src: rawUrl };
     }
   };
 

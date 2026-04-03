@@ -741,6 +741,7 @@ export type Database = {
           content: string | null
           course_id: string
           created_at: string
+          description: string | null
           duration_minutes: number | null
           id: string
           is_published: boolean
@@ -757,6 +758,7 @@ export type Database = {
           content?: string | null
           course_id: string
           created_at?: string
+          description?: string | null
           duration_minutes?: number | null
           id?: string
           is_published?: boolean
@@ -773,6 +775,7 @@ export type Database = {
           content?: string | null
           course_id?: string
           created_at?: string
+          description?: string | null
           duration_minutes?: number | null
           id?: string
           is_published?: boolean

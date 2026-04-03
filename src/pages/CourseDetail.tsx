@@ -5,8 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProgressRing } from '@/components/ui/progress-ring';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { useCourse, useCourseLessons, useHasPurchasedCourse } from '@/hooks/useCourses';
 import { useCourseProgress } from '@/hooks/useProgress';
 import { useAuth } from '@/hooks/useAuth';
@@ -108,37 +106,29 @@ export default function CourseDetail() {
 
   if (isError) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <ErrorView
-            message={error?.message}
-            onRetry={refetch}
-            backTo="/courses"
-            backLabel="Back to courses"
-          />
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <ErrorView
+          message={error?.message}
+          onRetry={refetch}
+          backTo="/courses"
+          backLabel="Back to courses"
+        />
+      </main>
     );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <div className="text-center glass-card p-8 rounded-lg">
-            <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
-            <Button variant="neon" asChild>
-              <Link to="/courses">Back to Courses</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <div className="text-center glass-card p-8 rounded-lg">
+          <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
+          <Button variant="neon" asChild>
+            <Link to="/courses">Back to Courses</Link>
+          </Button>
+        </div>
+      </main>
     );
   }
 
@@ -169,13 +159,13 @@ export default function CourseDetail() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col cyber-bg">
+    <div className="cyber-bg">
       <PageMeta
         title={course.title}
         description={course.description ?? undefined}
         path={`/courses/${course.id}`}
       />
-      <Header />
+      
       
       <main className="flex-1 relative">
         {/* Cyber grid overlay */}
@@ -592,7 +582,6 @@ export default function CourseDetail() {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 }

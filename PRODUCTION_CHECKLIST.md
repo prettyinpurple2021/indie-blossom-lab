@@ -89,9 +89,8 @@ Courses exist in the database but lessons, textbook chapters, and project prompt
 ### 22. ✅ Route-Level Error Boundaries
 **Status:** Fixed — Every route wrapped in `<RouteErrorBoundary>`.
 
-### 23. 👤 `robots.txt` Sitemap Reference
-**File:** `public/robots.txt`  
-**Action needed after deploying:** Add `Sitemap: https://yourdomain.com/sitemap.xml`.
+### 23. ✅ `robots.txt` Sitemap Reference
+**Status:** Fixed — `robots.txt` and `sitemap.xml` updated with production domain `solosuccessacademy.cloud`.
 
 ### 24. ✅ PWA Package Removed
 **Status:** Fixed — Unused `vite-plugin-pwa` removed.
@@ -104,10 +103,9 @@ Courses exist in the database but lessons, textbook chapters, and project prompt
 |----------|-------|----------|-----------|
 | 🚨 Critical (blockers) | 6 | 6 | 0 |
 | ⚠️ High priority | 6 | 6 | 0 |
-| 🟡 Medium priority | 7 | 5 | 2 (Twitter handle, course content) |
-| 🔵 Low priority / polish | 5 | 4 | 1 (sitemap reference) |
+| 🟡 Medium priority | 7 | 6 | 1 (Twitter handle) |
+| 🔵 Low priority / polish | 5 | 5 | 0 |
 
 **Remaining actions before launch:**
 1. 👤 Populate course content (lessons, textbooks, projects)
 2. 👤 Create real Twitter/X account and update handle
-3. 👤 Add sitemap reference to robots.txt after deploying with custom domain

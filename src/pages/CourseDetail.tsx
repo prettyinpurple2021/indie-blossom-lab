@@ -120,19 +120,15 @@ export default function CourseDetail() {
 
   if (!course) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <div className="text-center glass-card p-8 rounded-lg">
-            <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
-            <Button variant="neon" asChild>
-              <Link to="/courses">Back to Courses</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <div className="text-center glass-card p-8 rounded-lg">
+          <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
+          <Button variant="neon" asChild>
+            <Link to="/courses">Back to Courses</Link>
+          </Button>
+        </div>
+      </main>
     );
   }
 

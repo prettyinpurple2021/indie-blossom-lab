@@ -383,7 +383,6 @@ export default function CourseDetail() {
                                   {lesson.duration_minutes} min
                                 </p>
                               )}
-                              )}
                             </div>
 
                             {/* Action */}

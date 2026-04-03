@@ -181,8 +181,9 @@ const getEmbeddedVideoSrc = (rawUrl: string): { type: 'youtube' | 'vimeo' | 'raw
       hostname === 'www.youtube.com' ||
       hostname === 'm.youtube.com' ||
       hostname === 'youtu.be' ||
-      hostname === 'www.youtu.be';
-
+      hostname === 'www.youtu.be' ||
+      hostname === 'youtube-nocookie.com' ||
+      hostname === 'www.youtube-nocookie.com';
     if (isYouTubeHost) {
       let videoId: string | null = null;
 

@@ -526,7 +526,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full px-4">
       {/* Reading Progress Bar */}
       <div 
         className="fixed top-0 left-0 right-0 h-1 z-50 bg-background/20 backdrop-blur-sm"
@@ -539,7 +539,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       </div>
 
       {/* Toolbar */}
-      <div className="w-full max-w-4xl glass-card p-4 mb-6 flex items-center justify-between gap-4">
+      <div className="w-full max-w-7xl glass-card p-4 mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           {/* Table of Contents */}
           <Sheet>
@@ -682,20 +682,20 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       {/* Book with touch gesture support */}
       <ContentTransition>
         <div 
-          className="relative w-full max-w-5xl" 
+          className="relative w-full max-w-7xl" 
           style={{ perspective: '2000px' }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
           <HTMLFlipBook
             ref={bookRef}
-            width={800}
-            height={680}
+            width={1200}
+            height={750}
             size="stretch"
-            minWidth={400}
-            maxWidth={1000}
-            minHeight={450}
-            maxHeight={800}
+            minWidth={500}
+            maxWidth={1800}
+            minHeight={500}
+            maxHeight={1000}
             showCover={false}
             mobileScrollSupport={true}
             onFlip={handleFlip}

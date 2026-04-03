@@ -577,7 +577,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
           {/* Search */}
           <Sheet open={isSearching} onOpenChange={setIsSearching}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="border-primary/30 hover:bg-primary/20 hover:border-primary">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-foreground">
                 <Search className="h-4 w-4" />
               </Button>
             </SheetTrigger>

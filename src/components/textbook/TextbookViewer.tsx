@@ -539,7 +539,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       </div>
 
       {/* Toolbar */}
-      <div className="w-full max-w-7xl glass-card p-4 mb-6 flex items-center justify-between gap-4">
+      <div className="w-full glass-card p-4 mb-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           {/* Table of Contents */}
           <Sheet>

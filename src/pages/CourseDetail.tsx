@@ -165,7 +165,7 @@ export default function CourseDetail() {
         description={course.description ?? undefined}
         path={`/courses/${course.id}`}
       />
-      <Header />
+      
       
       <main className="flex-1 relative">
         {/* Cyber grid overlay */}

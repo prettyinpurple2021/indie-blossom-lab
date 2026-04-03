@@ -526,7 +526,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full px-4">
       {/* Reading Progress Bar */}
       <div 
         className="fixed top-0 left-0 right-0 h-1 z-50 bg-background/20 backdrop-blur-sm"
@@ -539,12 +539,12 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       </div>
 
       {/* Toolbar */}
-      <div className="w-full max-w-4xl glass-card p-4 mb-6 flex items-center justify-between gap-4">
+      <div className="w-full glass-card p-4 mb-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           {/* Table of Contents */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="border-primary/30 hover:bg-primary/20 hover:border-primary">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-foreground">
                 <List className="h-4 w-4" />
               </Button>
             </SheetTrigger>
@@ -577,7 +577,7 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
           {/* Search */}
           <Sheet open={isSearching} onOpenChange={setIsSearching}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="border-primary/30 hover:bg-primary/20 hover:border-primary">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-foreground">
                 <Search className="h-4 w-4" />
               </Button>
             </SheetTrigger>
@@ -682,20 +682,20 @@ export function TextbookViewer({ courseId, courseName }: TextbookViewerProps) {
       {/* Book with touch gesture support */}
       <ContentTransition>
         <div 
-          className="relative w-full max-w-4xl" 
+          className="relative w-full" 
           style={{ perspective: '2000px' }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
           <HTMLFlipBook
             ref={bookRef}
-            width={550}
+            width={1600}
             height={700}
             size="stretch"
-            minWidth={300}
-            maxWidth={600}
+            minWidth={600}
+            maxWidth={2400}
             minHeight={400}
-            maxHeight={800}
+            maxHeight={900}
             showCover={false}
             mobileScrollSupport={true}
             onFlip={handleFlip}

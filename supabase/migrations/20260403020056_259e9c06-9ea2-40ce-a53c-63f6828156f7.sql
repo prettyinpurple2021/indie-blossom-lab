@@ -1,0 +1,1 @@
+ALTER TABLE public.lessons ADD COLUMN description text;

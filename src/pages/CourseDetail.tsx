@@ -5,8 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProgressRing } from '@/components/ui/progress-ring';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { useCourse, useCourseLessons, useHasPurchasedCourse } from '@/hooks/useCourses';
 import { useCourseProgress } from '@/hooks/useProgress';
 import { useAuth } from '@/hooks/useAuth';
@@ -108,37 +106,29 @@ export default function CourseDetail() {
 
   if (isError) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <ErrorView
-            message={error?.message}
-            onRetry={refetch}
-            backTo="/courses"
-            backLabel="Back to courses"
-          />
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <ErrorView
+          message={error?.message}
+          onRetry={refetch}
+          backTo="/courses"
+          backLabel="Back to courses"
+        />
+      </main>
     );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <div className="text-center glass-card p-8 rounded-lg">
-            <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
-            <Button variant="neon" asChild>
-              <Link to="/courses">Back to Courses</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <div className="text-center glass-card p-8 rounded-lg">
+          <h1 className="text-2xl font-bold mb-4 neon-text">Course Not Found</h1>
+          <Button variant="neon" asChild>
+            <Link to="/courses">Back to Courses</Link>
+          </Button>
+        </div>
+      </main>
     );
   }
 
@@ -169,13 +159,13 @@ export default function CourseDetail() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col cyber-bg">
+    <div className="cyber-bg">
       <PageMeta
         title={course.title}
         description={course.description ?? undefined}
         path={`/courses/${course.id}`}
       />
-      <Header />
+      
       
       <main className="flex-1 relative">
         {/* Cyber grid overlay */}
@@ -367,23 +357,29 @@ export default function CourseDetail() {
                               <div className="flex items-center gap-2">
                                 <h3 className="font-medium truncate">{lesson.title}</h3>
                                 {lesson.type === 'video' && (
-                                  <Badge variant="outline" className="text-[10px] border-secondary/30 text-secondary">Video</Badge>
+                                  <Badge variant="outline" className="text-[10px] border-secondary/30 text-secondary flex-shrink-0">Video</Badge>
                                 )}
                                 {lesson.type === 'quiz' && (
-                                  <Badge variant="outline" className="text-[10px] border-accent/30 text-accent">Quiz</Badge>
+                                  <Badge variant="outline" className="text-[10px] border-accent/30 text-accent flex-shrink-0">Quiz</Badge>
                                 )}
                                 {lesson.type === 'activity' && (
-                                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">Activity</Badge>
+                                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary flex-shrink-0">Activity</Badge>
                                 )}
                                 {lesson.type === 'worksheet' && (
-                                  <Badge variant="outline" className="text-[10px] border-info/30 text-info">Worksheet</Badge>
+                                  <Badge variant="outline" className="text-[10px] border-info/30 text-info flex-shrink-0">Worksheet</Badge>
                                 )}
                                 {lesson.type === 'assignment' && (
-                                  <Badge variant="outline" className="text-[10px] border-warning/30 text-warning">Assignment</Badge>
+                                  <Badge variant="outline" className="text-[10px] border-warning/30 text-warning flex-shrink-0">Assignment</Badge>
                                 )}
                               </div>
+                              {lesson.description && (
+                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                  {lesson.description}
+                                </p>
+                              )}
                               {lesson.duration_minutes && (
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-xs text-muted-foreground/70 mt-1">
+                                  <Clock className="inline h-3 w-3 mr-1" />
                                   {lesson.duration_minutes} min
                                 </p>
                               )}
@@ -592,7 +588,6 @@ export default function CourseDetail() {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 }

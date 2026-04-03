@@ -106,19 +106,15 @@ export default function CourseDetail() {
 
   if (isError) {
     return (
-      <div className="min-h-screen flex flex-col cyber-bg">
-        <Header />
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="cyber-grid" />
-          <ErrorView
-            message={error?.message}
-            onRetry={refetch}
-            backTo="/courses"
-            backLabel="Back to courses"
-          />
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center relative cyber-bg">
+        <div className="cyber-grid" />
+        <ErrorView
+          message={error?.message}
+          onRetry={refetch}
+          backTo="/courses"
+          backLabel="Back to courses"
+        />
+      </main>
     );
   }
 

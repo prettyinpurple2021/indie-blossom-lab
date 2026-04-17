@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_requests: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string
+          delete_content: boolean
+          email: string
+          id: string
+          purged_at: string | null
+          requested_at: string
+          scheduled_purge_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string
+          delete_content?: boolean
+          email: string
+          id?: string
+          purged_at?: string | null
+          requested_at?: string
+          scheduled_purge_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string
+          delete_content?: boolean
+          email?: string
+          id?: string
+          purged_at?: string | null
+          requested_at?: string
+          scheduled_purge_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       achievement_badges: {
         Row: {
           category: string
@@ -2001,6 +2040,7 @@ export type Database = {
         Args: { _action?: string; _user_id: string; _xp_amount: number }
         Returns: Json
       }
+      cancel_account_deletion: { Args: never; Returns: Json }
       check_textbook_quiz_answer: {
         Args: { _page_id: string; _selected_answer: number }
         Returns: Json
@@ -2014,6 +2054,7 @@ export type Database = {
         Returns: number
       }
       get_exam_for_student: { Args: { _course_id: string }; Returns: Json }
+      get_my_deletion_request: { Args: never; Returns: Json }
       get_overall_progress: { Args: { _user_id: string }; Returns: Json }
       get_textbook_pages_for_student: {
         Args: { _course_id: string }
@@ -2054,6 +2095,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      request_account_deletion: {
+        Args: { _delete_content?: boolean }
+        Returns: Json
       }
       verify_certificate_by_code: {
         Args: { code: string }

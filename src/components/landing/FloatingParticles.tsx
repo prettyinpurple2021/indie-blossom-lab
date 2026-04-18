@@ -1,11 +1,14 @@
 /**
  * @file FloatingParticles.tsx — Bokeh / digital dust particles
- * 
+ *
  * Renders floating, semi-transparent circles that drift slowly
  * to create a sense of 3D depth on the landing page.
  * Uses pure CSS animations — no JS runtime cost.
+ *
+ * ACCESSIBILITY: Returns null when reduced motion is requested.
  */
 import { useMemo } from 'react';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface Particle {
   id: number;
@@ -19,6 +22,7 @@ interface Particle {
 }
 
 export function FloatingParticles({ count = 30 }: { count?: number }) {
+  const reducedMotion = useReducedMotion();
   /* Generate random particle configs once */
   const particles = useMemo<Particle[]>(() => {
     return Array.from({ length: count }, (_, i) => ({

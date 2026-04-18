@@ -234,14 +234,25 @@ export default function LessonViewer() {
           title: '🎉 Course Completed!',
           description: `Congratulations! You've finished all lessons in ${course?.title}!`,
         });
+      } else if (!isCompleted) {
+        // Just-completed a lesson (not the whole course) — offer one-click "Next lesson"
+        sonnerToast.success('Lesson completed!', {
+          description: nextLesson
+            ? 'Great work! Keep your streak going.'
+            : 'Congratulations on completing this lesson!',
+          action: nextLesson
+            ? {
+                label: 'Next lesson →',
+                onClick: () =>
+                  navigate(`/courses/${courseId}/lessons/${nextLesson.id}`),
+              }
+            : undefined,
+          duration: 6000,
+        });
       } else {
         toast({
-          title: isCompleted ? 'Marked as incomplete' : 'Lesson completed!',
-          description: isCompleted 
-            ? 'Progress updated' 
-            : nextLesson 
-              ? 'Great work! Ready for the next lesson?' 
-              : 'Congratulations on completing this lesson!',
+          title: 'Marked as incomplete',
+          description: 'Progress updated',
         });
       }
     } catch (error) {

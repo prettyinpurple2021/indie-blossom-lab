@@ -241,6 +241,10 @@ export default function Settings() {
           <ConnectedAccountsCard />
           <SessionsCard />
 
+          {/* Accessibility — motion preferences (auto-respects OS setting) */}
+          <AccessibilityCard />
+
+
           {/* Danger zone */}
           <div className="pt-4">
             <h2 className="text-2xl font-display font-bold mb-4 text-destructive">Danger Zone</h2>

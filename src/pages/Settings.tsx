@@ -24,6 +24,7 @@ import { ConnectedAccountsCard } from '@/components/settings/ConnectedAccountsCa
 import { SessionsCard } from '@/components/settings/SessionsCard';
 import { DeleteAccountCard } from '@/components/settings/DeleteAccountCard';
 import { AccessibilityCard } from '@/components/settings/AccessibilityCard';
+import { DailyGoalsCard } from '@/components/settings/DailyGoalsCard';
 
 export default function Settings() {
   const { user, isLoading: authLoading, resetPassword } = useAuth();
@@ -243,6 +244,9 @@ export default function Settings() {
 
           {/* Accessibility — motion preferences (auto-respects OS setting) */}
           <AccessibilityCard />
+
+          {/* Daily study goals — lessons + active minutes */}
+          <DailyGoalsCard />
 
 
           {/* Danger zone */}

@@ -246,3 +246,44 @@ Frontend:
 Batches 1 + 2 + 3 cover items #1, 2, 3, 4, 5 from the original 26-item
 list. Remaining items (6–26) are queued for follow-up sessions per the
 priority breakdown at the top of this document.
+
+---
+
+## Batch 3.5 — Recovery code sign-in flow polish
+
+**What changed**
+- Added `confirm_mfa_recovery_code(_code)` Postgres RPC that returns
+  rich JSON (`accepted`, masked tail of the code, `used_at`,
+  `remaining`) instead of a bare boolean. Plaintext codes are still
+  never stored — only SHA-256 hashes.
+- Added `confirmRecoveryCode()` to `useMfa` hook wrapping the new RPC.
+- `MfaChallengeForm` now has three states for the recovery path:
+  1. **Enter** — segmented `InputOTP` (5 + 5 chars) with separator,
+     accepts only `[a-z0-9]`, auto-lowercases.
+  2. **Confirm** — after acceptance, shows a card with the masked code
+     (`••••••-••••XXXX`), the timestamp it was consumed, the number of
+     codes remaining, and a warning to re-enroll the authenticator.
+     User must click **Continue** before being routed to the app.
+  3. **Continue** → `onSuccess()` (same callback used by TOTP path).
+- Existing TOTP factor is unenrolled automatically when a recovery
+  code is consumed (the assumption is the original device is lost).
+
+**Why these choices**
+- The previous recovery flow used a free-text input and silently
+  redirected. Users had no confirmation of *which* code was burned,
+  which is bad for trust on a single-use credential.
+- The masked tail (last 4 chars) is enough to cross-reference against
+  the printed/saved list without revealing the full code in any logs.
+- `remaining` count gently nudges users to regenerate codes when the
+  pool is low.
+
+**Files**
+- `supabase/migrations/...confirm_mfa_recovery_code.sql`
+- `src/hooks/useMfa.ts` — added `confirmRecoveryCode`
+- `src/components/auth/MfaChallengeForm.tsx` — full rewrite of recovery branch
+
+**Known follow-ups**
+- Show "Only N codes left — generate fresh ones" banner in Settings
+  when `remaining < 3`.
+- Send a transactional email after a recovery code is consumed so the
+  user has an audit trail (and is alerted if it wasn't them).

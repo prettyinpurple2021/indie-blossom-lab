@@ -58,7 +58,7 @@ export default function Billing() {
     },
   });
 
-  if (isLoading) return <LoadingView label="Loading your billing history…" />;
+  if (isLoading) return <LoadingView message="Loading your billing history…" />;
   if (isError) {
     return (
       <ErrorView message={(error as Error)?.message} onRetry={() => refetch()} backTo="/dashboard" backLabel="Back to dashboard" />

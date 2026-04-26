@@ -228,6 +228,7 @@ const App = () => (
                 <Route path="/notifications" element={<RouteErrorBoundary><NotificationsPage /></RouteErrorBoundary>} />
                 <Route path="/transcript" element={<RouteErrorBoundary><TranscriptPage /></RouteErrorBoundary>} />
                 <Route path="/grades" element={<RouteErrorBoundary><StudentGrades /></RouteErrorBoundary>} />
+                <Route path="/billing" element={<RouteErrorBoundary><Billing /></RouteErrorBoundary>} />
               </Route>
 
                 {/* 404 catch-all — shows friendly "not found" page */}

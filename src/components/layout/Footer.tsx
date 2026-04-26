@@ -103,6 +103,11 @@ export function Footer() {
                   Refund Policy
                 </Link>
               </li>
+              <li>
+                <Link to="/billing" className="text-muted-foreground hover:text-accent transition-colors font-mono">
+                  Billing
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
     "strict": true,
-    "lib": ["esnext", "dom", "dom.iterable"]
+    "lib": ["esnext", "dom", "dom.iterable", "deno.ns", "deno.unstable"]
   }
 }

@@ -121,6 +121,37 @@ export function useMfa() {
     return data as boolean;
   }, []);
 
+  /**
+   * Confirm a recovery code and return rich metadata about the acceptance,
+   * so the UI can display *which* code was used (masked) and how many
+   * codes the user has remaining.
+   */
+  const confirmRecoveryCode = useCallback(
+    async (
+      code: string,
+    ): Promise<
+      | { accepted: false }
+      | { accepted: true; masked: string; usedAt: string; remaining: number }
+    > => {
+      const { data, error } = await supabase.rpc('confirm_mfa_recovery_code', { _code: code });
+      if (error) throw error;
+      const payload = data as {
+        accepted: boolean;
+        masked?: string;
+        used_at?: string;
+        remaining?: number;
+      };
+      if (!payload?.accepted) return { accepted: false };
+      return {
+        accepted: true,
+        masked: payload.masked ?? '••••••-••••',
+        usedAt: payload.used_at ?? new Date().toISOString(),
+        remaining: payload.remaining ?? 0,
+      };
+    },
+    [],
+  );
+
   return {
     factors,
     isLoading,
@@ -135,5 +166,6 @@ export function useMfa() {
     verifyChallenge,
     generateRecoveryCodes,
     consumeRecoveryCode,
+    confirmRecoveryCode,
   };
 }

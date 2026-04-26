@@ -1250,6 +1250,8 @@ export type Database = {
           course_id: string
           id: string
           purchased_at: string
+          refund_amount_cents: number | null
+          refunded_at: string | null
           stripe_checkout_session_id: string | null
           stripe_payment_intent_id: string | null
           user_id: string
@@ -1259,6 +1261,8 @@ export type Database = {
           course_id: string
           id?: string
           purchased_at?: string
+          refund_amount_cents?: number | null
+          refunded_at?: string | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           user_id: string
@@ -1268,6 +1272,8 @@ export type Database = {
           course_id?: string
           id?: string
           purchased_at?: string
+          refund_amount_cents?: number | null
+          refunded_at?: string | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           user_id?: string
@@ -1319,6 +1325,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      stripe_webhook_events: {
+        Row: {
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          processed_at: string
+          status: string
+          stripe_event_id: string
+        }
+        Insert: {
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string
+          status?: string
+          stripe_event_id: string
+        }
+        Update: {
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string
+          status?: string
+          stripe_event_id?: string
+        }
+        Relationships: []
       }
       student_essay_submissions: {
         Row: {

@@ -81,7 +81,7 @@ export function DocumentUpload({
         // Extract text from XML and neutralize HTML-significant characters
         const textMatches = docXml.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
         content = textMatches
-          .map(match => match.replace(/[<>]/g, ''))
+          .map(match => (match.match(/<w:t[^>]*>([^<]*)<\/w:t>/)?.[1] || '').replace(/[<>]/g, ''))
           .join(' ')
           .replace(/\s+/g, ' ')
           .trim();

@@ -78,10 +78,10 @@ export function DocumentUpload({
         }
         
         setParseProgress(70);
-        // Extract text from XML and neutralize HTML-significant characters
-        const textMatches = docXml.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
+        // Extract text from XML: strip '<' and '>' characters, then normalize whitespace
+        const textMatches = [...docXml.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)];
         content = textMatches
-          .map(match => (match.match(/<w:t[^>]*>([^<]*)<\/w:t>/)?.[1] || '').replace(/[<>]/g, ''))
+          .map(m => m[1].replace(/[<>]/g, ''))
           .join(' ')
           .replace(/\s+/g, ' ')
           .trim();

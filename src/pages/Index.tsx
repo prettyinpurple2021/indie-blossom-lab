@@ -15,6 +15,7 @@ import { CTASection } from '@/components/landing/CTASection';
 import { TrustBandSection } from '@/components/landing/TrustBandSection';
 import { FounderNoteSection } from '@/components/landing/FounderNoteSection';
 import { FAQSection } from '@/components/landing/FAQSection';
+import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 
 export default function Index() {
   const { data: courses, isLoading, isError, error, refetch } = useCourses();
@@ -42,6 +43,7 @@ export default function Index() {
       <FounderNoteSection />
       <CourseJourneySection courses={courses} isLoading={isLoading} />
       <PricingSection />
+      <TestimonialsSection />
       <FAQSection />
       <CTASection />
     </div>

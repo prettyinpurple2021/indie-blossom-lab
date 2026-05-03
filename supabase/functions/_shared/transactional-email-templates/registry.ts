@@ -20,6 +20,10 @@ import { template as purchaseReceipt } from './purchase-receipt.tsx'
 import { template as welcome } from './welcome.tsx'
 import { template as lifecycleDay3Nudge } from './lifecycle-day3-nudge.tsx'
 import { template as lifecycleDay7Resume } from './lifecycle-day7-resume.tsx'
+import { template as dripDay1Welcome } from './drip-day1-welcome.tsx'
+import { template as dripDay7Value } from './drip-day7-value.tsx'
+import { template as dripDay14Final } from './drip-day14-final.tsx'
+import { template as courseCompletionUpsell } from './course-completion-upsell.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'contact-confirmation': contactConfirmation,
@@ -27,4 +31,8 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
   'lifecycle-day3-nudge': lifecycleDay3Nudge,
   'lifecycle-day7-resume': lifecycleDay7Resume,
+  'drip-day1-welcome': dripDay1Welcome,
+  'drip-day7-value': dripDay7Value,
+  'drip-day14-final': dripDay14Final,
+  'course-completion-upsell': courseCompletionUpsell,
 }

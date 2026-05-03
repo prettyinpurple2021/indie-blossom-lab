@@ -190,6 +190,77 @@ export type Database = {
           },
         ]
       }
+      announcement_dismissals: {
+        Row: {
+          announcement_id: string
+          dismissed_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          dismissed_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          dismissed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_dismissals_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          cta_label: string | null
+          cta_url: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          severity: Database["public"]["Enums"]["announcement_severity"]
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          severity?: Database["public"]["Enums"]["announcement_severity"]
+          starts_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          severity?: Database["public"]["Enums"]["announcement_severity"]
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       api_rate_limits: {
         Row: {
           created_at: string
@@ -2220,6 +2291,7 @@ export type Database = {
       }
     }
     Enums: {
+      announcement_severity: "info" | "success" | "warning"
       app_role: "admin" | "student"
       course_phase: "initialization" | "orchestration" | "launch"
       lesson_type:
@@ -2357,6 +2429,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      announcement_severity: ["info", "success", "warning"],
       app_role: ["admin", "student"],
       course_phase: ["initialization", "orchestration", "launch"],
       lesson_type: [

@@ -99,6 +99,7 @@ const StudentGrades = lazy(() => import("./pages/StudentGrades"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Billing = lazy(() => import("./pages/Billing"));
 const Welcome = lazy(() => import("./pages/Welcome"));
+const AdminAnnouncements = lazy(() => import("./pages/AdminAnnouncements"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 /**
@@ -211,6 +212,7 @@ const App = () => (
                   <Route path="ai-settings" element={<RouteErrorBoundary><AISettings /></RouteErrorBoundary>} />
                   <Route path="gradebook" element={<RouteErrorBoundary><Gradebook /></RouteErrorBoundary>} />
                   <Route path="exam-essay" element={<RouteErrorBoundary><AdminExamEssay /></RouteErrorBoundary>} />
+                  <Route path="announcements" element={<RouteErrorBoundary><AdminAnnouncements /></RouteErrorBoundary>} />
                 </Route>
                 
                 {/* ─── STUDENT LEARNING ROUTES ────────────

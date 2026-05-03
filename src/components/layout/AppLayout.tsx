@@ -32,6 +32,7 @@ import { NebulaBackground } from '@/components/landing/NebulaBackground';
 import { StarField } from '@/components/landing/StarField';
 import { PendingDeletionBanner } from '@/components/settings/PendingDeletionBanner';
 import { MobileBottomNav } from './MobileBottomNav';
+import { AnnouncementBanner } from './AnnouncementBanner';
 
 export function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -75,6 +76,9 @@ export function AppLayout() {
         <div className="flex-1 flex flex-col relative min-w-0">
           {/* Sitewide banner shown only if user has scheduled account deletion */}
           <PendingDeletionBanner />
+
+          {/* Sitewide admin announcement (dismissible, persists per user) */}
+          <AnnouncementBanner />
 
           {/* Main content area — <Outlet /> renders the matched child route */}
           <main

@@ -19,6 +19,9 @@ import { getCorsHeaders, corsResponse } from "../_shared/cors.ts";
 const SITE_URL = "https://solosuccessacademy.cloud";
 const DAY3_THRESHOLD_DAYS = 3;
 const DAY7_THRESHOLD_DAYS = 7;
+const DRIP_DAY1_HOURS = 24;
+const DRIP_DAY7_DAYS = 7;
+const DRIP_DAY14_DAYS = 14;
 
 serve(async (req: Request): Promise<Response> => {
   const corsHeaders = getCorsHeaders(req);
@@ -133,6 +136,10 @@ serve(async (req: Request): Promise<Response> => {
 
     let day3Sent = 0;
     let day7Sent = 0;
+    let drip1Sent = 0;
+    let drip7Sent = 0;
+    let drip14Sent = 0;
+    let upsellSent = 0;
     const errors: string[] = [];
 
     // Walk every (user, course) purchase ──────────────────────────────
@@ -235,6 +242,168 @@ serve(async (req: Request): Promise<Response> => {
         if (sent === "sent") day7Sent++;
         if (sent === "error") errors.push(`day7 ${purchase.user_id}/${purchase.course_id}`);
       }
+
+      // ── COURSE COMPLETION UPSELL ─────────────────────────────────
+      // (handled below in dedicated loop after computing per-course completion)
+    }
+
+    // ── COURSE COMPLETION UPSELL LOOP ──────────────────────────────
+    // For every (user, course) where all lessons are completed, send a
+    // one-time upsell pointing to the next course in order_number sequence.
+    const allCoursesOrdered = [...courses].sort(
+      // deno-lint-ignore no-explicit-any
+      (a: any, b: any) => (a.order_number ?? 0) - (b.order_number ?? 0),
+    );
+    for (const purchase of purchases) {
+      const profile = profiles?.find((p) => p.id === purchase.user_id);
+      if (!profile?.email_notifications || !profile?.course_updates) continue;
+      const courseLessons = lessonsByCourse.get(purchase.course_id) ?? [];
+      if (!courseLessons.length) continue;
+      const userCompleted = new Set(
+        progress
+          .filter((p) =>
+            p.user_id === purchase.user_id &&
+            p.completed &&
+            courseLessons.some((l) => l.id === p.lesson_id)
+          )
+          .map((p) => p.lesson_id),
+      );
+      if (userCompleted.size !== courseLessons.length) continue;
+
+      const completedCourse = courses.find((c) => c.id === purchase.course_id);
+      // deno-lint-ignore no-explicit-any
+      const completedOrder = (completedCourse as any)?.order_number ?? null;
+      // Find next course (purchased only — never upsell something they don't own)
+      const userPurchasedIds = new Set(
+        purchases.filter((p) => p.user_id === purchase.user_id).map((p) => p.course_id),
+      );
+      const nextCourse = allCoursesOrdered.find(
+        // deno-lint-ignore no-explicit-any
+        (c: any) =>
+          (c.order_number ?? 0) > (completedOrder ?? 0) &&
+          userPurchasedIds.has(c.id),
+      );
+
+      const sent = await tryClaimAndSend(
+        supabase,
+        { user_id: purchase.user_id, course_id: purchase.course_id, kind: "completion-upsell" },
+        async (recipientEmail) => {
+          await invokeSendEmail(supabase, {
+            templateName: "course-completion-upsell",
+            recipientEmail,
+            idempotencyKey: `upsell-${purchase.user_id}-${purchase.course_id}`,
+            templateData: {
+              studentName: profile.display_name ?? undefined,
+              completedCourseTitle: completedCourse?.title ?? "your course",
+              nextCourseTitle: nextCourse?.title,
+              nextCourseUrl: nextCourse
+                ? `${SITE_URL}/courses/${nextCourse.id}`
+                : `${SITE_URL}/dashboard`,
+              testimonialUrl: `${SITE_URL}/profile?testimonial=1`,
+            },
+          });
+        },
+      );
+      if (sent === "sent") upsellSent++;
+      if (sent === "error") errors.push(`upsell ${purchase.user_id}/${purchase.course_id}`);
+    }
+
+    // ── DRIP CAMPAIGN (NON-BUYERS) ─────────────────────────────────
+    // Find all users with NO purchases who signed up at the right cadence.
+    const buyerIds = new Set(purchases.map((p) => p.user_id));
+    // List users via auth admin (paginated). Most projects fit in <1k users; one page is fine for v1.
+    const { data: usersPage, error: usersErr } = await supabase.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000,
+    });
+    if (usersErr) {
+      console.error("[check-student-progress] listUsers failed:", usersErr);
+    } else {
+      const nowMs = now;
+      const nonBuyers = (usersPage?.users ?? []).filter(
+        // deno-lint-ignore no-explicit-any
+        (u: any) => !buyerIds.has(u.id) && !!u.email_confirmed_at,
+      );
+      // Pre-fetch their profile prefs in one shot
+      const nonBuyerIds = nonBuyers.map((u) => u.id);
+      let prefsMap = new Map<string, { display_name: string | null; email_notifications: boolean; course_updates: boolean }>();
+      if (nonBuyerIds.length) {
+        const { data: prefsRows } = await supabase
+          .from("profiles")
+          .select("id, display_name, email_notifications, course_updates")
+          .in("id", nonBuyerIds);
+        for (const r of prefsRows ?? []) prefsMap.set(r.id, r);
+      }
+
+      for (const u of nonBuyers) {
+        const prefs = prefsMap.get(u.id);
+        // Default opt-in if no profile row yet
+        if (prefs && (!prefs.email_notifications || !prefs.course_updates)) continue;
+        if (!u.email) continue;
+        const createdMs = new Date(u.created_at).getTime();
+        const ageMs = nowMs - createdMs;
+        const ageHours = ageMs / 3_600_000;
+        const ageDays = ageMs / 86_400_000;
+
+        const baseData = {
+          studentName: prefs?.display_name ?? undefined,
+          catalogUrl: `${SITE_URL}/courses`,
+        };
+
+        // Day-1
+        if (ageHours >= DRIP_DAY1_HOURS && ageDays < DRIP_DAY7_DAYS) {
+          const r = await tryClaimAndSend(
+            supabase,
+            { user_id: u.id, course_id: null as unknown as string, kind: "drip-day1" },
+            async () => {
+              await invokeSendEmail(supabase, {
+                templateName: "drip-day1-welcome",
+                recipientEmail: u.email,
+                idempotencyKey: `drip1-${u.id}`,
+                templateData: baseData,
+              });
+            },
+          );
+          if (r === "sent") drip1Sent++;
+          if (r === "error") errors.push(`drip1 ${u.id}`);
+          continue;
+        }
+        // Day-7
+        if (ageDays >= DRIP_DAY7_DAYS && ageDays < DRIP_DAY14_DAYS) {
+          const r = await tryClaimAndSend(
+            supabase,
+            { user_id: u.id, course_id: null as unknown as string, kind: "drip-day7" },
+            async () => {
+              await invokeSendEmail(supabase, {
+                templateName: "drip-day7-value",
+                recipientEmail: u.email,
+                idempotencyKey: `drip7-${u.id}`,
+                templateData: baseData,
+              });
+            },
+          );
+          if (r === "sent") drip7Sent++;
+          if (r === "error") errors.push(`drip7 ${u.id}`);
+          continue;
+        }
+        // Day-14
+        if (ageDays >= DRIP_DAY14_DAYS) {
+          const r = await tryClaimAndSend(
+            supabase,
+            { user_id: u.id, course_id: null as unknown as string, kind: "drip-day14" },
+            async () => {
+              await invokeSendEmail(supabase, {
+                templateName: "drip-day14-final",
+                recipientEmail: u.email,
+                idempotencyKey: `drip14-${u.id}`,
+                templateData: baseData,
+              });
+            },
+          );
+          if (r === "sent") drip14Sent++;
+          if (r === "error") errors.push(`drip14 ${u.id}`);
+        }
+      }
     }
 
     return jsonOk(
@@ -242,6 +411,10 @@ serve(async (req: Request): Promise<Response> => {
         success: true,
         day3Sent,
         day7Sent,
+        drip1Sent,
+        drip7Sent,
+        drip14Sent,
+        upsellSent,
         errors: errors.length ? errors : undefined,
       },
       corsHeaders,

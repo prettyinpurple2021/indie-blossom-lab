@@ -87,7 +87,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // ── Fetch base data in parallel ────────────────────────────────
     const [purchasesRes, coursesRes, lessonsRes] = await Promise.all([
-      supabase.from("purchases").select("user_id, course_id, created_at"),
+      supabase.from("purchases").select("user_id, course_id, purchased_at"),
       supabase.from("courses").select("id, title"),
       supabase.from("lessons")
         .select("id, course_id, title, order_number, is_published")
@@ -153,7 +153,7 @@ serve(async (req: Request): Promise<Response> => {
 
       const course = courses.find((c) => c.id === purchase.course_id);
       const courseTitle = course?.title ?? "your course";
-      const purchasedAt = new Date(purchase.created_at);
+      const purchasedAt = new Date(purchase.purchased_at);
 
       // Per-course progress slice
       const courseLessonIds = new Set(courseLessons.map((l) => l.id));

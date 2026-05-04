@@ -7,7 +7,7 @@
 import { PageMeta } from '@/components/layout/PageMeta';
 import { LegalDisclaimer } from '@/components/legal/LegalDisclaimer';
 
-const LEGAL_EMAIL = 'legal@solosuccessacademy.cloud';
+const LEGAL_EMAIL = 'legal@solosuccessacademy.app';
 const LAST_UPDATED = 'April 28, 2026';
 
 export default function RefundPolicy() {

@@ -9,7 +9,7 @@
 import { PageMeta } from '@/components/layout/PageMeta';
 import { LegalDisclaimer } from '@/components/legal/LegalDisclaimer';
 
-const LEGAL_EMAIL = 'legal@solosuccessacademy.cloud';
+const LEGAL_EMAIL = 'legal@solosuccessacademy.app';
 const LAST_UPDATED = 'April 28, 2026';
 
 export default function TermsOfService() {
@@ -31,7 +31,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-display font-semibold text-foreground mb-3">1. Agreement to Terms</h2>
           <p>
             These Terms of Service (“Terms”) form a binding agreement between you and SoloSuccess Academy
-            (“SoloSuccess Academy,” “we,” “us,” or “our”), the operator of <strong>solosuccessacademy.cloud</strong> and
+            (“SoloSuccess Academy,” “we,” “us,” or “our”), the operator of <strong>solosuccessacademy.app</strong> and
             related services (the “Service”). By creating an account, purchasing a course, or otherwise using the
             Service, you agree to these Terms and to our{' '}
             <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> and{' '}

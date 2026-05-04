@@ -2,47 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Public pages -->
   <url>
-    <loc>https://solosuccessacademy.cloud/</loc>
+    <loc>https://solosuccessacademy.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/courses</loc>
+    <loc>https://solosuccessacademy.app/courses</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/auth</loc>
+    <loc>https://solosuccessacademy.app/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/about</loc>
+    <loc>https://solosuccessacademy.app/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/contact</loc>
+    <loc>https://solosuccessacademy.app/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/help</loc>
+    <loc>https://solosuccessacademy.app/help</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/privacy</loc>
+    <loc>https://solosuccessacademy.app/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/terms</loc>
+    <loc>https://solosuccessacademy.app/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://solosuccessacademy.cloud/refund</loc>
+    <loc>https://solosuccessacademy.app/refund</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

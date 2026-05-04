@@ -263,7 +263,7 @@ async function handleCheckoutCompleted(
           amountFormatted,
           purchaseDate,
           orderId: session.id,
-          courseUrl: `https://solosuccessacademy.cloud/courses/${courseId}`,
+          courseUrl: `https://solosuccessacademy.app/courses/${courseId}`,
         },
       },
     });

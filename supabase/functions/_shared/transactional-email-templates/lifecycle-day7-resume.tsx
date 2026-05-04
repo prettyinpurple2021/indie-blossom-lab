@@ -12,7 +12,7 @@ import {
 import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = 'SoloSuccess Academy'
-const SITE_URL = 'https://solosuccessacademy.cloud'
+const SITE_URL = 'https://solosuccessacademy.app'
 
 interface ResumeProps {
   studentName?: string

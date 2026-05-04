@@ -16,7 +16,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 import { getCorsHeaders, corsResponse } from "../_shared/cors.ts";
 
-const SITE_URL = "https://solosuccessacademy.cloud";
+const SITE_URL = "https://solosuccessacademy.app";
 const DAY3_THRESHOLD_DAYS = 3;
 const DAY7_THRESHOLD_DAYS = 7;
 const DRIP_DAY1_HOURS = 24;

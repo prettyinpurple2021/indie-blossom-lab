@@ -8,7 +8,7 @@
 import { PageMeta } from '@/components/layout/PageMeta';
 import { LegalDisclaimer } from '@/components/legal/LegalDisclaimer';
 
-const LEGAL_EMAIL = 'legal@solosuccessacademy.cloud';
+const LEGAL_EMAIL = 'legal@solosuccessacademy.app';
 const LAST_UPDATED = 'April 28, 2026';
 
 export default function PrivacyPolicy() {
@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2 className="text-xl font-display font-semibold text-foreground mb-3">1. Who We Are</h2>
           <p>
-            SoloSuccess Academy (“we,” “us,” or “our”) operates <strong>solosuccessacademy.cloud</strong>. We are
+            SoloSuccess Academy (“we,” “us,” or “our”) operates <strong>solosuccessacademy.app</strong>. We are
             the data controller for personal data processed in connection with the Service. Contact us at{' '}
             <a className="text-primary hover:underline" href={`mailto:${LEGAL_EMAIL}`}>{LEGAL_EMAIL}</a> for any
             privacy questions.
@@ -109,7 +109,7 @@ export default function PrivacyPolicy() {
             <li><strong>Supabase / managed cloud backend</strong> — database hosting, authentication, file storage.</li>
             <li><strong>Vercel</strong> — front-end hosting and CDN.</li>
             <li><strong>Stripe</strong> — payment processing (PCI-DSS Level 1).</li>
-            <li><strong>Resend</strong> (or our then-current email provider) — transactional email delivery from <code className="font-mono">notify.solosuccessacademy.cloud</code>.</li>
+            <li><strong>Resend</strong> (or our then-current email provider) — transactional email delivery from <code className="font-mono">notify.solosuccessacademy.app</code>.</li>
           </ul>
           <p className="mt-2">
             All sub-processors are contractually bound to safeguard your data and use it only for the services they

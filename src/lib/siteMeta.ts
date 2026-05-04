@@ -26,9 +26,6 @@ export const DEFAULT_TITLE = `${SITE_NAME} - AI-Powered Learning for Solo Founde
 export const DEFAULT_DESCRIPTION =
   "Master entrepreneurship with 10 AI-powered courses designed for solo founders. From mindset to pitch, build your business one course at a time.";
 
-/** Twitter handle for Twitter Card meta tags */
-export const TWITTER_HANDLE = "@solosuccessai";
-
 /**
  * Get the absolute base URL for the site.
  * Used for canonical tags and og:image absolute URLs.

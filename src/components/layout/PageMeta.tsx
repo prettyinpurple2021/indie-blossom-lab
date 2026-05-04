@@ -3,7 +3,6 @@ import {
   SITE_NAME,
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
-  TWITTER_HANDLE,
   getSiteUrl,
   getOgImageUrl,
 } from "@/lib/siteMeta";
@@ -53,7 +52,6 @@ export function PageMeta({
       {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={TWITTER_HANDLE} />
       <meta name="twitter:title" content={resolvedTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />

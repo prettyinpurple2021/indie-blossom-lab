@@ -14,7 +14,6 @@
  * PRODUCTION TODO:
  * - Set VITE_SITE_URL in your production .env for correct canonical URLs
  * - Add a public/og-image.png (1200×630px) for social media sharing
- * - TWITTER_HANDLE is set to @solosuccessai
  */
 
 /** The name of the application — used in titles like "Page | SoloSuccess Academy" */

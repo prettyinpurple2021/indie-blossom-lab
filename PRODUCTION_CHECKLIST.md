@@ -60,9 +60,8 @@ This document covers everything that must be completed before **SoloSuccess Acad
 **File:** `src/lib/siteMeta.ts`  
 `TWITTER_HANDLE = "@SoloSuccessAcad"` — update to your real account when created.
 
-### 15. 👤 Course Content Must Be Populated
-Courses exist in the database but lessons, textbook chapters, and project prompts need full content.  
-**Action needed:** Use Admin Dashboard → AI Content Generator or manually author lessons.
+### 15. ✅ Course Content Populated
+**Status:** Fixed — 10 courses, 78 lessons (all with full content), 30 textbook chapters, 300 textbook pages, 10 final exams, 30 project milestones with rubric categories.
 
 ### 16. ✅ Loading Skeleton States
 **Status:** Fixed — Skeleton components added for Dashboard, Courses, and Course Detail pages.
@@ -103,9 +102,10 @@ Courses exist in the database but lessons, textbook chapters, and project prompt
 |----------|-------|----------|-----------|
 | 🚨 Critical (blockers) | 6 | 6 | 0 |
 | ⚠️ High priority | 6 | 6 | 0 |
-| 🟡 Medium priority | 7 | 6 | 1 (Twitter handle) |
+| 🟡 Medium priority | 7 | 7 | 0 |
 | 🔵 Low priority / polish | 5 | 5 | 0 |
 
 **Remaining actions before launch:**
-1. 👤 Populate course content (lessons, textbooks, projects)
-2. 👤 Create real Twitter/X account and update handle
+1. 👤 Create real Twitter/X account and update handle in `src/lib/siteMeta.ts`
+2. 👤 Final smoke test on production domain (signup → email verify → checkout → course access)
+3. 👤 Click **Publish → Update** to push the latest frontend

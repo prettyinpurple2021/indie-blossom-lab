@@ -26,6 +26,7 @@ import { DeleteAccountCard } from '@/components/settings/DeleteAccountCard';
 import { AccessibilityCard } from '@/components/settings/AccessibilityCard';
 import { DailyGoalsCard } from '@/components/settings/DailyGoalsCard';
 import { TwoFactorCard } from '@/components/settings/TwoFactorCard';
+import { EmailPreferencesCard } from '@/components/settings/EmailPreferencesCard';
 
 export default function Settings() {
   const { user, isLoading: authLoading, resetPassword } = useAuth();
@@ -208,6 +209,9 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Email delivery (suppression / resubscribe) */}
+          <EmailPreferencesCard />
 
           {/* Account section header */}
           <div className="flex items-center gap-2 pt-4">

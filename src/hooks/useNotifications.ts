@@ -2,6 +2,93 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+
+/* ──────────────────────────────────────────────────────────────
+ * Local user preferences (per-device)
+ *   realtime_toast        — show in-app toast on new notification
+ *   realtime_sound        — play soft cyber chime
+ *   realtime_browser_push — show OS-level notification when tab hidden
+ * ────────────────────────────────────────────────────────────── */
+const PREF_KEYS = {
+  toast: 'notif:realtime_toast',
+  sound: 'notif:realtime_sound',
+  push: 'notif:realtime_browser_push',
+} as const;
+
+function getPref(key: string, fallback = true): boolean {
+  if (typeof window === 'undefined') return fallback;
+  const v = localStorage.getItem(key);
+  if (v === null) return fallback;
+  return v === '1';
+}
+
+/** Synthesize a short two-note "ping" via Web Audio — no asset needed. */
+function playChime() {
+  try {
+    const Ctx =
+      (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const now = ctx.currentTime;
+    [
+      { freq: 880, start: 0, dur: 0.12 },
+      { freq: 1320, start: 0.08, dur: 0.18 },
+    ].forEach(({ freq, start, dur }) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + start);
+      gain.gain.exponentialRampToValueAtTime(0.18, now + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + start);
+      osc.stop(now + start + dur + 0.05);
+    });
+    setTimeout(() => ctx.close().catch(() => {}), 600);
+  } catch {
+    /* noop */
+  }
+}
+
+/** Show a native browser notification if granted + tab is hidden. */
+function showBrowserNotification(n: Notification) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return;
+  if (window.Notification.permission !== 'granted') return;
+  if (document.visibilityState === 'visible') return; // avoid double-noise
+  try {
+    const notif = new window.Notification(n.title, {
+      body: n.message,
+      icon: '/favicon.ico',
+      tag: n.id,
+    });
+    notif.onclick = () => {
+      window.focus();
+      if (n.link) window.location.href = n.link;
+      notif.close();
+    };
+  } catch {
+    /* noop */
+  }
+}
+
+/** Public helpers so Settings UI can read/write prefs. */
+export const notificationPrefs = {
+  keys: PREF_KEYS,
+  get: getPref,
+  set(key: string, value: boolean) {
+    localStorage.setItem(key, value ? '1' : '0');
+  },
+  async requestPushPermission(): Promise<NotificationPermission> {
+    if (typeof window === 'undefined' || !('Notification' in window))
+      return 'denied';
+    if (window.Notification.permission === 'granted') return 'granted';
+    if (window.Notification.permission === 'denied') return 'denied';
+    return await window.Notification.requestPermission();
+  },
+};
 
 export interface Notification {
   id: string;
@@ -17,6 +104,8 @@ export interface Notification {
 export function useNotifications() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const query = useQuery({
     queryKey: ['notifications', user?.id],
@@ -51,13 +140,30 @@ export function useNotifications() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
+          const newNotification = payload.new as Notification;
           queryClient.setQueryData<Notification[]>(
             ['notifications', user.id],
             (old) => {
-              const newNotification = payload.new as Notification;
               return old ? [newNotification, ...old] : [newNotification];
             }
           );
+
+          // 1) In-app toast (foreground)
+          if (getPref(PREF_KEYS.toast)) {
+            toast({
+              title: newNotification.title,
+              description: newNotification.message,
+              onClick: newNotification.link
+                ? () => navigate(newNotification.link!)
+                : undefined,
+            } as any);
+          }
+
+          // 2) Soft chime
+          if (getPref(PREF_KEYS.sound)) playChime();
+
+          // 3) Native browser push (background tab)
+          if (getPref(PREF_KEYS.push)) showBrowserNotification(newNotification);
         }
       )
       .subscribe();
@@ -65,7 +171,7 @@ export function useNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id, queryClient]);
+  }, [user?.id, queryClient, toast, navigate]);
 
   return query;
 }

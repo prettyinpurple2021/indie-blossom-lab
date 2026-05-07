@@ -5,12 +5,13 @@
  * Users arrive here from the unsubscribe link in transactional emails.
  */
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Loader2, MailX, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Loader2, MailX, CheckCircle, AlertTriangle, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageMeta } from '@/components/layout/PageMeta';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 type Status = 'loading' | 'valid' | 'already' | 'invalid' | 'success' | 'error';
 
@@ -19,6 +20,24 @@ export default function Unsubscribe() {
   const token = searchParams.get('token');
   const [status, setStatus] = useState<Status>('loading');
   const [submitting, setSubmitting] = useState(false);
+  const { user } = useAuth();
+  const [resubscribing, setResubscribing] = useState(false);
+  const [resubscribed, setResubscribed] = useState(false);
+
+  const handleResubscribe = async () => {
+    setResubscribing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('manage-email-preferences', {
+        body: { action: 'resubscribe' },
+      });
+      if (error) throw error;
+      if (data?.success) setResubscribed(true);
+    } catch {
+      // noop — button stays available
+    } finally {
+      setResubscribing(false);
+    }
+  };
 
   // Validate the token on mount
   useEffect(() => {
@@ -128,6 +147,27 @@ export default function Unsubscribe() {
                 <p className="text-muted-foreground text-sm">
                   You won't receive any more notification emails from us.
                 </p>
+                {user && !resubscribed && (
+                  <Button
+                    variant="outline"
+                    onClick={handleResubscribe}
+                    disabled={resubscribing}
+                    className="w-full"
+                  >
+                    {resubscribing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    Changed your mind? Resubscribe
+                  </Button>
+                )}
+                {resubscribed && (
+                  <p className="text-success text-sm">You're resubscribed. Welcome back!</p>
+                )}
+                {user && (
+                  <Button asChild variant="ghost" size="sm" className="w-full">
+                    <Link to="/settings">
+                      <SettingsIcon className="h-4 w-4 mr-2" /> Manage email preferences
+                    </Link>
+                  </Button>
+                )}
               </>
             )}
 
@@ -141,6 +181,20 @@ export default function Unsubscribe() {
                 <p className="text-muted-foreground text-sm">
                   This email address has already been unsubscribed.
                 </p>
+                {user && !resubscribed && (
+                  <Button
+                    variant="outline"
+                    onClick={handleResubscribe}
+                    disabled={resubscribing}
+                    className="w-full"
+                  >
+                    {resubscribing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    Resubscribe
+                  </Button>
+                )}
+                {resubscribed && (
+                  <p className="text-success text-sm">You're resubscribed. Welcome back!</p>
+                )}
               </>
             )}
 

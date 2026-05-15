@@ -690,11 +690,41 @@ export async function uploadLessonVideo(
   const fileExt = file.name.split('.').pop();
   const fileName = `${courseId}/${lessonId}-${Date.now()}.${fileExt}`;
 
-  const { error: uploadError } = await supabase.storage
+  // Use a signed upload URL so we can stream the file via XHR and report
+  // real upload progress events back to the caller. The Supabase JS SDK's
+  // `.upload()` uses fetch under the hood and does not expose progress.
+  const { data: signed, error: signedUploadError } = await supabase.storage
     .from('lesson-videos')
-    .upload(fileName, file, { upsert: true });
+    .createSignedUploadUrl(fileName, { upsert: true });
 
-  if (uploadError) throw uploadError;
+  if (signedUploadError || !signed) {
+    throw signedUploadError ?? new Error('Failed to create signed upload URL');
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', signed.signedUrl, true);
+    // Supabase signed-upload endpoint accepts the raw body with content type.
+    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+    xhr.setRequestHeader('x-upsert', 'true');
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100);
+        resolve();
+      } else {
+        reject(new Error(`Upload failed (${xhr.status}): ${xhr.responseText}`));
+      }
+    };
+    xhr.onerror = () => reject(new Error('Network error during upload'));
+    xhr.onabort = () => reject(new Error('Upload aborted'));
+    xhr.send(file);
+  });
 
   // lesson-videos bucket is private — use signed URL (1 hour expiry)
   const { data: signedData, error: signedError } = await supabase.storage

@@ -105,16 +105,14 @@ export function VideoUpload({ courseId, lessonId, currentUrl, onUpload }: VideoU
     setUploadProgress(0);
 
     try {
-      // Simulate progress for now (Supabase doesn't provide upload progress)
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => Math.min(prev + 10, 90));
-      }, 200);
+      // Real upload progress via XHR against a Supabase signed upload URL.
+      const publicUrl = await uploadLessonVideo(
+        courseId,
+        lessonId,
+        file,
+        (pct) => setUploadProgress(pct)
+      );
 
-      const publicUrl = await uploadLessonVideo(courseId, lessonId, file);
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      
       onUpload(publicUrl);
       setManualUrl(publicUrl);
       toast({ title: 'Video uploaded!' });
